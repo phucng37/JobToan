@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import {FormProvider, useForm} from "react-hook-form"
 import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
+import { ToastError, ToastSuccess } from "../../notifi/toastify";
 const SignInForm = lazy(() => import("../../components/account/SignInForm"));
 
 const phoneSchema =yup.string()
@@ -37,9 +38,13 @@ const SignInView = () => {
   const onSubmit =handleSubmit((res)=>{
     //submit form thành công
     console.log('ok',res);
+    ToastSuccess('Đăng nhập tài khoản thành công')
   },(err)=>{
     console.log('lỗi',err);
     //submit form lỗi
+    for(let i=0;i<Object.values(err).length;i++){
+      ToastError(Object.values(err)[i].message)
+    }
   }) 
   return (
   <FormProvider {...method}>

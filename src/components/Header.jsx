@@ -10,7 +10,11 @@ const Header = () => {
         <div className="row g-3">
           <div className="col-md-3 text-center">
             <Link to="/">
-              <img src="../../images/logo.jpg" alt="logo" style={{width:"40px",height:"40px"}}/>
+              <img
+                src="../../images/logo.jpg"
+                alt="logo"
+                style={{ width: "40px", height: "40px" }}
+              />
             </Link>
           </div>
           <div className="col-md-5">
@@ -21,8 +25,7 @@ const Header = () => {
               <Link to="/cart" className="btn btn-primary">
                 <i className="bi bi-cart3"></i>
                 <div className="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-circle">
-                  2
-                  {/* phải lấy từ redux */}
+                  2{/* phải lấy từ redux */}
                 </div>
               </Link>
             </div>

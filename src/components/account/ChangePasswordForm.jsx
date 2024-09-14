@@ -4,64 +4,106 @@ import { compose } from "redux";
 import renderFormGroupField from "../../helpers/renderFormGroupField";
 import { required, maxLength20, minLength8 } from "../../helpers/validation";
 import { ReactComponent as IconShieldLock } from "bootstrap-icons/icons/shield-lock.svg";
+import { useFormContext, Controller } from "react-hook-form";
 
-const ChangePasswordForm = (props) => {
-  const { handleSubmit, submitting, onSubmit, submitFailed } = props;
+const ChangePasswordForm = () => {
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useFormContext();
+
+  const onSubmit = handleSubmit(
+    (res) => {
+      console.log("ok", res);
+    },
+    (err) => {
+      console.log("lỗi", err);
+    }
+  );
+
   return (
     <div className="card border-info">
       <h6 className="card-header bg-info text-white">
-      <i className="bi bi-key"></i> Change Password
+        <i className="bi bi-key"></i> Change Password
       </h6>
       <div className="card-body">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className={`needs-validation ${submitFailed ? "was-validated" : ""}`}
-          noValidate
-        >
-          <Field
-            name="currentPassword"
-            type="password"
-            label="Current Password"
-            component={renderFormGroupField}
-            placeholder="******"
-            icon={IconShieldLock}
-            validate={[required, maxLength20, minLength8]}
-            required={true}
-            maxLength="20"
-            minLength="8"
-            className="mb-3"
+        <form onSubmit={onSubmit} noValidate>
+          <label>
+            Current Password <strong style={{ color: "red" }}>*</strong>
+          </label>
+          <Controller
+            control={control}
+            name="currentPw"
+            render={({ field }) => (
+              <input
+                type="text"
+                placeholder="Nhập số điện thoại"
+                style={{
+                  width: "100%",
+                  display: "block",
+                  margin: "auto",
+                  borderRadius: "5px",
+                  outline: "none",
+                  border: "2px solid #ececec",
+                  height: "38px",
+                  marginBottom: "20px",
+                }}
+                {...field}
+              />
+            )}
           />
-          <Field
-            name="password"
-            type="password"
-            label="New Password"
-            component={renderFormGroupField}
-            placeholder="******"
-            icon={IconShieldLock}
-            validate={[required, maxLength20, minLength8]}
-            required={true}
-            maxLength="20"
-            minLength="8"
-            className="mb-3"
+
+          <label>
+            New Password <strong style={{ color: "red" }}>*</strong>
+          </label>
+          <Controller
+            control={control}
+            name="newPw"
+            render={({ field }) => (
+              <input
+                type="text"
+                placeholder="Nhập số điện thoại"
+                style={{
+                  width: "100%",
+                  display: "block",
+                  margin: "auto",
+                  borderRadius: "5px",
+                  outline: "none",
+                  border: "2px solid #ececec",
+                  height: "38px",
+                  marginBottom: "20px",
+                }}
+                {...field}
+              />
+            )}
           />
-          <Field
-            name="confirmPassword"
-            type="password"
-            label="Confirm New password"
-            component={renderFormGroupField}
-            placeholder="******"
-            icon={IconShieldLock}
-            validate={[required, maxLength20, minLength8]}
-            required={true}
-            maxLength="20"
-            minLength="8"
-            className="mb-3"
+
+          <label>
+            Confirm New Password <strong style={{ color: "red" }}>*</strong>
+          </label>
+          <Controller
+            control={control}
+            name="reNewPw"
+            render={({ field }) => (
+              <input
+                type="text"
+                placeholder="Nhập số điện thoại"
+                style={{
+                  width: "100%",
+                  display: "block",
+                  margin: "auto",
+                  borderRadius: "5px",
+                  outline: "none",
+                  border: "2px solid #ececec",
+                  height: "38px",
+                  marginBottom: "20px",
+                }}
+                {...field}
+              />
+            )}
           />
-          <button
-            type="submit"
-            className="btn btn-info  d-flex"
-            disabled={submitting}
-          >
+          <button type="submit" className="btn btn-info  d-flex">
             Submit
           </button>
         </form>

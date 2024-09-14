@@ -174,20 +174,13 @@ const ProductDetailView = () => {
                 >
                   <i className="bi bi-cart-plus me-1"></i>Add to cart
                 </button>
-                <button
+                {/* <button
                   type="button"
                   className="btn btn-sm btn-warning me-2"
                   title="Buy now"
                 >
                   <i className="bi bi-cart3 me-1"></i>Buy now
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-secondary"
-                  title="Add to wishlist"
-                >
-                  <i className="bi bi-heart-fill"></i>
-                </button>
+                </button> */}
               </div>
               <div>
                 <p className="fw-bold mb-2 small">Product Highlights</p>

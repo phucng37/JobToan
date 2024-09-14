@@ -83,8 +83,11 @@ const CartView = () => {
                         </small>
                       </td>
                       <td className="text-end">
+                        <button className="btn btn-sm btn-success me-2">
+                          <i className="bi bi-bag-fill"></i>
+                        </button>
                         <button className="btn btn-sm btn-outline-secondary me-2">
-                          <i className="bi bi-heart-fill"></i>
+                          <i className="bi bi-save"></i>
                         </button>
                         <button className="btn btn-sm btn-outline-danger">
                           <i className="bi bi-trash"></i>
@@ -142,8 +145,11 @@ const CartView = () => {
                         </small>
                       </td>
                       <td className="text-end">
+                        <button className="btn btn-sm btn-success me-2">
+                          <i className="bi bi-bag-fill"></i>
+                        </button>
                         <button className="btn btn-sm btn-outline-secondary me-2">
-                          <i className="bi bi-heart-fill"></i>
+                          <i className="bi bi-save"></i>
                         </button>
                         <button className="btn btn-sm btn-outline-danger">
                           <i className="bi bi-trash"></i>

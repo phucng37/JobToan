@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const FilterCategory = (props) => {
+  const { onChangeFilter } = props;
   return (
     <div className="card mb-3 accordion">
       <div
@@ -16,36 +17,25 @@ const FilterCategory = (props) => {
       <ul
         className="list-group list-group-flush show"
         id="filterCategory"
+        onClick={(e) => onChangeFilter({ category: e.target.dataset.cate })}
       >
-        <li className="list-group-item">
-          <Link to="/" className="text-decoration-none stretched-link">
-            Clothing
-          </Link>
+        <li className="list-group-item btn" data-cate="dell">
+          DELL
         </li>
-        <li className="list-group-item">
-          <Link to="/" className="text-decoration-none stretched-link">
-            Leather Bag
-          </Link>
+        <li className="list-group-item btn" data-cate="acer">
+          ACER
         </li>
-        <li className="list-group-item">
-          <Link to="/" className="text-decoration-none stretched-link">
-            Trausers
-          </Link>
+        <li className="list-group-item btn" data-cate="asus">
+          ASUS
         </li>
-        <li className="list-group-item">
-          <Link to="/" className="text-decoration-none stretched-link">
-            Sweater & Cardigans
-          </Link>
+        <li className="list-group-item btn" data-cate="gaming">
+          GAMING
         </li>
-        <li className="list-group-item">
-          <Link to="/" className="text-decoration-none stretched-link">
-            High Heels
-          </Link>
+        <li className="list-group-item btn" data-cate="macbook">
+          MACBOOK
         </li>
-        <li className="list-group-item">
-          <Link to="/" className="text-decoration-none stretched-link">
-            Coats & Jackets
-          </Link>
+        <li className="list-group-item btn" data-cate="hp">
+          HP
         </li>
       </ul>
     </div>

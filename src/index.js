@@ -2,14 +2,18 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 //import "./index.css";
 import App from "./App";
-import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
-import store1 from "redux/slice/rootSlice";
+import store1 from "./redux/slice/rootSlice";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ContextFilter from "./context/ContextFilter";
 
-
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store1}>
-    <App />
+    <ContextFilter>
+      <App />
+    </ContextFilter>
+    <ToastContainer />
   </Provider>
 );
 

@@ -1,7 +1,11 @@
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { createFilterContext } from "../../context/ContextFilter";
 
 const CardProductList = (props) => {
   const product = props.data;
+  const [count, setCount] = useState(1);
+  const { handleClickAddToCart } = useContext(createFilterContext);
   return (
     <div className="card">
       <div className="row g-0">
@@ -43,13 +47,6 @@ const CardProductList = (props) => {
               product.description.includes("|") === false && (
                 <p className="small mt-2">{product.description}</p>
               )}
-            {product.description && product.description.includes("|") && (
-              <ul className="mt-2">
-                {product.description.split("|").map((desc, idx) => (
-                  <li key={idx}>{desc}</li>
-                ))}
-              </ul>
-            )}
           </div>
         </div>
         <div className="col-md-3">
@@ -77,20 +74,29 @@ const CardProductList = (props) => {
               </p>
             )}
 
-            <div className="btn-group d-flex" role="group">
+            <div className="btn-group d-flex flex-column" role="group">
+              <input
+                type="number"
+                min={1}
+                max={99}
+                value={count}
+                step={1}
+                onChange={(e) => setCount(e.target.value)}
+                style={{
+                  borderRadius: "4px",
+                  outline: "none",
+                  border: "1px solid blue",
+                  marginBottom: "2px",
+                  textAlign: "center",
+                }}
+              />
               <button
                 type="button"
                 className="btn btn-sm btn-primary"
                 title="Add to cart"
+                onClick={() => handleClickAddToCart(product.id, count)}
               >
                 <i className="bi bi-cart-plus" />
-              </button>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-secondary"
-                title="Add to wishlist"
-              >
-                <i className="bi bi-heart-fill" />
               </button>
             </div>
           </div>

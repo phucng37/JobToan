@@ -1,7 +1,17 @@
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { createFilterContext } from "../../context/ContextFilter";
 
 const CardProductGrid = (props) => {
   const product = props.data;
+  const [count, setCount] = useState(1);
+  const { handleClickAddToCart } = useContext(createFilterContext);
+  useEffect(() => {
+    console.log("alo=>", props.index);
+    return () => {
+      console.log("unmount=>", props.index);
+    };
+  }, [count]);
   return (
     <div className="card">
       <img src={product.img} className="card-img-top" alt="..." />
@@ -44,20 +54,31 @@ const CardProductGrid = (props) => {
             ))}
           </span>
         </div>
-        <div className="btn-group  d-flex" role="group">
+        <div className="btn-group  d-flex between" role="group">
+          <input
+            type="number"
+            onChange={(e) => {
+              setCount(e.target.value);
+            }}
+            min={1}
+            max={99}
+            value={count}
+            style={{
+              borderRadius: "4px",
+              outline: "none",
+              border: "1px solid blue",
+              marginRight: "2px",
+              textAlign: "center",
+              width: "70%",
+            }}
+          />
           <button
             type="button"
             className="btn btn-sm btn-primary"
             title="Add to cart"
+            onClick={() => handleClickAddToCart(product.id, count)}
           >
             <i className="bi bi-cart-plus" />
-          </button>
-          <button
-            type="button"
-            className="btn btn-sm btn-outline-secondary"
-            title="Add to wishlist"
-          >
-            <i className="bi bi-heart-fill" />
           </button>
         </div>
       </div>

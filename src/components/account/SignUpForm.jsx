@@ -1,22 +1,10 @@
-import { Field, reduxForm } from "redux-form";
+import { reduxForm } from "redux-form";
 import { compose } from "redux";
 import { Link } from "react-router-dom";
-import renderFormGroupField from "../../helpers/renderFormGroupField";
-import renderFormField from "../../helpers/renderFormField";
-import {
-  required,
-  maxLength20,
-  minLength8,
-  maxLengthMobileNo,
-  minLengthMobileNo,
-  digit,
-  name,
-} from "../../helpers/validation";
-import { ReactComponent as IconPhone } from "bootstrap-icons/icons/phone.svg";
-import { ReactComponent as IconShieldLock } from "bootstrap-icons/icons/shield-lock.svg";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ToastError, ToastSuccess } from "../../notifi/toastify";
 
 const nameSchema = yup.string().required("Tên là bắt buộc");
 
@@ -61,10 +49,14 @@ const SignUpForm = () => {
     (res) => {
       //submit form thành công
       console.log("ok", res);
+      ToastSuccess('Đăng ký tài khoản thành công')
     },
     (err) => {
       console.log("lỗi", err);
       //submit form lỗi
+      for(let i=0;i<Object.values(err).length;i++){
+        ToastError(Object.values(err)[i].message)
+      }
     }
   );
   return (
