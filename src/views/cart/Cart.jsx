@@ -14,14 +14,14 @@ const data = [
   {
     id: 1,
     img: "../../images/products/tshirt_red_480x400.webp",
-    name: "Another name of some product goes just here",
+    name: "Laptop gaming i5",
     count: 2,
     price: "237",
   },
   {
     id: 2,
     img: "../../images/products/tshirt_grey_480x400.webp",
-    name: "Another name of some product goes just here",
+    name: "ASUS Vivobook",
     count: 5,
     price: "500",
   },
@@ -81,6 +81,8 @@ const CartView = () => {
       handleStartUpdatedToCartRedux({
         product_id: itemUpdate.idCart,
         buy_count: itemUpdate.count,
+        price: cart.find((item) => item.id === id).price,
+        name: cart.find((item2) => item2.id === id).name,
       })
     );
   };
@@ -88,17 +90,18 @@ const CartView = () => {
     dispatch(handleStartDeleteToCartRedux(id));
   };
 
-  console.log(
-    cart.reduce(
-      (value, item) =>
-        Number(value) +
-        Number(
-          count.find((item2) => item2.idCart === item.id)?.count * item.price
-        ),
-
-      [0]
-    )
-  );
+  const handleAllPurchase = () => {
+    dispatch(
+      handleStartBuyRedux(
+        count.map((item) => ({
+          product_id: item.idCart,
+          buy_count: item.count,
+          price: cart.find((item2) => item2.id === item.idCart).price,
+          name: cart.find((item2) => item2.id === item.idCart).name,
+        }))
+      )
+    );
+  };
 
   return (
     <div>
@@ -206,7 +209,7 @@ const CartView = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="card-footer">
+              <div className="card-footer" onClick={handleAllPurchase}>
                 <Link to="/checkout" className="btn btn-primary float-end">
                   Make Purchase <i className="bi bi-chevron-right"></i>
                 </Link>
@@ -237,7 +240,8 @@ const CartView = () => {
                           ),
 
                         [0]
-                      )}
+                      )}{" "}
+                      VND
                     </strong>
                   </dd>
                 </dl>

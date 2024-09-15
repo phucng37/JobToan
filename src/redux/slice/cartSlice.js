@@ -5,7 +5,7 @@ const initStateCart = {
   buy_count: 0,
   dataCart: [],
   isStatusCart: false,
-  dataBuyPurchase: [{ product_id: "", buy_count: 0 }],
+  dataBuyPurchase: [{ product_id: "", name: "", buy_count: 0, price: 0 }],
 };
 
 export const START_ADDING_TO_CART = "START_ADDING_TO_CART";
@@ -128,7 +128,7 @@ export const handleFinishedDeleteToCartRedux = () => ({
   type: FINISHED_DELETE_TO_CART,
 });
 export const handleStartBuyRedux = (
-  payload = [{ product_id: "", buy_count: 0 }]
+  payload = [{ product_id: "", buy_count: 0, price: 0, name: "" }]
 ) => ({
   type: START_BUY_PURCHASE,
   payload,

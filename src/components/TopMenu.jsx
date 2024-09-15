@@ -5,7 +5,7 @@ const TopMenu = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark p-0">
       <div className="container-fluid">
         <Link className="navbar-brand" to="/">
-          Cảnh_Toàn Computer
+          CT Computer
         </Link>
         <button
           className="navbar-toggler"
@@ -41,77 +41,26 @@ const TopMenu = () => {
                     Sign Up
                   </Link>
                 </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/checkout">
-                    Checkout Page
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/contact-us">
-                    Contact Us
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/blog">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/blog/detail">
-                    Blog Detail
-                  </Link>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/fsafasf">
-                    404 Page Not Found
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/500">
-                    500 Internal Server Error
-                  </Link>
-                </li>
               </ul>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/category">
-                Fashion
+              <Link className="nav-link" to="/">
+                Home
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/category">
-                Supermarket
+                Products
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/category">
-                Electronics
+              <Link className="nav-link" to="/contact">
+                Contact
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/category">
-                Furniture
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/category">
-                Garden & Outdoors
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/category">
-                Jewellery
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/documentation">
-                Documentation
+              <Link className="nav-link" to="/intro">
+                Introduction
               </Link>
             </li>
           </ul>
