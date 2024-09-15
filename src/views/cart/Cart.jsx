@@ -1,4 +1,5 @@
-import { lazy } from "react";
+import { lazy, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 const CouponApplyForm = lazy(() =>
   import("../../components/others/CouponApplyForm")
@@ -8,6 +9,16 @@ const CartView = () => {
   const onSubmitApplyCouponCode = async (values) => {
     alert(JSON.stringify(values));
   };
+  const isStatusCart = useSelector((state) => state.cartReducer.isStatusCart);
+  const dataCart = useSelector((state) => state.cartReducer.dataCart);
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    if (isStatusCart) {
+      setCart(dataCart);
+    }
+  }, [isStatusCart]);
+
   return (
     <div>
       <div className="bg-secondary border-top p-4 text-white mb-3">
@@ -156,6 +167,63 @@ const CartView = () => {
                         </button>
                       </td>
                     </tr>
+                    {cart.map((item, index) => (
+                      <tr key={index}>
+                        <td>
+                          <div className="row">
+                            <div className="col-3 d-none d-md-block">
+                              <img src={item.img} width="80" alt="..." />
+                            </div>
+                            <div className="col">
+                              <Link
+                                to={`/product/detail/${item.id}`}
+                                className="text-decoration-none"
+                              >
+                                {item.name}
+                              </Link>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className="input-group input-group-sm mw-140">
+                            <button
+                              className="btn btn-primary text-white"
+                              type="button"
+                            >
+                              <i className="bi bi-dash-lg"></i>
+                            </button>
+                            <input
+                              type="text"
+                              className="form-control"
+                              defaultValue="1"
+                            />
+                            <button
+                              className="btn btn-primary text-white"
+                              type="button"
+                            >
+                              <i className="bi bi-plus-lg"></i>
+                            </button>
+                          </div>
+                        </td>
+                        <td>
+                          <var className="price">$237.00</var>
+                          <small className="d-block text-muted">
+                            {item.price}
+                          </small>
+                        </td>
+                        <td className="text-end">
+                          <button className="btn btn-sm btn-success me-2">
+                            <i className="bi bi-bag-fill"></i>
+                          </button>
+                          <button className="btn btn-sm btn-outline-secondary me-2">
+                            <i className="bi bi-save"></i>
+                          </button>
+                          <button className="btn btn-sm btn-outline-danger">
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

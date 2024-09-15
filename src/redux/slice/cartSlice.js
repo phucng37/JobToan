@@ -4,10 +4,7 @@ const initStateCart = {
   product_id: "",
   buy_count: 0,
   dataCart: [],
-  isAddToCartSuccess: false,
-  isGetToCart: false,
-  isUpdatedToCart: false,
-  isDeleteToCart: false,
+  isStatusCart: false,
   dataBuyPurchase: [{ product_id: "", buy_count: 0 }],
 };
 
@@ -28,10 +25,10 @@ export const cartSlice = (state = initStateCart, action) => {
     case START_ADDING_TO_CART:
       newState.product_id = action.payload.product_id;
       newState.buy_count = action.payload.buy_count;
-      newState.isAddToCartSuccess = false;
+      newState.isStatusCart = false;
       break;
     case FINISHED_ADDING_TO_CART:
-      newState.isAddToCartSuccess = true;
+      newState.isStatusCart = true;
       const findIndex = newState.dataCart.findIndex(
         (item) => item.productId === action.payload.productId
       );
@@ -44,30 +41,30 @@ export const cartSlice = (state = initStateCart, action) => {
       }
       break;
     case GET_TO_CART:
-      newState.isGetToCart = false;
+      newState.isStatusCart = false;
       break;
     case GET_TO_CART_DONE:
-      newState.isGetToCart = true;
+      newState.isStatusCart = true;
       newState.dataCart = action.payload;
       break;
     case START_UPDATE_TO_CART:
-      newState.isUpdatedToCart = true;
+      newState.isStatusCart = true;
       newState.product_id = action.payload.product_id;
       newState.buy_count = action.payload.buy_count;
       break;
     case FINISHED_UPDATE_TO_CART:
-      newState.isUpdatedToCart = false;
+      newState.isStatusCart = false;
       const id = newState.dataCart.findIndex(
         (item) => item.productId === newState.product_id
       );
       if (id > -1) newState.dataCart[id].buy_count = newState.buy_count;
       break;
     case START_DELETE_TO_CART:
-      newState.isDeleteToCart = false;
+      newState.isStatusCart = false;
       newState.product_id = action.payload;
       break;
     case FINISHED_DELETE_TO_CART:
-      newState.isDeleteToCart = true;
+      newState.isStatusCart = true;
       newState.dataCart = newState.dataCart.filter(
         (item) => newState.product_id !== item.productId
       );

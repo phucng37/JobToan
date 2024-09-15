@@ -1,9 +1,13 @@
 import { height } from "@fortawesome/free-brands-svg-icons/fa42Group";
 import { lazy } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 const Search = lazy(() => import("./Search"));
 
 const Header = () => {
+  const countDataCart = useSelector(
+    (state) => state.cartReducer.dataCart.length
+  );
   return (
     <header className="p-3 border-bottom bg-light">
       <div className="container-fluid">
@@ -25,7 +29,7 @@ const Header = () => {
               <Link to="/cart" className="btn btn-primary">
                 <i className="bi bi-cart3"></i>
                 <div className="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-circle">
-                  2{/* phải lấy từ redux */}
+                  {countDataCart || 0}
                 </div>
               </Link>
             </div>
