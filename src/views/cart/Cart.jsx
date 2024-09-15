@@ -1,9 +1,31 @@
 import { lazy, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import {
+  handleStartBuyRedux,
+  handleStartDeleteToCartRedux,
+  handleStartUpdatedToCartRedux,
+} from "../../redux/slice/cartSlice";
 const CouponApplyForm = lazy(() =>
   import("../../components/others/CouponApplyForm")
 );
+
+const data = [
+  {
+    id: 1,
+    img: "../../images/products/tshirt_red_480x400.webp",
+    name: "Another name of some product goes just here",
+    count: 2,
+    price: "237",
+  },
+  {
+    id: 2,
+    img: "../../images/products/tshirt_grey_480x400.webp",
+    name: "Another name of some product goes just here",
+    count: 5,
+    price: "500",
+  },
+];
 
 const CartView = () => {
   const onSubmitApplyCouponCode = async (values) => {
@@ -12,12 +34,71 @@ const CartView = () => {
   const isStatusCart = useSelector((state) => state.cartReducer.isStatusCart);
   const dataCart = useSelector((state) => state.cartReducer.dataCart);
   const [cart, setCart] = useState([]);
+  const [count, setCount] = useState([]);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (isStatusCart) {
-      setCart(dataCart);
+    // if (isStatusCart) {
+    // setCart(dataCart);
+    // setCount(
+    //   dataCart.map((item) => ({ idCart: item.id, count: item.count }))
+    // );
+    // }
+    //nháp
+    if (!isStatusCart) {
+      setCart(data);
+      setCount(data.map((item) => ({ idCart: item.id, count: item.count })));
     }
   }, [isStatusCart]);
+
+  const handleChangeCount = (action, id) => {
+    const element = count.find((item) => item.idCart === id);
+    const countClone = count.filter((item) => item.idCart !== id);
+    if (action === "decrement" && element.count > 1) {
+      element.count -= 1;
+    } else if (action === "increment") {
+      element.count += 1;
+    }
+    countClone.push(element);
+    setCount(countClone);
+  };
+
+  const handlePurchase = (ids = []) => {
+    const itemPurchase = count.filter((item) => ids.includes(item.idCart));
+    dispatch(
+      handleStartBuyRedux(
+        itemPurchase.map((item) => ({
+          product_id: item.idCart,
+          buy_count: item.count,
+        }))
+      )
+    );
+  };
+  const handleSaveCart = (id) => {
+    const itemUpdate = count.find((item) => item.idCart === id);
+    dispatch(
+      handleStartUpdatedToCartRedux({
+        product_id: itemUpdate.idCart,
+        buy_count: itemUpdate.count,
+      })
+    );
+  };
+  const handleDeleteCart = (id) => {
+    dispatch(handleStartDeleteToCartRedux(id));
+  };
+
+  console.log(
+    cart.reduce(
+      (value, item) =>
+        Number(value) +
+        Number(
+          count.find((item2) => item2.idCart === item.id)?.count * item.price
+        ),
+
+      [0]
+    )
+  );
 
   return (
     <div>
@@ -43,136 +124,12 @@ const CartView = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>
-                        <div className="row">
-                          <div className="col-3 d-none d-md-block">
-                            <img
-                              src="../../images/products/tshirt_red_480x400.webp"
-                              width="80"
-                              alt="..."
-                            />
-                          </div>
-                          <div className="col">
-                            <Link
-                              to="/product/detail"
-                              className="text-decoration-none"
-                            >
-                              Another name of some product goes just here
-                            </Link>
-                            <p className="small text-muted">
-                              Size: XL, Color: blue, Brand: XYZ
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="input-group input-group-sm mw-140">
-                          <button
-                            className="btn btn-primary text-white"
-                            type="button"
-                          >
-                            <i className="bi bi-dash-lg"></i>
-                          </button>
-                          <input
-                            type="text"
-                            className="form-control"
-                            defaultValue="1"
-                          />
-                          <button
-                            className="btn btn-primary text-white"
-                            type="button"
-                          >
-                            <i className="bi bi-plus-lg"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <var className="price">$237.00</var>
-                        <small className="d-block text-muted">
-                          $79.00 each
-                        </small>
-                      </td>
-                      <td className="text-end">
-                        <button className="btn btn-sm btn-success me-2">
-                          <i className="bi bi-bag-fill"></i>
-                        </button>
-                        <button className="btn btn-sm btn-outline-secondary me-2">
-                          <i className="bi bi-save"></i>
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger">
-                          <i className="bi bi-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="row">
-                          <div className="col-3 d-none d-md-block">
-                            <img
-                              src="../../images/products/tshirt_grey_480x400.webp"
-                              width="80"
-                              alt="..."
-                            />
-                          </div>
-                          <div className="col">
-                            <Link
-                              to="/product/detail"
-                              className="text-decoration-none"
-                            >
-                              Another name of some product goes just here
-                            </Link>
-                            <p className="small text-muted">
-                              Size: XL, Color: blue, Brand: XYZ
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="input-group input-group-sm mw-140">
-                          <button
-                            className="btn btn-primary text-white"
-                            type="button"
-                          >
-                            <i className="bi bi-dash-lg"></i>
-                          </button>
-                          <input
-                            type="text"
-                            className="form-control"
-                            defaultValue="1"
-                          />
-                          <button
-                            className="btn btn-primary text-white"
-                            type="button"
-                          >
-                            <i className="bi bi-plus-lg"></i>
-                          </button>
-                        </div>
-                      </td>
-                      <td>
-                        <var className="price">$237.00</var>
-                        <small className="d-block text-muted">
-                          $79.00 each
-                        </small>
-                      </td>
-                      <td className="text-end">
-                        <button className="btn btn-sm btn-success me-2">
-                          <i className="bi bi-bag-fill"></i>
-                        </button>
-                        <button className="btn btn-sm btn-outline-secondary me-2">
-                          <i className="bi bi-save"></i>
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger">
-                          <i className="bi bi-trash"></i>
-                        </button>
-                      </td>
-                    </tr>
                     {cart.map((item, index) => (
                       <tr key={index}>
                         <td>
                           <div className="row">
                             <div className="col-3 d-none d-md-block">
-                              <img src={item.img} width="80" alt="..." />
+                              <img src={item.img} width="80" alt="" />
                             </div>
                             <div className="col">
                               <Link
@@ -189,6 +146,9 @@ const CartView = () => {
                             <button
                               className="btn btn-primary text-white"
                               type="button"
+                              onClick={() =>
+                                handleChangeCount("decrement", item.id)
+                              }
                             >
                               <i className="bi bi-dash-lg"></i>
                             </button>
@@ -196,29 +156,48 @@ const CartView = () => {
                               type="text"
                               className="form-control"
                               defaultValue="1"
+                              value={
+                                count.find(
+                                  (countItem) => countItem.idCart === item.id
+                                ).count
+                              }
                             />
                             <button
                               className="btn btn-primary text-white"
                               type="button"
+                              onClick={() =>
+                                handleChangeCount("increment", item.id)
+                              }
                             >
                               <i className="bi bi-plus-lg"></i>
                             </button>
                           </div>
                         </td>
                         <td>
-                          <var className="price">$237.00</var>
-                          <small className="d-block text-muted">
-                            {item.price}
-                          </small>
+                          <var className="price">
+                            {item.price *
+                              count.find(
+                                (countItem) => countItem.idCart === item.id
+                              ).count}
+                          </var>
                         </td>
                         <td className="text-end">
-                          <button className="btn btn-sm btn-success me-2">
+                          <button
+                            className="btn btn-sm btn-success me-2"
+                            onClick={() => handlePurchase([item.id])}
+                          >
                             <i className="bi bi-bag-fill"></i>
                           </button>
-                          <button className="btn btn-sm btn-outline-secondary me-2">
+                          <button
+                            className="btn btn-sm btn-outline-secondary me-2"
+                            onClick={() => handleSaveCart(item.id)}
+                          >
                             <i className="bi bi-save"></i>
                           </button>
-                          <button className="btn btn-sm btn-outline-danger">
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDeleteCart(item.id)}
+                          >
                             <i className="bi bi-trash"></i>
                           </button>
                         </td>
@@ -243,29 +222,23 @@ const CartView = () => {
             </div>
           </div>
           <div className="col-md-3">
-            <div className="card mb-3">
-              <div className="card-body">
-                <CouponApplyForm onSubmit={onSubmitApplyCouponCode} />
-              </div>
-            </div>
             <div className="card">
               <div className="card-body">
-                <dl className="row border-bottom">
-                  <dt className="col-6">Total price:</dt>
-                  <dd className="col-6 text-end">$1,568</dd>
-
-                  <dt className="col-6 text-success">Discount:</dt>
-                  <dd className="col-6 text-success text-end">-$58</dd>
-                  <dt className="col-6 text-success">
-                    Coupon:{" "}
-                    <span className="small text-muted">EXAMPLECODE</span>{" "}
-                  </dt>
-                  <dd className="col-6 text-success text-end">-$68</dd>
-                </dl>
                 <dl className="row">
                   <dt className="col-6">Total:</dt>
                   <dd className="col-6 text-end  h5">
-                    <strong>$1,350</strong>
+                    <strong>
+                      {cart.reduce(
+                        (value, item) =>
+                          Number(value) +
+                          Number(
+                            count.find((item2) => item2.idCart === item.id)
+                              ?.count * item.price
+                          ),
+
+                        [0]
+                      )}
+                    </strong>
                   </dd>
                 </dl>
                 <hr />
