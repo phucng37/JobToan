@@ -7,6 +7,7 @@ import store1 from "./redux/slice/rootSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContextFilter from "./context/ContextFilter";
+import 'core-js';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store1}>
@@ -14,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <App />
     </ContextFilter>
     <ToastContainer />
-  </Provider>
+  </Provider>,
 );
 
 // If you want your app to work offline and load faster, you can change

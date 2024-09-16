@@ -177,7 +177,7 @@ const Footer = () => {
           </div>
           <div className="col-md-3 py-2">
             © 2009-{new Date().getFullYear()} React-E-Commerce.com (
-            {process.env.REACT_APP_VERSION})
+            {import.meta.env.REACT_APP_VERSION})
           </div>
           <div className="col-md-3 py-2 bg-white">
             <img
