@@ -3,14 +3,14 @@ import ReactDOM from "react-dom/client";
 //import "./index.css";
 import App from "./App";
 import { Provider } from "react-redux";
-import store1 from "./redux/slice/rootSlice";
+import store from "./redux/slice/rootSlice";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContextFilter from "./context/ContextFilter";
 import 'core-js';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <Provider store={store1}>
+  <Provider store={store}>
     <ContextFilter>
       <App />
     </ContextFilter>

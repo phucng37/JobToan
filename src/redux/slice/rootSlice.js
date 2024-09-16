@@ -15,8 +15,8 @@ const rootReducer = combineReducers({
   cartReducer: cartSlice,
 });
 
-const store1 = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 
 sagaMiddleware.run(rootSaga);
 
-export default store1;
+export default store;

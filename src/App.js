@@ -7,6 +7,8 @@ import TopMenu from "./components/TopMenu";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "./App.min.css";
+import './scss/style.scss'
+import AdminLayout from "./layout/AdminLayout";
 //const Header = lazy(() => import("./components/Header"));
 //const TopMenu = lazy(() => import("./components/TopMenu"));
 const HomeView = lazy(() => import("./views/Home"));
@@ -34,7 +36,10 @@ const BlogDetailView = lazy(() => import("./views/blog/Detail"));
 function App() {
   return (
     <BrowserRouter>
-      <React.Fragment>
+        {
+          true ? <AdminLayout/> : 
+         <React.Fragment>
+     
         <Header />
         <TopMenu />
         <Suspense
@@ -84,6 +89,7 @@ function App() {
         </Suspense>
         <Footer />
       </React.Fragment>
+}
     </BrowserRouter>
   );
 }
