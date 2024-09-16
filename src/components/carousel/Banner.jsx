@@ -3,15 +3,25 @@ import { Link } from "react-router-dom";
 
 const Item = ({ item, index }) => (
   <div className={`carousel-item ${index === 0 ? "active" : ""}`}>
-    <Link to={item.to}>
-      <img src={item.img} className="img-fluid" alt={item.title} />
+    <div>
+      <img
+        src={item.img}
+        className="img-fluid"
+        alt={item.title}
+        style={{
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          width: "100%",
+          height: "500px",
+        }}
+      />
       {(item.title || item.description) && (
         <div className="carousel-caption d-none d-md-block">
           {item.title && <h5>{item.title}</h5>}
           {item.description && <p>{item.description}</p>}
         </div>
       )}
-    </Link>
+    </div>
   </div>
 );
 
@@ -48,7 +58,6 @@ const Banner = (props) => {
         data-bs-slide="prev"
       >
         <span className="carousel-control-prev-icon" aria-hidden="true" />
-        <span className="sr-only">Previous</span>
       </a>
       <a
         className="carousel-control-next"
@@ -57,7 +66,6 @@ const Banner = (props) => {
         data-bs-slide="next"
       >
         <span className="carousel-control-next-icon" aria-hidden="true" />
-        <span className="sr-only">Next</span>
       </a>
     </div>
   );

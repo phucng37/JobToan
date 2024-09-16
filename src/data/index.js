@@ -1,20 +1,17 @@
 export const data = {
   banner: [
     {
-      to: "/link",
-      img: "../../images/banner/Banner_2.webp",
+      img: "https://intphcm.com/data/upload/banner-la-gi.jpg",
       title: "First slide label",
       description: "Nulla vitae elit libero, a pharetra augue mollis interdum",
     },
     {
-      to: "/link",
-      img: "../../images/banner/Banner_3.webp",
+      img: "https://png.pngtree.com/thumb_back/fh260/background/20230705/pngtree-digital-devices-on-blue-shelf-laptop-mobile-phone-and-tablet-pc-image_3811397.jpg",
       title: "Second slide label",
       description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     },
     {
-      to: "/link",
-      img: "../../images/banner/Banner_1.webp",
+      img: "https://maytinhtoanvu.com/wp-content/uploads/2018/11/banner.jpg",
       title: "Third slide label",
       description: " Praesent commodo cursus magna, vel scelerisque nisl.",
     },

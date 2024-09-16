@@ -53,7 +53,11 @@ class HomeView extends Component {
                   tips={product.tips}
                   to={product.to}
                 >
-                  <ProductImage className={product.cssClass} width="80" height="80" />
+                  <ProductImage
+                    className={product.cssClass}
+                    width="80"
+                    height="80"
+                  />
                 </CardIcon>
               </div>
             );
@@ -96,7 +100,7 @@ class HomeView extends Component {
         </div>
 
         <div className="bg-info bg-gradient p-3 text-center mb-3">
-          <h4 className="m-0">Explore Fashion Collection</h4>
+          <h4 className="m-0">Featured Products</h4>
         </div>
         <div className="container">
           <div className="row">
