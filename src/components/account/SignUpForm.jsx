@@ -5,7 +5,8 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastError, ToastSuccess } from "../../notifi/toastify";
-
+import { useDispatch } from "react-redux";
+import { handleStartRegisterRedux } from "../../redux/slice/registerSlice";
 const nameSchema = yup.string().required("Tên là bắt buộc");
 
 const phoneSchema = yup
@@ -31,6 +32,7 @@ const yupResolverSignUpValidate = yup.object({
 });
 
 const SignUpForm = () => {
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     formState: { errors, isSubmitting },
@@ -49,13 +51,17 @@ const SignUpForm = () => {
     (res) => {
       //submit form thành công
       console.log("ok", res);
-      ToastSuccess('Đăng ký tài khoản thành công')
+      dispatch(
+        handleStartRegisterRedux({
+          ...res,
+        })
+      );
     },
     (err) => {
       console.log("lỗi", err);
       //submit form lỗi
-      for(let i=0;i<Object.values(err).length;i++){
-        ToastError(Object.values(err)[i].message)
+      for (let i = 0; i < Object.values(err).length; i++) {
+        ToastError(Object.values(err)[i].message);
       }
     }
   );

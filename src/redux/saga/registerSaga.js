@@ -11,10 +11,19 @@ import { ToastError, ToastSuccess } from "../../notifi/toastify";
 function* handleStartRegister() {
   const phone = store.getState().registerReducer.phone;
   const password = store.getState().registerReducer.password;
+  const firstName = store.getState().registerReducer.firstName;
+  const lastName = store.getState().registerReducer.lastName;
   try {
-    const data = yield postApiRegister("register", { phone, password });
+    const data = yield postApiRegister("register", {
+      name: firstName + lastName,
+      phone,
+      password,
+      email: "1@gmail.com",
+    });
+    console.log(data);
+
     ToastSuccess(data.data.message);
-    store.dispatch(handleEndRegisterSuccessRedux());
+    // store.dispatch(handleEndRegisterSuccessRedux());
   } catch (error) {
     ToastError(error?.response?.data?.data?.email);
     store.dispatch(handleEndRegisterFailedRedux());

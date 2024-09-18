@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const instanceAxios = axios.create({
-  baseURL: "https://api-ecom.duthanhduoc.com/",
+  baseURL: "http://localhost:3001/",
   headers: {
     "Content-Type": "application/json",
     // 'expire-access-token': 10

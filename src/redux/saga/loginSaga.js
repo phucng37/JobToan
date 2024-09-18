@@ -15,13 +15,13 @@ function* handleLogin() {
   const phone = store.getState().loginReducer.phone;
   const password = store.getState().loginReducer.password;
   try {
-    const data = yield call(postApiLogin, "/login", { phone, password });
-    const { user, access_token, refresh_token } = data.data.data;
-    store.dispatch(
-      handleEndSuccessLoginRedux({ access_token, refresh_token, user })
-    );
+    const data = yield call(postApiLogin, "login", { phone, password });
+    console.log(data);
+
+    const { role, token } = data.data;
+    store.dispatch(handleEndSuccessLoginRedux({ role, token }));
   } catch (error) {
-    ToastError(error.response.data.data.password);
+    ToastError("Đăng nhập không thành công");
     store.dispatch(handleEndFailedLoginRedux());
   }
 }

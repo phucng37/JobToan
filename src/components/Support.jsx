@@ -3,7 +3,7 @@ import { ReactComponent as IconHeadset } from "bootstrap-icons/icons/headset.svg
 import { ReactComponent as IconTruck } from "bootstrap-icons/icons/truck.svg";
 const Support = (props) => {
   return (
-    <div className={`row g-3 ${props.className}`}>
+    <div className="d-flex row g-4">
       <div className="col-md-4">
         <div className="card bg-primary">
           <div className="card-body text-white">

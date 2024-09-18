@@ -29,8 +29,6 @@ export const CHANGE_PASSWORD = "CHANGE_PASSWORD";
 // };
 
 const initLogin = {
-  firstName: "",
-  lastName: "",
   phone: "",
   password: "123",
   isLoginDone: true,
@@ -44,7 +42,6 @@ export const loginSlice = (state = initLogin, action) => {
   switch (action.type) {
     case START_LOGIN:
       newState.isLoginDone = false;
-      newState.firstName = action.payload.lastName || "";
       newState.phone = action.payload.phone || "";
       newState.password = action.payload.password || "";
       break;
@@ -55,23 +52,15 @@ export const loginSlice = (state = initLogin, action) => {
     case END_LOGIN_SUCCESS:
       newState.isLoginDone = true;
       newState.isLoginStatus = true;
-      newState.access_token = action.payload.access_token || "";
-      newState.refresh_token = action.payload.refresh_token || "";
-      localStorage.setItem("access_token", action.payload.access_token || "");
-      localStorage.setItem("refresh_token", action.payload.refresh_token || "");
+      newState.access_token = action.payload.token || "";
+      localStorage.setItem("access_token", action.payload.token || "");
       break;
     case LOGGED_OUT:
       newState.phone = "";
       newState.password = "";
-      newState.firstName = "";
-      newState.lastName = "";
       newState.isLoginDone = true;
       newState.isLoginStatus = false;
       newState.access_token = "";
-      newState.refresh_token = "";
-      break;
-    case ACCESS_TOKEN_EXPIRED:
-      newState.access_token = action.payload.new_access_token || "";
       break;
     case CHANGE_PASSWORD:
       newState.password = action.payload.new_password || "";
@@ -93,10 +82,6 @@ export const handleEndFailedLoginRedux = () => ({
 });
 export const handleLogoutRedux = () => ({
   type: LOGGED_OUT,
-});
-export const handleAccessTokenExpiredRedux = (payload) => ({
-  type: ACCESS_TOKEN_EXPIRED,
-  payload,
 });
 export const handleChangePasswordRedux = (payload) => ({
   type: CHANGE_PASSWORD,

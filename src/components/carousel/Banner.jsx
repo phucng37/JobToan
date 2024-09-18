@@ -1,29 +1,33 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { handleGetCateBeginRedux } from "../../redux/slice/cateSlice";
 
-const Item = ({ item, index }) => (
-  <div className={`carousel-item ${index === 0 ? "active" : ""}`}>
-    <div>
-      <img
-        src={item.img}
-        className="img-fluid"
-        alt={item.title}
-        style={{
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          width: "100%",
-          height: "500px",
-        }}
-      />
-      {(item.title || item.description) && (
-        <div className="carousel-caption d-none d-md-block">
-          {item.title && <h5>{item.title}</h5>}
-          {item.description && <p>{item.description}</p>}
-        </div>
-      )}
+const Item = ({ item, index }) => {
+  return (
+    <div className={`carousel-item ${index === 0 ? "active" : ""}`}>
+      <div>
+        <img
+          src={item.img}
+          className="img-fluid"
+          alt={item.title}
+          style={{
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            width: "100%",
+            height: "500px",
+          }}
+        />
+        {(item.title || item.description) && (
+          <div className="carousel-caption d-none d-md-block">
+            {item.title && <h5>{item.title}</h5>}
+            {item.description && <p>{item.description}</p>}
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const Indicator = ({ item, index }) => (
   <li

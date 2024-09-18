@@ -3,6 +3,7 @@ import { reduxForm } from "redux-form";
 import { compose } from "redux";
 import { Link } from "react-router-dom";
 import { useFormContext } from "react-hook-form";
+import { useDispatch } from "react-redux";
 
 const SignInForm = ({ onSubmit }) => {
   const {
