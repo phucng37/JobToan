@@ -6,9 +6,16 @@ const Support = (props) => {
     <div className="d-flex row g-4">
       <div className="col-md-4">
         <div className="card bg-primary">
-          <div className="card-body text-white">
+          <div
+            className="card-body text-white"
+            style={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <span className="p-3 bg-light rounded-circle me-3 text-dark">
-              <IconCash width={40} height={40} />
+              <IconCash />
             </span>
             Reasonable prices
           </div>
@@ -16,9 +23,16 @@ const Support = (props) => {
       </div>
       <div className="col-md-4">
         <div className="card bg-danger">
-          <div className="card-body text-white">
+          <div
+            className="card-body text-white"
+            style={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <span className="p-3 bg-light rounded-circle me-3 text-dark">
-              <IconHeadset width={40} height={40} />
+              <IconHeadset />
             </span>
             Customer support 24/7
           </div>
@@ -26,9 +40,16 @@ const Support = (props) => {
       </div>
       <div className="col-md-4">
         <div className="card bg-success">
-          <div className="card-body text-white">
+          <div
+            className="card-body text-white"
+            style={{
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <span className="p-3 bg-light rounded-circle me-3 text-dark">
-              <IconTruck width={40} height={40} />
+              <IconTruck />
             </span>
             Quick delivery
           </div>

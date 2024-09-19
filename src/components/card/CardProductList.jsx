@@ -10,13 +10,13 @@ const CardProductList = (props) => {
     <div className="card">
       <div className="row g-0">
         <div className="col-md-3 text-center">
-          <img src={product.img} className="img-fluid" alt="..." />
+          <img src={product.image} className="img-fluid" alt="..." />
         </div>
         <div className="col-md-6">
           <div className="card-body">
             <h6 className="card-subtitle me-2 d-inline">
               <Link
-                to={`${product.link}/${product.id}`}
+                to={`http://localhost:3000/product/detail/${product._id}`}
                 className="text-decoration-none"
               >
                 {product.name}
@@ -28,9 +28,9 @@ const CardProductList = (props) => {
             {product.isHot && <span className="badge bg-danger me-2">Hot</span>}
 
             <div>
-              {product.star > 0 &&
+              {product.review > 0 &&
                 Array.from({ length: 5 }, (_, key) => {
-                  if (key <= product.star)
+                  if (key <= product.review)
                     return (
                       <i
                         className="bi bi-star-fill text-warning me-1"
@@ -46,9 +46,9 @@ const CardProductList = (props) => {
                     );
                 })}
             </div>
-            {product.description &&
-              product.description.includes("|") === false && (
-                <p className="small mt-2">{product.description}</p>
+            {product.shortDescription &&
+              product.shortDescription.includes("|") === false && (
+                <p className="small mt-2">{product.shortDescription}</p>
               )}
           </div>
         </div>
@@ -81,7 +81,7 @@ const CardProductList = (props) => {
               <input
                 type="number"
                 min={1}
-                max={99}
+                max={product.quantity}
                 value={count}
                 step={1}
                 onChange={(e) => setCount(e.target.value)}
@@ -97,7 +97,7 @@ const CardProductList = (props) => {
                 type="button"
                 className="btn btn-sm btn-primary"
                 title="Add to cart"
-                onClick={() => handleClickAddToCart(product.id, count)}
+                onClick={() => handleClickAddToCart(product._id, count)}
               >
                 <i className="bi bi-cart-plus" />
               </button>

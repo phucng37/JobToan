@@ -22,17 +22,13 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
 const CardDealsOfTheDay = (props) => {
   return (
     <div className="card">
-      <div className="card-body">
-        <h5 className="card-title pb-3 border-bottom">
-          {props.title} <i className="bi bi-stopwatch text-primary" />{" "}
-          <Countdown date={props.endDate} renderer={renderer} />
-          <span className="float-end">
-            <Link to={props.to} className="btn btn-sm btn-outline-primary">
-              View All
-            </Link>
-          </span>
-        </h5>
-        {props.children}
+      <div className="card-header">
+        <h5 className="card-title pb-3 border-bottom">{props.title}</h5>
+      </div>
+      <div className="card-body col-md-12">
+        <div className="row gx-3 d-flex justify-content-between flex-wrap">
+          {props.children}
+        </div>
       </div>
     </div>
   );

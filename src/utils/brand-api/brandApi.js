@@ -1,6 +1,6 @@
 import { instanceAxios } from "../https";
 
-export const getCateApi = async () => {
+export const getBrandApi = async () => {
   try {
     const data = await instanceAxios.get("category/show");
     return data;
@@ -8,7 +8,7 @@ export const getCateApi = async () => {
     return Promise.reject(error);
   }
 };
-export const createCateApi = async (body) => {
+export const createBrandApi = async (body) => {
   try {
     const data = await instanceAxios.post("/create", body);
     return data;
@@ -16,15 +16,15 @@ export const createCateApi = async (body) => {
     return Promise.reject(error);
   }
 };
-export const updateCateApi = async (body) => {
+export const updateBrandApi = async (body) => {
   try {
-    const data = await instanceAxios.put("/show", body);
+    const data = await instanceAxios.put("/update", body);
     return data;
   } catch (error) {
     return Promise.reject(error);
   }
 };
-export const deleteCateApi = async (idCate) => {
+export const deleteBrandApi = async (idCate) => {
   try {
     const data = await instanceAxios.get("/delete", idCate);
     return data;

@@ -6,15 +6,9 @@ const CardProductGrid = (props) => {
   const product = props.data;
   const [count, setCount] = useState(1);
   const { handleClickAddToCart } = useContext(createFilterContext);
-  useEffect(() => {
-    console.log("alo=>", props.index);
-    return () => {
-      console.log("unmount=>", props.index);
-    };
-  }, [count]);
   return (
     <div className="card">
-      <img src={product.img} className="card-img-top" alt="..." />
+      <img src={product.image} className="card-img-top" alt="..." />
       {product.isNew && (
         <span className="badge bg-success position-absolute mt-2 ms-2">
           New
@@ -39,7 +33,10 @@ const CardProductGrid = (props) => {
       )}
       <div className="card-body">
         <h6 className="card-subtitle mb-2">
-          <Link to={product.link} className="text-decoration-none">
+          <Link
+            to={`http://localhost:3000/product/detail/${product._id}`}
+            className="text-decoration-none"
+          >
             {product.name}
           </Link>
         </h6>
@@ -49,7 +46,7 @@ const CardProductGrid = (props) => {
             <del className="small text-muted ms-2">${product.originPrice}</del>
           )}
           <span className="ms-2">
-            {Array.from({ length: product.star }, (_, key) => (
+            {Array.from({ length: product.review }, (_, key) => (
               <i className="bi bi-star-fill text-warning me-1" key={key} />
             ))}
           </span>
@@ -61,7 +58,7 @@ const CardProductGrid = (props) => {
               setCount(e.target.value);
             }}
             min={1}
-            max={99}
+            max={product.quantity}
             value={count}
             style={{
               borderRadius: "4px",
@@ -76,7 +73,7 @@ const CardProductGrid = (props) => {
             type="button"
             className="btn btn-sm btn-primary"
             title="Add to cart"
-            onClick={() => handleClickAddToCart(product.id, count)}
+            onClick={() => handleClickAddToCart(product._id, count)}
           >
             <i className="bi bi-cart-plus" />
           </button>

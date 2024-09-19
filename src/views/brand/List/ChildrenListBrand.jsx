@@ -1,9 +1,10 @@
 import React, { lazy, useState, useEffect, useContext } from "react";
-import { handleGetProductListBeginRedux } from "../../../redux/slice/productListSlice";
+import { handleGetProductListByParamsBeginRedux } from "../../../redux/slice/productListSlice";
 import { data } from "../../../data";
 import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
 import { createFilterContext } from "../../../context/ContextFilter";
+import { useParams } from "react-router-dom";
 
 const Breadcrumb = lazy(() => import("../../../components/Breadcrumb"));
 const FilterCategory = lazy(
@@ -24,37 +25,22 @@ const CardProductList = lazy(
 
 // const items = [...data.products, ...data.products, ...data.products];
 
-const ChildrenList = ({ itemsPerPage }) => {
-  const isGetDataProductList = useSelector(
-    (state) => state.productListReducer.isGetDataProductList
-  );
-  const dataProductListRedux = useSelector(
+const ChildrenListBrand = ({ itemsPerPage }) => {
+  const productByBrand = useSelector(
     (state) => state.productListReducer.products
   );
-  const paramsProductRedux = useSelector(
-    (state) => state.productListReducer.queryParams
-  );
-  const isGetDataProductListByParams = useSelector(
-    (state) => state.productListReducer.isGetDataProductListByParams
-  );
+
+  const { id } = useParams();
   const dispatch = useDispatch();
 
   const [view, setView] = useState("list");
   const [totalItems, setTotalItems] = useState("list");
-  const [items, setItems] = useState(dataProductListRedux);
+  const [items, setItems] = useState([]);
 
   const [currentItems, setCurrentItems] = useState([]);
   const [pageCount, setPageCount] = useState(0);
 
   const [itemOffset, setItemOffset] = useState(0);
-
-  const { onChangeFilter } = useContext(createFilterContext);
-
-  useEffect(() => {
-    if (isGetDataProductListByParams) {
-      handlePageClick({ selected: 0 });
-    }
-  }, [isGetDataProductListByParams]);
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -63,13 +49,13 @@ const ChildrenList = ({ itemsPerPage }) => {
   }, [itemOffset, itemsPerPage, items]);
 
   useEffect(() => {
-    if (!isGetDataProductList) {
-      dispatch(handleGetProductListBeginRedux());
-    } else {
-      setItems(dataProductListRedux);
-      setTotalItems(dataProductListRedux.length);
-    }
-  }, [isGetDataProductList, dataProductListRedux]);
+    setItems(productByBrand);
+    setTotalItems(productByBrand.length);
+  }, [productByBrand]);
+
+  useEffect(() => {
+    dispatch(handleGetProductListByParamsBeginRedux({ categoryId: id }));
+  }, [id]);
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % items.length;
@@ -94,38 +80,17 @@ const ChildrenList = ({ itemsPerPage }) => {
           </span>
         </div>
       </div>
-      <Breadcrumb />
       <div className="container-fluid mb-3">
         <div className="row">
-          <div className="col-md-3">
-            <FilterCategory onChangeFilter={onChangeFilter} />
-            <FilterPrice onChangeFilter={onChangeFilter} />
-            <FilterStar onChangeFilter={onChangeFilter} />
-            <FilterClear />
-            <CardServices />
-          </div>
-          <div className="col-md-9">
+          <div className="col-md-10 offset-1">
             <div className="row">
-              <div className="col-7">
-                <span className="align-middle fw-bold">
-                  {totalItems} results for{" "}
-                  <span className="text-warning">"t-shirts"</span>
-                </span>
+              <div
+                className="col-6 mt-3"
+                style={{ textTransform: "uppercase", fontWeight: "bold" }}
+              >
+                Total results: ({totalItems})
               </div>
-              <div className="col-5 d-flex justify-content-end">
-                <select
-                  className="form-select mw-180 float-start"
-                  aria-label="Default select"
-                  onChange={(e) => onChangeFilter({ sort_by: e.target.value })}
-                >
-                  <option value={"most_popular"}>Most Popular</option>
-                  <option value={"latest_items"}>Latest items</option>
-                  <option value={"trending"}>Trending</option>
-                  <option value={"price_low_to_high"}>Price low to high</option>
-                  <option value={"price_hight_to_low"}>
-                    Price high to low
-                  </option>
-                </select>
+              <div className="col-6 d-flex justify-content-end mt-3">
                 <div className="btn-group ms-3" role="group">
                   <button
                     aria-label="Grid"
@@ -170,31 +135,30 @@ const ChildrenList = ({ itemsPerPage }) => {
                 })}
             </div>
             <hr />
-            <ReactPaginate
-              nextLabel="Next >"
-              onPageChange={handlePageClick}
-              pageRangeDisplayed={3}
-              marginPagesDisplayed={2}
-              pageCount={pageCount}
-              previousLabel="< Previous"
-              pageClassName="page-item"
-              pageLinkClassName="page-link"
-              previousClassName="page-item"
-              previousLinkClassName="page-link"
-              nextClassName="page-item"
-              nextLinkClassName="page-link"
-              breakLabel="..."
-              breakClassName="page-item"
-              breakLinkClassName="page-link"
-              containerClassName="pagination"
-              activeClassName="active"
-              renderOnZeroPageCount={null}
-              forcePage={
-                isGetDataProductListByParams && itemOffset === 0
-                  ? itemOffset
-                  : undefined
-              }
-            />
+            <div className="row">
+              <div className="col-md-6 offset-3">
+                <ReactPaginate
+                  nextLabel="Next >"
+                  onPageChange={handlePageClick}
+                  pageRangeDisplayed={3}
+                  marginPagesDisplayed={2}
+                  pageCount={pageCount}
+                  previousLabel="< Previous"
+                  pageClassName="page-item"
+                  pageLinkClassName="page-link"
+                  previousClassName="page-item"
+                  previousLinkClassName="page-link"
+                  nextClassName="page-item"
+                  nextLinkClassName="page-link"
+                  breakLabel="..."
+                  breakClassName="page-item"
+                  breakLinkClassName="page-link"
+                  containerClassName="pagination"
+                  activeClassName="active"
+                  renderOnZeroPageCount={null}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -202,4 +166,4 @@ const ChildrenList = ({ itemsPerPage }) => {
   );
 };
 
-export default ChildrenList;
+export default ChildrenListBrand;

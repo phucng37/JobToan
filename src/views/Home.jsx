@@ -10,7 +10,11 @@ import { ReactComponent as IconHdd } from "bootstrap-icons/icons/hdd.svg";
 import { ReactComponent as IconUpcScan } from "bootstrap-icons/icons/upc-scan.svg";
 import { ReactComponent as IconTools } from "bootstrap-icons/icons/tools.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { handleGetCateBeginRedux } from "../redux/slice/cateSlice";
+import { handleGetBrandBeginRedux } from "../redux/slice/brandSlice";
+import { FaLaptop } from "react-icons/fa";
+import CardProductGrid from "../components/card/CardProductGrid";
+import { handleGetProductListByParamsBeginRedux } from "../redux/slice/productListSlice";
+import CIcon from "@coreui/icons-react";
 
 const Support = lazy(() => import("../components/Support"));
 const Banner = lazy(() => import("../components/carousel/Banner"));
@@ -18,27 +22,56 @@ const Carousel = lazy(() => import("../components/carousel/Carousel"));
 const CardIcon = lazy(() => import("../components/card/CardIcon"));
 const CardLogin = lazy(() => import("../components/card/CardLogin"));
 const CardImage = lazy(() => import("../components/card/CardImage"));
-const CardDealsOfTheDay = lazy(() =>
-  import("../components/card/CardDealsOfTheDay")
+const CardDealsOfTheDay = lazy(
+  () => import("../components/card/CardDealsOfTheDay")
 );
 
 const HomeView = () => {
-  const isGetDataCate = useSelector((state) => state.cateReducer.isGetDataCate);
-  const dataCate = useSelector((state) => state.cateReducer.dataCate);
+  const isGetDataBrand = useSelector(
+    (state) => state.brandReducer.isGetDataBrand
+  );
+  const dataBrand = useSelector((state) => state.brandReducer.dataBrand);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (isGetDataCate) dispatch(handleGetCateBeginRedux());
-  }, [isGetDataCate]);
+    if (!isGetDataBrand) dispatch(handleGetBrandBeginRedux());
+  }, [isGetDataBrand]);
 
-  const carouselContent = dataCate.map((row, idx) => (
-    <div className={`carousel-item ${idx === 0 ? "active" : ""}`} key={idx}>
-      <div className="row g-3">
-        <div key={idx} className="col-md-3">
-          <CardIcon title="1" text="1" tips="1" to="1"></CardIcon>
+  const productFeatured = useSelector(
+    (state) => state.productListReducer.products
+  );
+  useEffect(() => {
+    dispatch(handleGetProductListByParamsBeginRedux({ sort_by: "featured" }));
+  }, []);
+
+  const carouselContent = dataBrand.map((row, idx) => {
+    return (
+      <div
+        className="card col-sm-4 grid g-3"
+        style={{ width: "350px" }}
+        key={idx}
+      >
+        <div style={{ width: "100px", margin: "auto" }}>
+          {/* <FaLaptop style={{ width: "100%", height: "100%" }} /> */}
+          {/* {<row.icon style={{ width: "100%", height: "100%" }}/>} */}
+          <CIcon
+            icon={row.icon.component}
+            style={{ width: "100%", height: "100%" }}
+          />
+        </div>
+        <div className="card-body">
+          <h5 className="card-title">{row.name}</h5>
+          <p className="card-text">
+            Some quick example text to build on the card title and make up the
+            bulk of the card's content.
+            {row.description}
+          </p>
+          <Link to={`/brand/${row._id}`} className="btn btn-primary">
+            See More
+          </Link>
         </div>
       </div>
-    </div>
-  ));
+    );
+  });
 
   return (
     <React.Fragment>
@@ -64,14 +97,8 @@ const HomeView = () => {
       <div className="container-fluid bg-light mb-3">
         <div className="row">
           <div className="col-md-12">
-            <CardDealsOfTheDay
-              endDate={Date.now() + 1000 * 60 * 60 * 14}
-              title="Deals of the Day"
-              to="/"
-            >
-              <Carousel id="elect-product-category1">
-                {carouselContent}
-              </Carousel>
+            <CardDealsOfTheDay title="OUTSTANDING BRAND">
+              {carouselContent}
             </CardDealsOfTheDay>
           </div>
         </div>
@@ -82,46 +109,11 @@ const HomeView = () => {
       </div>
       <div className="container">
         <div className="row">
-          <div className="col-md-3">
-            <Link to="/" className="text-decoration-none">
-              <img
-                src="../../images/category/male.webp"
-                className="img-fluid rounded-circle"
-                alt="..."
-              />
-              <div className="text-center h6">Men's Clothing</div>
-            </Link>
-          </div>
-          <div className="col-md-3">
-            <Link to="/" className="text-decoration-none">
-              <img
-                src="../../images/category/female.webp"
-                className="img-fluid rounded-circle"
-                alt="..."
-              />
-              <div className="text-center h6">Women's Clothing</div>
-            </Link>
-          </div>
-          <div className="col-md-3">
-            <Link to="/" className="text-decoration-none">
-              <img
-                src="../../images/category/smartwatch.webp"
-                className="img-fluid rounded-circle"
-                alt="..."
-              />
-              <div className="text-center h6">Smartwatch</div>
-            </Link>
-          </div>
-          <div className="col-md-3">
-            <Link to="/" className="text-decoration-none">
-              <img
-                src="../../images/category/footwear.webp"
-                className="img-fluid rounded-circle"
-                alt="..."
-              />
-              <div className="text-center h6">Footwear</div>
-            </Link>
-          </div>
+          {productFeatured?.slice(0, 12).map((item, index) => (
+            <div className="col-md-3" key={index}>
+              <CardProductGrid data={item} />
+            </div>
+          ))}
         </div>
       </div>
     </React.Fragment>
