@@ -17,7 +17,7 @@ const FilterCategory = (props) => {
       <ul
         className="list-group list-group-flush show"
         id="filterCategory"
-        onClick={(e) => onChangeFilter({ category: e.target.dataset.cate })}
+        onClick={(e) => onChangeFilter({ categoryName: e.target.dataset.cate })}
       >
         <li className="list-group-item btn" data-cate="dell">
           DELL

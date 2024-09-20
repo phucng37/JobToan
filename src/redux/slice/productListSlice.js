@@ -6,12 +6,12 @@ const initProductList = {
   isGetDataProductList: false,
   isGetDataProductListByParams: false,
   queryParams: {
-    sort_by: "",
-    categoryId: "",
-    rating_filter: "",
-    price_max: "",
-    price_min: "",
-    name: "",
+    categoryName: "",
+    review: "",
+    priceMax: "",
+    priceMin: "",
+    productName: "",
+    sortBy:''
   },
 };
 
@@ -43,12 +43,12 @@ export const productListSlice = (state = initProductList, action) => {
       break;
     case GET_PRODUCT_LIST_BY_PARAMS_BEGIN:
       newState.isGetDataProductListByParams = false;
-      newState.queryParams.sort_by = action.payload.sort_by;
-      newState.queryParams.categoryId = action.payload.categoryId;
-      newState.queryParams.rating_filter = action.payload.rating_filter;
-      newState.queryParams.price_min = action.payload.price_min;
-      newState.queryParams.price_max = action.payload.price_max;
-      newState.queryParams.name = action.payload.name;
+      newState.queryParams.categoryName = action.payload.categoryName;
+      newState.queryParams.review = action.payload.review;
+      newState.queryParams.priceMin = action.payload.priceMin;
+      newState.queryParams.priceMax = action.payload.priceMax;
+      newState.queryParams.productName = action.payload.productName;
+      newState.queryParams.sortBy=action.payload.sortBy
       break;
     case GET_PRODUCT_LIST_BY_PARAMS_DONE:
       newState.isGetDataProductListByParams = true;

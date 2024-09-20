@@ -1,5 +1,11 @@
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.js";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -9,6 +15,7 @@ import Footer from "./components/Footer";
 import "./App.min.css";
 import "./scss/style.scss";
 import AdminLayout from "./layout/AdminLayout";
+import { protectedRoute, publicRouters, rejectedRoute } from "./router";
 //const Header = lazy(() => import("./components/Header"));
 //const TopMenu = lazy(() => import("./components/TopMenu"));
 const HomeView = lazy(() => import("./views/Home"));
@@ -34,6 +41,20 @@ const SupportView = lazy(() => import("./views/pages/Support"));
 const BlogView = lazy(() => import("./views/blog/Blog"));
 const BlogDetailView = lazy(() => import("./views/blog/Detail"));
 
+//kiểm tra khi truy cập đến url login or register thì nếu đã login rồi thì chuyển đến home, nếu chưa thì mới cho đến trang register or login
+function RejectedRoute() {
+  return !localStorage.getItem("userId") ? <Outlet /> : <Navigate to="/home" />;
+}
+
+//kiểm tra nếu ta chưa login mà truy cập đến những trang như profile thì phải chuyển đến login page để đăng nhập trước đã
+function ProtectedRoute() {
+  return localStorage.getItem("userId") ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/account/signin" />
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -49,14 +70,10 @@ function App() {
             }
           >
             <Routes>
-              <Route exact path="/" element={<HomeView />} />
+              {/* <Route path="*" element={<NotFoundView />} />
               <Route exact path="/account/signin" element={<SignInView />} />
               <Route exact path="/account/signup" element={<SignUpView />} />
-              {/* <Route
-              exact
-              path="/account/forgotpassword"
-              element={<ForgotPasswordView/>}
-            /> */}
+              <Route exact path="/" element={<HomeView />} />
               <Route
                 exact
                 path="/account/profile"
@@ -93,8 +110,33 @@ function App() {
               <Route exact path="/support" element={<SupportView />} />
               <Route exact path="/blog" element={<BlogView />} />
               <Route exact path="/blog/detail" element={<BlogDetailView />} />
-              <Route exact path="/500" element={<InternalServerErrorView />} />
-              <Route path="*" element={<NotFoundView />} />
+              <Route exact path="/500" element={<InternalServerErrorView />} /> */}
+              {/* <Route path="/" element={<HomeView />} />; */}
+              {publicRouters.map((item, index) => {
+                if (!item.type) {
+                  console.log("path", item);
+
+                  return (
+                    <Route
+                      key={index}
+                      path={item.path}
+                      element={<item.component />}
+                    />
+                  );
+                }
+                if (item.type === protectedRoute)
+                  return (
+                    <Route key={index} path="" element={<ProtectedRoute />}>
+                      <Route path={item.path} element={<item.component />} />
+                    </Route>
+                  );
+                else if (item.type === rejectedRoute)
+                  return (
+                    <Route key={index} path="" element={<RejectedRoute />}>
+                      <Route path={item.path} element={<item.component />} />
+                    </Route>
+                  );
+              })}
             </Routes>
           </Suspense>
           <Footer />

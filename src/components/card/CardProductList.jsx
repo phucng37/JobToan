@@ -10,7 +10,7 @@ const CardProductList = (props) => {
     <div className="card">
       <div className="row g-0">
         <div className="col-md-3 text-center">
-          <img src={product.image} className="img-fluid" alt="..." />
+          <img src={product.image} className="img-fluid" alt="" />
         </div>
         <div className="col-md-6">
           <div className="card-body">
@@ -97,7 +97,9 @@ const CardProductList = (props) => {
                 type="button"
                 className="btn btn-sm btn-primary"
                 title="Add to cart"
-                onClick={() => handleClickAddToCart(product._id, count)}
+                onClick={() =>
+                  handleClickAddToCart({ product, quantity: count })
+                }
               >
                 <i className="bi bi-cart-plus" />
               </button>

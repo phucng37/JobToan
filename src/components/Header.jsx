@@ -1,13 +1,19 @@
 import { height } from "@fortawesome/free-brands-svg-icons/fa42Group";
-import { lazy } from "react";
-import { useSelector } from "react-redux";
+import { lazy, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { handleLogoutRedux } from "../redux/slice/loginSlice";
+import { handleGetToCartRedux } from "../redux/slice/cartSlice";
 const Search = lazy(() => import("./Search"));
 
 const Header = () => {
   const countDataCart = useSelector(
     (state) => state.cartReducer.dataCart.length
   );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(handleGetToCartRedux());
+  }, []);
   return (
     <header className="p-3 border-bottom bg-light">
       <div className="container-fluid">
@@ -51,40 +57,21 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/star/zone">
-                    <i className="bi bi-star-fill text-warning"></i> Star Zone
-                  </Link>
-                </li>
-                <li>
                   <Link className="dropdown-item" to="/account/orders">
                     <i className="bi bi-list-check text-primary"></i> Orders
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/account/wishlist">
-                    <i className="bi bi-heart-fill text-danger"></i> Wishlist
-                  </Link>
-                </li>
-                <li>
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/account/notification">
-                    <i className="bi bi-bell-fill text-primary"></i>
-                    Notification
-                  </Link>
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/support">
-                    <i className="bi bi-info-circle-fill text-success"></i>
-                    Support
-                  </Link>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <Link className="dropdown-item" to="/">
+                  <Link
+                    className="dropdown-item"
+                    onClick={() => {
+                      dispatch(handleLogoutRedux());
+                    }}
+                    to="account/signin"
+                  >
                     <i className="bi bi-door-closed-fill text-danger"></i>
                     Logout
                   </Link>

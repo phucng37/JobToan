@@ -40,7 +40,7 @@ const HomeView = () => {
     (state) => state.productListReducer.products
   );
   useEffect(() => {
-    dispatch(handleGetProductListByParamsBeginRedux({ sort_by: "featured" }));
+    dispatch(handleGetProductListByParamsBeginRedux({ review: 4 }));
   }, []);
 
   const carouselContent = dataBrand.map((row, idx) => {

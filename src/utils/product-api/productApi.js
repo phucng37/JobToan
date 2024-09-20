@@ -10,7 +10,7 @@ export const getProductListApi = async () => {
 };
 export const getProductListApiByParams = async (params) => {
   try {
-    const data = await instanceAxios.get("/product/filter-product", params);
+    const data = await instanceAxios.get("/product/filter-product", {params});
     return data;
   } catch (error) {
     return Promise.reject(error);

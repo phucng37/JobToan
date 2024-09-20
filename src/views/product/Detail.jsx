@@ -152,7 +152,12 @@ const ProductDetailView = () => {
                     type="button"
                     className="btn btn-sm btn-primary me-2"
                     title="Add to cart"
-                    onClick={() => handleClickAddToCart(id, count)}
+                    onClick={() =>
+                      handleClickAddToCart({
+                        product: productDetail,
+                        quantity: count,
+                      })
+                    }
                   >
                     <i className="bi bi-cart-plus me-1"></i>Add to cart
                   </button>

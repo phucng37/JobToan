@@ -66,13 +66,14 @@ const ChildrenList = ({ itemsPerPage }) => {
     if (!isGetDataProductList) {
       dispatch(handleGetProductListBeginRedux());
     } else {
-      setItems(dataProductListRedux);
+      setItems([...dataProductListRedux]);
       setTotalItems(dataProductListRedux.length);
     }
   }, [isGetDataProductList, dataProductListRedux]);
 
   const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % items.length;
+    const newOffset =
+      (event.selected * Number(itemsPerPage)) % (items.length || 1);
     setItemOffset(newOffset);
   };
 
@@ -116,11 +117,10 @@ const ChildrenList = ({ itemsPerPage }) => {
                 <select
                   className="form-select mw-180 float-start"
                   aria-label="Default select"
-                  onChange={(e) => onChangeFilter({ sort_by: e.target.value })}
+                  onChange={(e) => onChangeFilter({ sortBy: e.target.value })}
                 >
-                  <option value={"most_popular"}>Most Popular</option>
+                  <option value={"default"}>Default</option>
                   <option value={"latest_items"}>Latest items</option>
-                  <option value={"trending"}>Trending</option>
                   <option value={"price_low_to_high"}>Price low to high</option>
                   <option value={"price_hight_to_low"}>
                     Price high to low

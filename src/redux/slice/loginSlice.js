@@ -1,15 +1,3 @@
-/* eslint-disable default-case */
-// export type State = {
-//   firstName: string;
-//   lastName: string;
-//   phone: string;
-//   password: string;
-//   isLoginDone: boolean;
-//   isLoginStatus: boolean;
-//   access_token: string;
-//   refresh_token: string;
-// };
-
 export const START_LOGIN = "START_LOGIN";
 export const END_LOGIN_SUCCESS = "END_LOGIN_SUCCESS";
 export const END_LOGIN_FAILED = "END_LOGIN_FAILED";
@@ -17,24 +5,15 @@ export const LOGGED_OUT = "LOGGED_OUT";
 export const ACCESS_TOKEN_EXPIRED = "ACCESS_TOKEN_EXPIRED";
 export const CHANGE_PASSWORD = "CHANGE_PASSWORD";
 
-// type loginAction = {
-//   type: loginEnum;
-//   payload?:
-//     | {
-//         access_token: string;
-//         refresh_token: string;
-//       }
-//     | { firstName: string; lastName: string; phone: string; password: string }
-//     | { new_access_token: string };
-// };
-
 const initLogin = {
+  userId: "",
   phone: "",
   password: "123",
   isLoginDone: true,
   isLoginStatus: false,
   access_token: "",
   refresh_token: "",
+  role: "user" || "admin",
 };
 
 export const loginSlice = (state = initLogin, action) => {
@@ -50,8 +29,12 @@ export const loginSlice = (state = initLogin, action) => {
       newState.isLoginStatus = false;
       break;
     case END_LOGIN_SUCCESS:
+      localStorage.setItem("userId", action.payload.userId);
+      localStorage.setItem("role", action.payload.role);
+      newState.userId = localStorage.getItem("userId");
       newState.isLoginDone = true;
       newState.isLoginStatus = true;
+      newState.role = action.payload.role;
       newState.access_token = action.payload.token || "";
       localStorage.setItem("access_token", action.payload.token || "");
       break;
@@ -61,6 +44,10 @@ export const loginSlice = (state = initLogin, action) => {
       newState.isLoginDone = true;
       newState.isLoginStatus = false;
       newState.access_token = "";
+      newState.userId = "";
+      localStorage.removeItem("userId");
+      localStorage.removeItem("role");
+      localStorage.removeItem("access_token");
       break;
     case CHANGE_PASSWORD:
       newState.password = action.payload.new_password || "";

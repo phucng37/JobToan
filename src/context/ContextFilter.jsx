@@ -18,14 +18,11 @@ const ContextFilter = ({ children }) => {
   const isAddToCartSuccess = useSelector(
     (state) => state.cartReducer.isAddToCartSuccess
   );
-  console.log("isAddToCartSucces", isAddToCartSuccess);
 
   const dispatch = useDispatch();
 
-  const handleClickAddToCart = (product_id, buy_count) => {
-    console.log({ product_id, buy_count });
-
-    dispatch(handleStartAddingToCartRedux({ product_id, buy_count }));
+  const handleClickAddToCart = (obj) => {
+    dispatch(handleStartAddingToCartRedux(obj));
   };
 
   const onChangeFilter = (optionParam) => {
@@ -40,148 +37,6 @@ const ContextFilter = ({ children }) => {
         ...optionParam,
       })
     );
-    // dispatch(
-    //   handleGetProductListByParamsDoneRedux({
-    //     products: [
-    //       {
-    //         id: 1,
-    //         sku: "FAS-01",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_red_480x400.webp",
-    //         price: 180,
-    //         originPrice: 200,
-    //         discountPrice: 20,
-    //         discountPercentage: 10,
-    //         isNew: true,
-    //         isHot: false,
-    //         star: 4,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Nulla sodales sit amet orci eu vehicula. Curabitur metus velit, fermentum a velit ac, sodales egestas lacus. Etiam congue velit vel luctus dictum. Pellentesque at pellentesque sapien.",
-    //       },
-    //       {
-    //         id: 3,
-    //         sku: "FAS-03",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_black_480x400.webp",
-    //         price: 1900,
-    //         originPrice: 2000,
-    //         discountPrice: 100,
-    //         discountPercentage: 0,
-    //         isNew: true,
-    //         isHot: true,
-    //         star: 2,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Vivamus sapien eros, molestie sed lacus vitae, lacinia volutpat ipsum. Nam sollicitudin lorem eget ornare vulputate.",
-    //       },
-    //       {
-    //         id: 1,
-    //         sku: "FAS-01",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_red_480x400.webp",
-    //         price: 180,
-    //         originPrice: 200,
-    //         discountPrice: 20,
-    //         discountPercentage: 10,
-    //         isNew: true,
-    //         isHot: false,
-    //         star: 4,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Nulla sodales sit amet orci eu vehicula. Curabitur metus velit, fermentum a velit ac, sodales egestas lacus. Etiam congue velit vel luctus dictum. Pellentesque at pellentesque sapien.",
-    //       },
-    //       {
-    //         id: 3,
-    //         sku: "FAS-03",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_black_480x400.webp",
-    //         price: 1900,
-    //         originPrice: 2000,
-    //         discountPrice: 100,
-    //         discountPercentage: 0,
-    //         isNew: true,
-    //         isHot: true,
-    //         star: 2,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Vivamus sapien eros, molestie sed lacus vitae, lacinia volutpat ipsum. Nam sollicitudin lorem eget ornare vulputate.",
-    //       },
-    //       {
-    //         id: 1,
-    //         sku: "FAS-01",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_red_480x400.webp",
-    //         price: 180,
-    //         originPrice: 200,
-    //         discountPrice: 20,
-    //         discountPercentage: 10,
-    //         isNew: true,
-    //         isHot: false,
-    //         star: 4,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Nulla sodales sit amet orci eu vehicula. Curabitur metus velit, fermentum a velit ac, sodales egestas lacus. Etiam congue velit vel luctus dictum. Pellentesque at pellentesque sapien.",
-    //       },
-    //       {
-    //         id: 3,
-    //         sku: "FAS-03",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_black_480x400.webp",
-    //         price: 1900,
-    //         originPrice: 2000,
-    //         discountPrice: 100,
-    //         discountPercentage: 0,
-    //         isNew: true,
-    //         isHot: true,
-    //         star: 2,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Vivamus sapien eros, molestie sed lacus vitae, lacinia volutpat ipsum. Nam sollicitudin lorem eget ornare vulputate.",
-    //       },
-    //       {
-    //         id: 1,
-    //         sku: "FAS-01",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_red_480x400.webp",
-    //         price: 180,
-    //         originPrice: 200,
-    //         discountPrice: 20,
-    //         discountPercentage: 10,
-    //         isNew: true,
-    //         isHot: false,
-    //         star: 4,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Nulla sodales sit amet orci eu vehicula. Curabitur metus velit, fermentum a velit ac, sodales egestas lacus. Etiam congue velit vel luctus dictum. Pellentesque at pellentesque sapien.",
-    //       },
-    //       {
-    //         id: 3,
-    //         sku: "FAS-03",
-    //         link: "/product/detail",
-    //         name: "Great product name goes here",
-    //         img: "../../images/products/tshirt_black_480x400.webp",
-    //         price: 1900,
-    //         originPrice: 2000,
-    //         discountPrice: 100,
-    //         discountPercentage: 0,
-    //         isNew: true,
-    //         isHot: true,
-    //         star: 2,
-    //         isFreeShipping: true,
-    //         description:
-    //           "Vivamus sapien eros, molestie sed lacus vitae, lacinia volutpat ipsum. Nam sollicitudin lorem eget ornare vulputate.",
-    //       },
-    //     ],
-    //   })
-    // );
   };
 
   useEffect(() => {

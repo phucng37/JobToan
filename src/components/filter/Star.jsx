@@ -1,8 +1,8 @@
 const FilterStar = (props) => {
   const { onChangeFilter } = props;
   const onChangeStar = (e) => {
-    const rating_filter = e.target.nextElementSibling.dataset.star;
-    onChangeFilter({ rating_filter });
+    const review = e.target.nextElementSibling.dataset.star;
+    onChangeFilter({ review });
   };
   return (
     <div className="card mb-3">

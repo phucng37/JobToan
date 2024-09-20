@@ -22,7 +22,7 @@ const Search = () => {
         className="btn btn-primary text-white"
         type="button"
         aria-label="Search"
-        onClick={() => onChangeFilter({ name: search })}
+        onClick={() => onChangeFilter({ productName: search })}
       >
         <i className="bi bi-search"></i>
       </button>

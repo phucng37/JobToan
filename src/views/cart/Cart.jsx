@@ -2,12 +2,13 @@ import { lazy, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
+  handleGetToCartRedux,
   handleStartBuyRedux,
   handleStartDeleteToCartRedux,
   handleStartUpdatedToCartRedux,
 } from "../../redux/slice/cartSlice";
-const CouponApplyForm = lazy(() =>
-  import("../../components/others/CouponApplyForm")
+const CouponApplyForm = lazy(
+  () => import("../../components/others/CouponApplyForm")
 );
 
 const data = [
@@ -39,17 +40,21 @@ const CartView = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // if (isStatusCart) {
-    // setCart(dataCart);
-    // setCount(
-    //   dataCart.map((item) => ({ idCart: item.id, count: item.count }))
-    // );
-    // }
-    //nháp
-    if (!isStatusCart) {
-      setCart(data);
-      setCount(data.map((item) => ({ idCart: item.id, count: item.count })));
+    if (isStatusCart) {
+      setCart(dataCart);
+      setCount(
+        dataCart.map((item) => ({
+          idCart: item.product._id,
+          count: item.quantity,
+        }))
+      );
     }
+    // else if (!isStatusCart) dispatch(handleGetToCartRedux());
+    //nháp
+    // if (!isStatusCart) {
+    //   setCart(data);
+    //   setCount(data.map((item) => ({ idCart: item.id, count: item.count })));
+    // }
   }, [isStatusCart]);
 
   const handleChangeCount = (action, id) => {
@@ -77,12 +82,12 @@ const CartView = () => {
   };
   const handleSaveCart = (id) => {
     const itemUpdate = count.find((item) => item.idCart === id);
+    console.log(itemUpdate);
+
     dispatch(
       handleStartUpdatedToCartRedux({
-        product_id: itemUpdate.idCart,
-        buy_count: itemUpdate.count,
-        price: cart.find((item) => item.id === id).price,
-        name: cart.find((item2) => item2.id === id).name,
+        productId: itemUpdate.idCart,
+        quantity: itemUpdate.count,
       })
     );
   };
@@ -96,12 +101,13 @@ const CartView = () => {
         count.map((item) => ({
           product_id: item.idCart,
           buy_count: item.count,
-          price: cart.find((item2) => item2.id === item.idCart).price,
-          name: cart.find((item2) => item2.id === item.idCart).name,
+          price: cart.find((item2) => item2._id === item.idCart).price,
+          name: cart.find((item2) => item2._id === item.idCart).name,
         }))
       )
     );
   };
+  console.log("cart", count);
 
   return (
     <div>
@@ -132,14 +138,14 @@ const CartView = () => {
                         <td>
                           <div className="row">
                             <div className="col-3 d-none d-md-block">
-                              <img src={item.img} width="80" alt="" />
+                              <img src={item.product.image} width="80" alt="" />
                             </div>
                             <div className="col">
                               <Link
-                                to={`/product/detail/${item.id}`}
+                                to={`/product/detail/${item.product._id}`}
                                 className="text-decoration-none"
                               >
-                                {item.name}
+                                {item.product.name}
                               </Link>
                             </div>
                           </div>
@@ -150,7 +156,7 @@ const CartView = () => {
                               className="btn btn-primary text-white"
                               type="button"
                               onClick={() =>
-                                handleChangeCount("decrement", item.id)
+                                handleChangeCount("decrement", item.product._id)
                               }
                             >
                               <i className="bi bi-dash-lg"></i>
@@ -161,15 +167,16 @@ const CartView = () => {
                               defaultValue="1"
                               value={
                                 count.find(
-                                  (countItem) => countItem.idCart === item.id
-                                ).count
+                                  (countItem) =>
+                                    countItem.idCart === item.product._id
+                                )?.count
                               }
                             />
                             <button
                               className="btn btn-primary text-white"
                               type="button"
                               onClick={() =>
-                                handleChangeCount("increment", item.id)
+                                handleChangeCount("increment", item.product._id)
                               }
                             >
                               <i className="bi bi-plus-lg"></i>
@@ -178,28 +185,29 @@ const CartView = () => {
                         </td>
                         <td>
                           <var className="price">
-                            {item.price *
+                            {Number(item.product.price) *
                               count.find(
-                                (countItem) => countItem.idCart === item.id
-                              ).count}
+                                (countItem) =>
+                                  countItem.idCart === item.product._id
+                              )?.count}
                           </var>
                         </td>
                         <td className="text-end">
                           <button
                             className="btn btn-sm btn-success me-2"
-                            onClick={() => handlePurchase([item.id])}
+                            onClick={() => handlePurchase([item.product._id])}
                           >
                             <i className="bi bi-bag-fill"></i>
                           </button>
                           <button
                             className="btn btn-sm btn-outline-secondary me-2"
-                            onClick={() => handleSaveCart(item.id)}
+                            onClick={() => handleSaveCart(item.product._id)}
                           >
                             <i className="bi bi-save"></i>
                           </button>
                           <button
                             className="btn btn-sm btn-outline-danger"
-                            onClick={() => handleDeleteCart(item.id)}
+                            onClick={() => handleDeleteCart(item.product._id)}
                           >
                             <i className="bi bi-trash"></i>
                           </button>
@@ -235,8 +243,9 @@ const CartView = () => {
                         (value, item) =>
                           Number(value) +
                           Number(
-                            count.find((item2) => item2.idCart === item.id)
-                              ?.count * item.price
+                            count.find(
+                              (item2) => item2.idCart === item.product._id
+                            )?.count * item.product.price
                           ),
 
                         [0]

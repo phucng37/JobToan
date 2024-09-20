@@ -62,7 +62,7 @@ const SignInView = () => {
   );
   useEffect(() => {
     if (isLoginStatus) {
-      navigate("/");
+      navigate("/home");
       ToastSuccess("Đăng nhập thành công");
     }
   }, [isLoginStatus]);

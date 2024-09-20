@@ -1,8 +1,9 @@
 /* eslint-disable default-case */
 /* eslint-disable no-undef */
 const initStateCart = {
-  product_id: "",
-  buy_count: 0,
+  productId: "",
+  quantity: "",
+  product: {},
   dataCart: [],
   isStatusCart: false,
   dataBuyPurchase: [{ product_id: "", name: "", buy_count: 0, price: 0 }],
@@ -23,21 +24,24 @@ export const cartSlice = (state = initStateCart, action) => {
   const newState = { ...state };
   switch (action.type) {
     case START_ADDING_TO_CART:
-      newState.product_id = action.payload.product_id;
-      newState.buy_count = action.payload.buy_count;
+      newState.product = action.payload.product;
+      newState.quantity = action.payload.quantity;
       newState.isStatusCart = false;
       break;
     case FINISHED_ADDING_TO_CART:
       newState.isStatusCart = true;
       const findIndex = newState.dataCart.findIndex(
-        (item) => item.product_id === action.payload.product_id
+        (item) => item.product._id === newState.product._id
       );
       if (findIndex > -1) {
-        newState.dataCart[findIndex].buy_count =
-          Number(newState.dataCart[findIndex].buy_count) +
-          Number(action.payload.buy_count);
+        newState.dataCart[findIndex].quantity =
+          Number(newState.dataCart[findIndex].quantity) +
+          Number(newState.quantity);
       } else {
-        newState.dataCart.push(action.payload);
+        newState.dataCart.push({
+          product: newState.product,
+          quantity: newState.quantity,
+        });
       }
       break;
     case GET_TO_CART:
@@ -49,24 +53,24 @@ export const cartSlice = (state = initStateCart, action) => {
       break;
     case START_UPDATE_TO_CART:
       newState.isStatusCart = false;
-      newState.product_id = action.payload.product_id;
-      newState.buy_count = action.payload.buy_count;
+      newState.productId = action.payload.productId;
+      newState.quantity = action.payload.quantity;
       break;
     case FINISHED_UPDATE_TO_CART:
       newState.isStatusCart = true;
       const id = newState.dataCart.findIndex(
-        (item) => item.product_id === newState.product_id
+        (item) => item.product._id === newState.productId
       );
-      if (id > -1) newState.dataCart[id].buy_count = newState.buy_count;
+      if (id > -1) newState.dataCart[id].quantity = newState.quantity;
       break;
     case START_DELETE_TO_CART:
       newState.isStatusCart = false;
-      newState.product_id = action.payload;
+      newState.productId = action.payload;
       break;
     case FINISHED_DELETE_TO_CART:
       newState.isStatusCart = true;
       newState.dataCart = newState.dataCart.filter(
-        (item) => newState.product_id !== item.product_id
+        (item) => newState.productId !== item.product._id
       );
       break;
     case START_BUY_PURCHASE:

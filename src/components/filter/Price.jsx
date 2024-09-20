@@ -4,9 +4,9 @@ const FilterPrice = (props) => {
   const { onChangeFilter } = props;
 
   const onChangePrice = (e) => {
-    const price_min = e.target.nextElementSibling.dataset.pricemin;
-    const price_max = e.target.nextElementSibling.dataset.pricemax;
-    onChangeFilter({ price_min, price_max });
+    const priceMin = e.target.nextElementSibling.dataset.pricemin;
+    const priceMax = e.target.nextElementSibling.dataset.pricemax;
+    onChangeFilter({ priceMin, priceMax });
   };
   return (
     <div className="card mb-3">
@@ -32,8 +32,8 @@ const FilterPrice = (props) => {
             <label
               className="form-check-label"
               htmlFor="flexCheckDefault1"
-              data-pricemin="10.000.000"
-              data-pricemax="15.000.000"
+              data-pricemin="10000000"
+              data-pricemax="15000000"
             >
               10 - 15 triệu đồng
             </label>
@@ -51,8 +51,8 @@ const FilterPrice = (props) => {
             <label
               className="form-check-label"
               htmlFor="flexCheckDefault2"
-              data-pricemin="20.000.000"
-              data-pricemax="30.000.000"
+              data-pricemin="20000000"
+              data-pricemax="30000000"
             >
               20 - 30 triệu đồng
             </label>
@@ -70,8 +70,8 @@ const FilterPrice = (props) => {
             <label
               className="form-check-label"
               htmlFor="flexCheckDefault3"
-              data-pricemin="30.000.000"
-              data-pricemax="50.000.000"
+              data-pricemin="30000000"
+              data-pricemax="50000000"
             >
               30 - 50 triệu đồng
             </label>

@@ -8,7 +8,7 @@ const CardProductGrid = (props) => {
   const { handleClickAddToCart } = useContext(createFilterContext);
   return (
     <div className="card">
-      <img src={product.image} className="card-img-top" alt="..." />
+      <img src={product.image} className="card-img-top" alt="" />
       {product.isNew && (
         <span className="badge bg-success position-absolute mt-2 ms-2">
           New
@@ -73,7 +73,7 @@ const CardProductGrid = (props) => {
             type="button"
             className="btn btn-sm btn-primary"
             title="Add to cart"
-            onClick={() => handleClickAddToCart(product._id, count)}
+            onClick={() => handleClickAddToCart({ product, quantity: count })}
           >
             <i className="bi bi-cart-plus" />
           </button>

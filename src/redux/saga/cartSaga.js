@@ -23,17 +23,15 @@ import {
 
 function* handleAddToCartSaga() {
   try {
-    const product_id = store1.getState().cartReducer.product_id;
-    const buy_count = store1.getState().cartReducer.buy_count;
-    const data = yield addToCartApi("/cart/add-to-cart", {
-      product_id,
-      buy_count,
+    const product = store1.getState().cartReducer.product;
+    const quantity = store1.getState().cartReducer.quantity;
+
+    yield addToCartApi("/cart/add-product", {
+      product,
+      quantity,
     });
-    yield put(
-      handleFinishedAddingToCartRedux({
-        data: data.data.data,
-      })
-    );
+
+    yield put(handleFinishedAddingToCartRedux());
     ToastSuccess("Đã thêm sản phẩm vào giỏ hàng");
   } catch (error) {
     ToastError("Lỗi khi thêm sản phẩm vào giỏ hàng");
@@ -41,20 +39,24 @@ function* handleAddToCartSaga() {
 }
 function* handleGetToCartSaga() {
   try {
-    const data = yield getToCartApi("/cart");
-    yield put(handleGetToCartDoneRedux(data.data.data));
+    const userId = localStorage.getItem("userId");
+    const data = yield getToCartApi(`/cart/show/${userId}`);
+    console.log("cart", data);
+
+    yield put(handleGetToCartDoneRedux(data.data.userInfo.cart.products));
   } catch (error) {
     console.log(error);
   }
 }
 function* handleUpdateToCartSaga() {
   try {
-    const product_id = store1.getState().cartReducer.product_id;
-    const buy_count = store1.getState().cartReducer.buy_count;
-    yield updateToCartApi("/cart/update-purchase", {
-      product_id,
-      buy_count,
+    const productId = store1.getState().cartReducer.productId;
+    const quantity = store1.getState().cartReducer.quantity;
+    const data = yield updateToCartApi("/cart/update-product", {
+      productId,
+      quantity,
     });
+    ToastSuccess(data.data.message);
     yield put(handleFinishedUpdatedToCartRedux());
   } catch (error) {
     console.log(error);
@@ -62,8 +64,12 @@ function* handleUpdateToCartSaga() {
 }
 function* handleDeleteToCartSaga() {
   try {
-    const purchase_id = store1.getState().cartReducer.purchase_id;
-    const data = yield deleteToCartApi("/cart", purchase_id);
+    const userId = localStorage.getItem("userId");
+    const productId = store1.getState().cartReducer.productId;
+    const data = yield deleteToCartApi("/cart/remove-product", {
+      productId,
+      userId,
+    });
     ToastSuccess(data.data.message);
     yield put(handleFinishedDeleteToCartRedux());
   } catch (error) {
@@ -86,6 +92,8 @@ export default function* cartSaga() {
   yield takeLeading(START_UPDATE_TO_CART, handleUpdateToCartSaga);
   yield takeLeading(START_DELETE_TO_CART, handleDeleteToCartSaga);
   yield takeLeading(START_BUY_PURCHASE, handleBuyPurchaseSaga);
-  yield take(GET_TO_CART);
-  yield fork(handleGetToCartSaga);
+  while (true) {
+    yield take(GET_TO_CART);
+    yield fork(handleGetToCartSaga);
+  }
 }

@@ -18,8 +18,8 @@ function* handleLogin() {
     const data = yield call(postApiLogin, "login", { phone, password });
     console.log(data);
 
-    const { role, token } = data.data;
-    store.dispatch(handleEndSuccessLoginRedux({ role, token }));
+    const { role, token,userId } = data.data;
+    store.dispatch(handleEndSuccessLoginRedux({ role, token,userId }));
   } catch (error) {
     ToastError("Đăng nhập không thành công");
     store.dispatch(handleEndFailedLoginRedux());

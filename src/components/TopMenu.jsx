@@ -4,7 +4,7 @@ const TopMenu = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark p-0">
       <div className="container-fluid">
-        <Link className="navbar-brand" to="/">
+        <Link className="navbar-brand" to="/home">
           CT Computer
         </Link>
         <button
@@ -44,7 +44,7 @@ const TopMenu = () => {
               </ul>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/">
+              <Link className="nav-link" to="/home">
                 Home
               </Link>
             </li>

@@ -6,11 +6,11 @@ const FilterClear = (props) => {
   const handleClearFilter = () => {
     onChangeFilter({
       sort_by: "",
-      category: "",
-      rating_filter: "",
-      price_min: "",
-      price_max: "",
-      name: "",
+      categoryName: "",
+      review: "",
+      priceMin: "",
+      priceMax: "",
+      productName: "",
     });
   };
   return (
