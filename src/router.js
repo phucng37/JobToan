@@ -4,9 +4,12 @@ import OrdersView from "./views/account/Orders";
 import SignInView from "./views/account/SignIn";
 import SignUpView from "./views/account/SignUp";
 import WishlistView from "./views/account/Wishlist";
+import BlogDetailView from "./views/blog-detail/BlogDetailView";
+import BlogView from "./views/blog/BlogView";
 import BrandListView from "./views/brand/List/List";
 import CartView from "./views/cart/Cart";
 import HomeView from "./views/Home";
+import IntroView from "./views/intro/IntroView";
 import NotFoundView from "./views/pages/404";
 import ProductDetailView from "./views/product/Detail";
 import ProductListView from "./views/product/List/List";
@@ -37,7 +40,7 @@ export const publicRouters = [
   {
     path: "/account/orders",
     component: OrdersView,
-    type: protectedRoute,
+    // type: protectedRoute,
   },
   {
     path: "/account/wishlist",
@@ -69,5 +72,17 @@ export const publicRouters = [
   {
     path: "*",
     component: NotFoundView,
+  },
+  {
+    path: "/blog",
+    component: BlogView,
+  },
+  {
+    path: "/blog/detail/:id",
+    component: BlogDetailView,
+  },
+  {
+    path: "/intro",
+    component: IntroView,
   },
 ];

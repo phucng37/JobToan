@@ -54,8 +54,8 @@ const TopMenu = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/contact">
-                Contact
+              <Link className="nav-link" to="/blog">
+                Blog
               </Link>
             </li>
             <li className="nav-item">

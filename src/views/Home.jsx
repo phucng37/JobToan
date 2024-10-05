@@ -1,17 +1,8 @@
 import React, { lazy, Component, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { data } from "../data";
-import { ReactComponent as IconLaptop } from "bootstrap-icons/icons/laptop.svg";
-import { ReactComponent as IconHeadset } from "bootstrap-icons/icons/headset.svg";
-import { ReactComponent as IconPhone } from "bootstrap-icons/icons/phone.svg";
-import { ReactComponent as IconTv } from "bootstrap-icons/icons/tv.svg";
-import { ReactComponent as IconDisplay } from "bootstrap-icons/icons/display.svg";
-import { ReactComponent as IconHdd } from "bootstrap-icons/icons/hdd.svg";
-import { ReactComponent as IconUpcScan } from "bootstrap-icons/icons/upc-scan.svg";
-import { ReactComponent as IconTools } from "bootstrap-icons/icons/tools.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { handleGetBrandBeginRedux } from "../redux/slice/brandSlice";
-import { FaLaptop } from "react-icons/fa";
 import CardProductGrid from "../components/card/CardProductGrid";
 import { handleGetProductListByParamsBeginRedux } from "../redux/slice/productListSlice";
 import CIcon from "@coreui/icons-react";

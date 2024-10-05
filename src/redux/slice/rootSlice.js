@@ -6,6 +6,7 @@ import { loginSlice } from "./loginSlice";
 import { productListSlice } from "./productListSlice";
 import { cartSlice } from "./cartSlice";
 import { BrandSlice } from "./brandSlice";
+import { orderSlice } from "./orderSlice";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   productListReducer: productListSlice,
   cartReducer: cartSlice,
   brandReducer: BrandSlice,
+  orderReducer: orderSlice,
 });
 
 const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));

@@ -1,12 +1,13 @@
 import { lazy, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   handleGetToCartRedux,
   handleStartBuyRedux,
   handleStartDeleteToCartRedux,
   handleStartUpdatedToCartRedux,
 } from "../../redux/slice/cartSlice";
+import { handleStartOrderRedux, status } from "../../redux/slice/orderSlice";
 const CouponApplyForm = lazy(
   () => import("../../components/others/CouponApplyForm")
 );
@@ -38,6 +39,7 @@ const CartView = () => {
   const [count, setCount] = useState([]);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isStatusCart) {
@@ -49,12 +51,6 @@ const CartView = () => {
         }))
       );
     }
-    // else if (!isStatusCart) dispatch(handleGetToCartRedux());
-    //nháp
-    // if (!isStatusCart) {
-    //   setCart(data);
-    //   setCount(data.map((item) => ({ idCart: item.id, count: item.count })));
-    // }
   }, [isStatusCart]);
 
   const handleChangeCount = (action, id) => {
@@ -69,20 +65,17 @@ const CartView = () => {
     setCount(countClone);
   };
 
-  const handlePurchase = (ids = []) => {
-    const itemPurchase = count.filter((item) => ids.includes(item.idCart));
+  const handlePurchase = (item) => {
     dispatch(
-      handleStartBuyRedux(
-        itemPurchase.map((item) => ({
-          product_id: item.idCart,
-          buy_count: item.count,
-        }))
-      )
+      handleStartOrderRedux({
+        products: [{ product: item.product, quantity: item.quantity }],
+        userId: localStorage.getItem("userId"),
+        totalPrice: item.product.price * item.quantity,
+      })
     );
   };
   const handleSaveCart = (id) => {
     const itemUpdate = count.find((item) => item.idCart === id);
-    console.log(itemUpdate);
 
     dispatch(
       handleStartUpdatedToCartRedux({
@@ -97,17 +90,16 @@ const CartView = () => {
 
   const handleAllPurchase = () => {
     dispatch(
-      handleStartBuyRedux(
-        count.map((item) => ({
-          product_id: item.idCart,
-          buy_count: item.count,
-          price: cart.find((item2) => item2._id === item.idCart).price,
-          name: cart.find((item2) => item2._id === item.idCart).name,
-        }))
-      )
+      handleStartOrderRedux({
+        products: cart,
+        userId: localStorage.getItem("userId"),
+        totalPrice: cart.reduce(
+          (value, item) => value + item.quantity * item.product.price,
+          0
+        ),
+      })
     );
   };
-  console.log("cart", count);
 
   return (
     <div>
@@ -195,7 +187,7 @@ const CartView = () => {
                         <td className="text-end">
                           <button
                             className="btn btn-sm btn-success me-2"
-                            onClick={() => handlePurchase([item.product._id])}
+                            onClick={() => handlePurchase(item)}
                           >
                             <i className="bi bi-bag-fill"></i>
                           </button>
@@ -218,7 +210,10 @@ const CartView = () => {
                 </table>
               </div>
               <div className="card-footer" onClick={handleAllPurchase}>
-                <Link to="/checkout" className="btn btn-primary float-end">
+                <Link
+                  to="/account/orders"
+                  className="btn btn-primary float-end"
+                >
                   Make Purchase <i className="bi bi-chevron-right"></i>
                 </Link>
                 <Link to="/" className="btn btn-secondary">

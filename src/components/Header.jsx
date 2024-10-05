@@ -1,9 +1,10 @@
 import { height } from "@fortawesome/free-brands-svg-icons/fa42Group";
 import { lazy, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { handleLogoutRedux } from "../redux/slice/loginSlice";
 import { handleGetToCartRedux } from "../redux/slice/cartSlice";
+import { handleGetOrderRedux, status } from "../redux/slice/orderSlice";
 const Search = lazy(() => import("./Search"));
 
 const Header = () => {
@@ -14,6 +15,15 @@ const Header = () => {
   useEffect(() => {
     dispatch(handleGetToCartRedux());
   }, []);
+  const isStatusOrder = useSelector(
+    (state) => state.orderReducer.isStatusOrder
+  );
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isStatusOrder === status.GOT) {
+      navigate("account/orders");
+    }
+  }, [isStatusOrder]);
   return (
     <header className="p-3 border-bottom bg-light">
       <div className="container-fluid">
@@ -57,9 +67,14 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/account/orders">
+                  <div
+                    className="dropdown-item"
+                    onClick={() => {
+                      dispatch(handleGetOrderRedux());
+                    }}
+                  >
                     <i className="bi bi-list-check text-primary"></i> Orders
-                  </Link>
+                  </div>
                 </li>
                 <li>
                   <hr className="dropdown-divider" />
