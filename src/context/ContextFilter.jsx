@@ -1,4 +1,4 @@
-import { createContext, useEffect } from "react";
+import { createContext, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   handleGetProductListByParamsBeginRedux,
@@ -19,6 +19,8 @@ const ContextFilter = ({ children }) => {
     (state) => state.cartReducer.isAddToCartSuccess
   );
 
+  const idRef = useRef();
+
   const dispatch = useDispatch();
 
   const handleClickAddToCart = (obj) => {
@@ -26,11 +28,6 @@ const ContextFilter = ({ children }) => {
   };
 
   const onChangeFilter = (optionParam) => {
-    console.log({
-      ...paramsProductRedux,
-      ...optionParam,
-    });
-
     dispatch(
       handleGetProductListByParamsBeginRedux({
         ...paramsProductRedux,
@@ -45,7 +42,7 @@ const ContextFilter = ({ children }) => {
 
   return (
     <createFilterContext.Provider
-      value={{ onChangeFilter, handleClickAddToCart }}
+      value={{ onChangeFilter, handleClickAddToCart, idRef }}
     >
       {children}
     </createFilterContext.Provider>

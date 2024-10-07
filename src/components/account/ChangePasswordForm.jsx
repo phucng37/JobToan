@@ -5,6 +5,8 @@ import renderFormGroupField from "../../helpers/renderFormGroupField";
 import { required, maxLength20, minLength8 } from "../../helpers/validation";
 import { ReactComponent as IconShieldLock } from "bootstrap-icons/icons/shield-lock.svg";
 import { useFormContext, Controller } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { handleChangePasswordRedux } from "../../redux/slice/loginSlice";
 
 const ChangePasswordForm = () => {
   const {
@@ -13,14 +15,18 @@ const ChangePasswordForm = () => {
     control,
   } = useFormContext();
 
+  const dispatch = useDispatch();
+
   const onSubmit = handleSubmit(
     (res) => {
       console.log("ok", res);
+      dispatch(handleChangePasswordRedux(res.newPw));
     },
     (err) => {
       console.log("lỗi", err);
     }
   );
+  console.log(errors);
 
   return (
     <div className="card border-info">
@@ -38,7 +44,7 @@ const ChangePasswordForm = () => {
             render={({ field }) => (
               <input
                 type="text"
-                placeholder="Nhập số điện thoại"
+                placeholder="Enter old password"
                 style={{
                   width: "100%",
                   display: "block",
@@ -53,6 +59,18 @@ const ChangePasswordForm = () => {
               />
             )}
           />
+          {errors.currentPw && (
+            <p
+              style={{
+                marginBottom: "20px",
+                fontFamily: "sans-serif",
+                fontSize: "12px",
+                color: "red",
+              }}
+            >
+              {errors.currentPw.message}
+            </p>
+          )}
 
           <label>
             New Password <strong style={{ color: "red" }}>*</strong>
@@ -63,7 +81,7 @@ const ChangePasswordForm = () => {
             render={({ field }) => (
               <input
                 type="text"
-                placeholder="Nhập số điện thoại"
+                placeholder="Enter new password"
                 style={{
                   width: "100%",
                   display: "block",
@@ -78,6 +96,18 @@ const ChangePasswordForm = () => {
               />
             )}
           />
+          {errors.newPw && (
+            <p
+              style={{
+                marginBottom: "20px",
+                fontFamily: "sans-serif",
+                fontSize: "12px",
+                color: "red",
+              }}
+            >
+              {errors.newPw.message}
+            </p>
+          )}
 
           <label>
             Confirm New Password <strong style={{ color: "red" }}>*</strong>
@@ -88,7 +118,7 @@ const ChangePasswordForm = () => {
             render={({ field }) => (
               <input
                 type="text"
-                placeholder="Nhập số điện thoại"
+                placeholder="Enter confirm new password"
                 style={{
                   width: "100%",
                   display: "block",
@@ -103,6 +133,18 @@ const ChangePasswordForm = () => {
               />
             )}
           />
+          {errors.reNewPw && (
+            <p
+              style={{
+                marginBottom: "20px",
+                fontFamily: "sans-serif",
+                fontSize: "12px",
+                color: "red",
+              }}
+            >
+              {errors.reNewPw.message}
+            </p>
+          )}
           <button type="submit" className="btn btn-info  d-flex">
             Submit
           </button>

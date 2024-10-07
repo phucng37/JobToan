@@ -9,6 +9,7 @@ import {
   handleGetOrderDoneRedux,
   START_ORDER,
   START_UPDATE_ORDER,
+  statusOrder,
 } from "../slice/orderSlice";
 import {
   addOrderApi,
@@ -40,13 +41,11 @@ function* handleGetOrderSaga() {
 }
 function* handleUpdateOrderSaga() {
   try {
-    // const productId = store1.getState().orderReducer.productId;
-    // const status = store1.getState().orderReducer.status;
-    const data = yield updateOrderApi("/cart/update-product", {
-      productId,
-      status,
+    const idOrder = store1.getState().orderReducer.idOrder;
+    yield updateOrderApi(`/order/update/${idOrder}`, {
+      status: statusOrder.COMPLETED,
     });
-    ToastSuccess(data.data.message);
+
     yield put(handleFinishedUpdatedOrderRedux());
   } catch (error) {
     console.log(error);

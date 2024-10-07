@@ -70,7 +70,6 @@ function* handleDeleteToCartSaga() {
       productId,
       userId,
     });
-    ToastSuccess(data.data.message);
     yield put(handleFinishedDeleteToCartRedux());
   } catch (error) {
     ToastError("Không thể xóa đơn hàng");
