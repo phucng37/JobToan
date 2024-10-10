@@ -16,6 +16,7 @@ instanceAxios.interceptors.request.use(
     if (access_token) {
       config.headers.Authorization = `${access_token}`;
     }
+    console.log('config: ', config);
     return config;
   },
   (error) => {
@@ -28,6 +29,7 @@ let requestAcessTokenExpired = null;
 //interceptors response
 instanceAxios.interceptors.response.use(
   (response) => {
+    console.log('reponse: ', response);
     return response;
   },
   async (error) => {

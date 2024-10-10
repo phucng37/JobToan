@@ -14,41 +14,45 @@ import {
   cilStar,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
-
+import { TbCategoryPlus } from "react-icons/tb";
+import { RiBillLine } from "react-icons/ri";
+import { FaProductHunt } from "react-icons/fa";
 const _nav = [
   {
     component: CNavItem,
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
+    // badge: {
+    //   color: 'info',
+    //   text: 'NEW',
+    // },
   },
   {
     component: CNavItem,
     name: 'Manage user',
     to: '/manage-user',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <TbCategoryPlus className="nav-icon" />,
+    // icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+
   },
   {
     component: CNavItem,
     name: 'Manage category',
     to: '/manage-category',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <TbCategoryPlus className="nav-icon" />,
   },
   {
     component: CNavItem,
     name: 'Manage order',
     to: '/manage-order',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <RiBillLine className='nav-icon'/>
   },
   {
     component: CNavItem,
     name: 'Manage product',
     to: '/manage-product',
-    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    icon: <FaProductHunt className='nav-icon'/>,
   },
   // {
   //   component: CNavTitle,

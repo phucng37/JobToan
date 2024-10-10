@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   CCard,
   CCardBody,
@@ -15,8 +15,20 @@ import {
 } from '@coreui/react'
 import { DocsExample } from 'src/components'
 import { Link } from 'react-router-dom'
+import { instanceAxios } from '../../utils/https';
 
 export default function ManageOrder() {
+  const [orders, setOrders] = React.useState();
+  const fetchOrders = useCallback(async () => {
+    const response = await instanceAxios.get('order/show');
+    if (response.status === 200) {
+      setOrders(response.data?.orders);
+    }
+  }, []);
+  useEffect(()=>{
+    fetchOrders();
+  }, []);
+
     return (
         <CRow>
         <CCol xs={12}>
@@ -34,29 +46,25 @@ export default function ManageOrder() {
                   <CTableHead>
                     <CTableRow>
                       <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Class</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
-                      <CTableHeaderCell scope="col">Heading</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Name</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Customer</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Created at</CTableHeaderCell>
+                      <CTableHeaderCell scope="col">Total price</CTableHeaderCell>
+                      {/* <CTableHeaderCell scope="col"></CTableHeaderCell> */}
                     </CTableRow>
                   </CTableHead>
                   <CTableBody>
-                    <CTableRow>
-                      <CTableHeaderCell scope="row">1</CTableHeaderCell>
-                      <CTableDataCell>Mark</CTableDataCell>
-                      <CTableDataCell>Otto</CTableDataCell>
-                      <CTableDataCell>@mdo</CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell scope="row">2</CTableHeaderCell>
-                      <CTableDataCell>Jacob</CTableDataCell>
-                      <CTableDataCell>Thornton</CTableDataCell>
-                      <CTableDataCell>@fat</CTableDataCell>
-                    </CTableRow>
-                    <CTableRow>
-                      <CTableHeaderCell scope="row">3</CTableHeaderCell>
-                      <CTableDataCell colSpan={2}>Larry the Bird</CTableDataCell>
-                      <CTableDataCell>@twitter</CTableDataCell>
-                    </CTableRow>
+                    {
+                      orders?.map((order, index) => (
+                        <CTableRow key={order._id}>
+                        <CTableHeaderCell scope="row">${index}</CTableHeaderCell>
+                        <CTableDataCell>{order?.name}</CTableDataCell>
+                        <CTableDataCell>{order?.customer}</CTableDataCell>
+                        <CTableDataCell>{order?.createdAt}</CTableDataCell>
+                        <CTableDataCell>{order?.totalPrice}</CTableDataCell>
+                      </CTableRow>
+                      ))
+                    }
                   </CTableBody>
                 </CTable>
               {/* </DocsExample> */}
