@@ -15,7 +15,7 @@ export default async function postApiLogin(path, option) {
 }
 export const changeApiPassword = async (path, option) => {
   try {
-    const data = await instanceAxios.post(path, option);
+    const data = await instanceAxios.put(path, option);
     return data;
   } catch (error) {
     return Promise.reject(error);

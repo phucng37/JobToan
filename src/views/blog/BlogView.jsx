@@ -119,7 +119,7 @@ const BlogView = () => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {item.description}
+                  {item.shortDescription}
                 </p>
               </div>
             </Link>

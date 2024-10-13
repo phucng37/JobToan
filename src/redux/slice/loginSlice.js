@@ -8,7 +8,8 @@ export const CHANGE_PASSWORD = "CHANGE_PASSWORD";
 const initLogin = {
   userId: "",
   phone: "",
-  password: "123",
+  password: "",
+  newPassword: "",
   isLoginDone: true,
   isLoginStatus: false,
   access_token: "",
@@ -31,6 +32,7 @@ export const loginSlice = (state = initLogin, action) => {
     case END_LOGIN_SUCCESS:
       localStorage.setItem("userId", action.payload.userId);
       localStorage.setItem("role", action.payload.role);
+      localStorage.setItem("pw", JSON.stringify(newState.password));
       newState.userId = localStorage.getItem("userId");
       newState.isLoginDone = true;
       newState.isLoginStatus = true;
@@ -48,9 +50,10 @@ export const loginSlice = (state = initLogin, action) => {
       localStorage.removeItem("userId");
       localStorage.removeItem("role");
       localStorage.removeItem("access_token");
+      localStorage.removeItem("pw");
       break;
     case CHANGE_PASSWORD:
-      newState.password = action.payload.new_password || "";
+      newState.newPassword = action.payload || "";
       break;
   }
   return newState;

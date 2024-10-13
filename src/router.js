@@ -40,7 +40,7 @@ export const publicRouters = [
   {
     path: "/account/orders",
     component: OrdersView,
-    // type: protectedRoute,
+    type: protectedRoute,
   },
   {
     path: "/account/wishlist",

@@ -5,21 +5,21 @@ import * as yup from "yup";
 import store1 from "../../redux/slice/rootSlice";
 
 const ProfileForm = lazy(() => import("../../components/account/ProfileForm"));
-const ChangePasswordForm = lazy(() =>
-  import("../../components/account/ChangePasswordForm")
+const ChangePasswordForm = lazy(
+  () => import("../../components/account/ChangePasswordForm")
 );
 
 const curPwSchema = yup
   .string()
   .required("Mật khẩu cũ là bắt buộc")
   .test("check_currentpw", "Mật khẩu cũ không chính xác", (value) => {
-    const pwRedux = store1.getState().loginReducer.password;
+    const pwRedux = JSON.parse(localStorage.getItem("pw"));
     return pwRedux === value;
   });
 
 const pwSchema = yup
   .string()
-  .required("Mật khẩu là bắt buộc")
+  .required("Mật khẩu mới là bắt buộc")
   .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
   .max(20, "Mật khẩu không được quá 20 ký tự")
   .matches(/[a-z]/, "Mật khẩu phải chứa ít nhất một ký tự chữ thường")

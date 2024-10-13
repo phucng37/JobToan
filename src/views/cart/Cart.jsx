@@ -1,4 +1,4 @@
-import { lazy, useEffect, useState } from "react";
+import { lazy, useContext, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -8,6 +8,10 @@ import {
   handleStartUpdatedToCartRedux,
 } from "../../redux/slice/cartSlice";
 import { handleStartOrderRedux, status } from "../../redux/slice/orderSlice";
+import ContextFilter, {
+  createFilterContext,
+} from "../../context/ContextFilter";
+import { ToastSuccess } from "../../notifi/toastify";
 const CouponApplyForm = lazy(
   () => import("../../components/others/CouponApplyForm")
 );
@@ -30,13 +34,14 @@ const data = [
 ];
 
 const CartView = () => {
-  const onSubmitApplyCouponCode = async (values) => {
-    alert(JSON.stringify(values));
-  };
   const isStatusCart = useSelector((state) => state.cartReducer.isStatusCart);
   const dataCart = useSelector((state) => state.cartReducer.dataCart);
   const [cart, setCart] = useState([]);
   const [count, setCount] = useState([]);
+
+  const deleteRef = useRef(false);
+
+  const { idRef } = useContext(createFilterContext);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -73,6 +78,8 @@ const CartView = () => {
         totalPrice: item.product.price * item.quantity,
       })
     );
+    navigate("/account/orders");
+    idRef.current = item.product._id;
   };
   const handleSaveCart = (id) => {
     const itemUpdate = count.find((item) => item.idCart === id);
@@ -86,7 +93,15 @@ const CartView = () => {
   };
   const handleDeleteCart = (id) => {
     dispatch(handleStartDeleteToCartRedux(id));
+    deleteRef.current = true;
   };
+
+  useEffect(() => {
+    if (deleteRef.current && isStatusCart) {
+      ToastSuccess("Deleted successfully!");
+      deleteRef.current = false;
+    }
+  }, [deleteRef.current, isStatusCart]);
 
   const handleAllPurchase = () => {
     dispatch(

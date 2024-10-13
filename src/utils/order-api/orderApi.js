@@ -27,15 +27,10 @@ export const getOrderApi = async (path = "") => {
     return Promise.reject(error);
   }
 };
-export const updateOrderApi = async (
-  path,
-  params = { productId: "", quantity: 0, userId: "" }
-) => {
+export const updateOrderApi = async (path, body) => {
   try {
     const userId = localStorage.getItem("userId");
-    const data = instanceAxios.put(path, undefined, {
-      params: { ...params, userId },
-    });
+    const data = instanceAxios.put(path, body);
     return data;
   } catch (error) {
     return Promise.reject(error);

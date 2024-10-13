@@ -72,10 +72,22 @@ const Header = () => {
                     onClick={() => {
                       dispatch(handleGetOrderRedux());
                     }}
+                    style={{ cursor: "pointer" }}
                   >
                     <i className="bi bi-list-check text-primary"></i> Orders
                   </div>
                 </li>
+                {!localStorage.getItem("userId") && (
+                  <li>
+                    <Link className="dropdown-item" to={`/account/signin`}>
+                      <i
+                        className="bi bi-box-arrow-in-right fs-5"
+                        style={{ marginLeft: "-4px" }}
+                      ></i>{" "}
+                      Sign In
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <hr className="dropdown-divider" />
                 </li>

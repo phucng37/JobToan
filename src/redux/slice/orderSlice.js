@@ -29,6 +29,8 @@ const initStateOrder = {
   ],
   isStatusOrder: status.NOTYET,
   bodyOrder: { products: [], userId: "", totalPrice: "" },
+  idOrder: "",
+  statusOrder: statusOrder.PENDING,
 };
 
 export const START_ORDER = "START_ORDER";
@@ -56,10 +58,11 @@ export const orderSlice = (state = initStateOrder, action) => {
       newState.dataOrder = action.payload;
       break;
     case START_UPDATE_ORDER:
-      //
+      newState.idOrder = action.payload;
+      newState.statusOrder = statusOrder.PROCESSING;
       break;
     case FINISHED_UPDATE_ORDER:
-      //
+      newState.statusOrder = statusOrder.COMPLETED;
       break;
   }
   return newState;
@@ -81,12 +84,7 @@ export const handleGetOrderDoneRedux = (payload) => ({
   payload,
 });
 
-export const handleStartUpdatedOrderRedux = (
-  payload = {
-    product_id: "",
-    status: "",
-  }
-) => ({
+export const handleStartUpdatedOrderRedux = (payload) => ({
   type: START_UPDATE_ORDER,
   payload,
 });
