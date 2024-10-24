@@ -7,6 +7,7 @@ import {
   CCol,
   CForm,
   CFormInput,
+  CImage,
   CModal,
   CModalBody,
   CModalFooter,
@@ -38,55 +39,21 @@ import { DocsExample } from "src/components";
 import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
 import CIcon from "@coreui/icons-react";
-
-const icons = [
-  {
-    name: "laptop",
-    component: cilLaptop,
-  },
-  {
-    name: "headphone",
-    component: cilHeadphones,
-  },
-  {
-    name: "keyboard",
-    component: cilKeyboard,
-  },
-  {
-    name: "mobile",
-    component: cilMobile,
-  },
-  {
-    name: "mouse",
-    component: cilMouse,
-  },
-  {
-    name: "computer",
-    component: cilScreenDesktop,
-  },
-];
-
-const toastCreateSuccess = (
-  <CToast autohide={false} visible={true} className="align-items-center">
-    <div className="d-flex">
-      <CToastBody>Create successfully!</CToastBody>
-      <CToastClose className="me-2 m-auto" />
-    </div>
-  </CToast>
-);
+import Toast from 'src/components/Toast';
 
 export default function ManageCategory() {
   const [categories, setCategories] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
-  const [idCategory, setIdCategory] = useState("");
+  const [category, setCategory] = useState("");
   const [visible, setVisible] = useState(false);
-  const categoryRef = React.useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
   const [name, setName] = useState("");
   const [icon, setIcon] = useState(null);
-
+  const [validated, setValidated] = useState(false);
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
+  
   const fetchCategories = useCallback(async () => {
     const res = await instanceAxios.get("category/show");
     if (res.data?.categories) {
@@ -98,15 +65,9 @@ export default function ManageCategory() {
     fetchCategories();
   }, []);
 
-  const handleSelectedIcon = useCallback((icon) => {
-    console.log(icon);
-    // icon = {...icon};
-    setIcon(icon);
-  }, []);
-
   const handleAction = useCallback(
     (category, action) => {
-      setIdCategory(category._id);
+      setCategory(category);
       if (action === "EDIT") {
         setName(category?.name);
         console.log("category: ", category);
@@ -116,19 +77,23 @@ export default function ManageCategory() {
         setIsVisible(true);
       }
     },
-    [idCategory, isVisible]
+    [category, isVisible]
   );
 
   const handleDelete = useCallback(async () => {
-    const res = await instanceAxios.delete(`category/delete/${idCategory}`);
+    console.log('CATEGORY: ', category);
+    const res = await instanceAxios.delete(`category/delete/${category._id}`);
     if (res.status === 200) {
       fetchCategories();
       setIsVisible(false);
-      // addToast(exampleToast);
+      console.log('res delete: ', res);
+      addToast(() => Toast(res?.data?.message));
     }
-  }, [isVisible, categories]);
-  const [validated, setValidated] = useState(false);
+  }, [isVisible, category]);
+
+
   const handleSubmit = async (event) => {
+    setIsLoading(true);
     event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
@@ -141,11 +106,22 @@ export default function ManageCategory() {
       name,
       icon,
     };
+    console.log(payload);
+    // return;
+    const headerConfig = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
     if (isCreate) {
-      res = await instanceAxios.post("category/create", payload);
+      res = await instanceAxios.post("category/create", payload, headerConfig);
       setIsCreate(false);
     } else {
-      res = await instanceAxios.put(`category/update/${idCategory}`, payload);
+      res = await instanceAxios.put(
+        `category/update/${category._id}`,
+        payload,
+        headerConfig
+      );
     }
     if (res.status === 200) {
       setValidated(false);
@@ -153,7 +129,8 @@ export default function ManageCategory() {
       setVisible(false);
       setName("");
       setIcon(null);
-      // addToast(exampleToast);
+      setIsLoading(false);
+      addToast(() => Toast(res?.data?.message));
     }
   };
   return (
@@ -163,6 +140,9 @@ export default function ManageCategory() {
           <CCardHeader>
             <CButton
               onClick={() => {
+                setName('');
+                setIcon(null);
+                setCategory(null);
                 setIsCreate(true);
                 setVisible(true);
               }}
@@ -189,10 +169,10 @@ export default function ManageCategory() {
                     <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
                     <CTableDataCell>{category?.name}</CTableDataCell>
                     <CTableDataCell>
-                      <CIcon icon={category?.icon?.component} />
+                    <CImage hidden={!category?.icon} rounded thumbnail src={category?.icon} width={200} height={200} />
                     </CTableDataCell>
                     <CTableDataCell>
-                      {new Date(category?.createdDate).toDateString()}
+                      {new Date(category?.createdAt).toDateString()}
                     </CTableDataCell>
                     <CTableDataCell>
                       <CButton
@@ -215,6 +195,7 @@ export default function ManageCategory() {
           </CCardBody>
         </CCard>
       </CCol>
+
       <CModal
         visible={isVisible}
         onClose={() => setIsVisible(false)}
@@ -235,6 +216,7 @@ export default function ManageCategory() {
           </CButton>
         </CModalFooter>
       </CModal>
+
       <CModal
         visible={visible}
         onClose={() => setVisible(false)}
@@ -257,49 +239,38 @@ export default function ManageCategory() {
                 name="name"
               />
             </CCol>
+            <CCol md={12} className="mt-2">
+              <CImage hidden={!category?.icon} rounded thumbnail src={category?.icon} width={200} height={200} />
+            </CCol>
             <CCol
               md={12}
-              style={
-                {
-                  // maxHeight: 30,
-                }
-              }
             >
-              <label
-                className="form-lable"
-                style={{ display: "block", marginTop: 8, marginBottom: 8 }}
-              >
-                Category icon
-              </label>
-              {/* [...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons, ...icons] */}
-              {icons?.map((_icon) => (
-                <CButton
-                  active={icon?.name === _icon.name}
-                  onClick={() => {
-                    handleSelectedIcon(_icon);
-                  }}
-                >
-                  <CIcon icon={_icon.component} />
-                </CButton>
-              ))}
+            <CFormInput
+                type="file"
+                label="Category icon"
+                onChange={(e) => {
+                  setIcon(e.target.files[0]);
+                }}
+                name="name"
+              />
             </CCol>
           </CModalBody>
           <CModalFooter>
             <CButton color="secondary" onClick={() => setVisible(false)}>
               Close
             </CButton>
-            <CButton color="primary" type="submit">
+            <CButton color="primary" type="submit" disabled={isLoading}>
               Submit
             </CButton>
           </CModalFooter>
         </CForm>
       </CModal>
-      <CToaster
+       <CToaster
         className="p-3"
         placement="top-end"
         push={toast}
         ref={toaster}
-      />
+      /> 
     </CRow>
   );
 }

@@ -60,7 +60,7 @@ export default function ManageOrder() {
                         <CTableHeaderCell scope="row">${index}</CTableHeaderCell>
                         <CTableDataCell>{order?.name}</CTableDataCell>
                         <CTableDataCell>{order?.customer}</CTableDataCell>
-                        <CTableDataCell>{order?.createdAt}</CTableDataCell>
+                        <CTableDataCell>{order?.createAt}</CTableDataCell>
                         <CTableDataCell>{order?.totalPrice}</CTableDataCell>
                       </CTableRow>
                       ))

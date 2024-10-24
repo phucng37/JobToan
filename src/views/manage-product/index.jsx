@@ -42,6 +42,7 @@ import { instanceAxios } from "src/utils/https";
 import CIcon from "@coreui/icons-react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
+import Toast from 'src/components/Toast';
 
 const CRHookInput = ({
   multiple,
@@ -81,7 +82,8 @@ export default function ManageProduct() {
   const [isCreate, setIsCreate] = useState(false);
   const [image, setImage] = useState(null);
   const [subImages, setSubImages] = useState(null);
-
+  const [brands, setBrands] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
   const fetchProducts = useCallback(async () => {
@@ -96,10 +98,21 @@ export default function ManageProduct() {
       setCategories(res.data?.categories);
     }
   }, []);
+
+  const fetchBrands = useCallback(async () => {
+    const res = await instanceAxios.get("brand/show");
+    if (res.status === 200 && res.data) {
+      console.log(res.data);
+      setBrands(res.data.brands);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
+    fetchBrands();
   }, []);
+
   const {
     register,
     handleSubmit,
@@ -125,8 +138,8 @@ export default function ManageProduct() {
         Object.entries(product).forEach((item) => {
           if (!unexpectedInput.has(item[0])) {
             console.log("item", item);
-            if (item[0] === "category") {
-              setValue("category", item[1]._id);
+            if (item[0] === "category" || item[0] === "brand") {
+              setValue(item[0], item[1]._id);
             } else setValue(item[0], item[1]);
           }
         });
@@ -147,7 +160,8 @@ export default function ManageProduct() {
 
   const onSubmit = useCallback(
     async (data) => {
-      const { category, name, price, quantity, shortDescription } = data;
+      setIsLoading(true);
+      const { category, name, price, quantity, shortDescription, brand } = data;
       console.log("data: ", data);
       let primaryImg, subImg1, subImg2, subImg3;
       if (isCreate) {
@@ -171,7 +185,9 @@ export default function ManageProduct() {
         subImg1,
         subImg2,
         subImg3,
+        brand
       };
+      console.log(payload);
       let response = null;
       const headerConfig = {
         headers: {
@@ -184,6 +200,7 @@ export default function ManageProduct() {
           payload,
           headerConfig
         );
+        setIsCreate(false);
       } else {
         response = await instanceAxios.put(
           `product/update/${idProduct}`,
@@ -195,10 +212,12 @@ export default function ManageProduct() {
       }
       if (response.status === 200) {
         fetchProducts();
-        // reset();
-        // setVisible(false);
+        reset();
+        setVisible(false);
+        addToast(() => Toast(response?.data?.message));
       }
       console.log("res: ", response);
+      setIsLoading(false);
     },
     [idProduct]
   );
@@ -209,6 +228,7 @@ export default function ManageProduct() {
           <CCardHeader>
             <CButton
               onClick={() => {
+                reset();
                 setIsCreate(true);
                 setVisible(true);
               }}
@@ -244,9 +264,9 @@ export default function ManageProduct() {
                     <CTableDataCell>{product.quantity}</CTableDataCell>
                     <CTableDataCell>{product.shortDescription}</CTableDataCell>
                     <CTableDataCell>{product.category?.name}</CTableDataCell>
-                    <CTableDataCell>{product.brand}</CTableDataCell>
+                    <CTableDataCell>{product.brand?.name}</CTableDataCell>
                     <CTableDataCell>
-                      {new Date(product?.createAt).toDateString()}
+                      {new Date(product?.createdAt).toDateString()}
                     </CTableDataCell>
 
                     <CTableDataCell>
@@ -409,6 +429,16 @@ export default function ManageProduct() {
                 }))}
               />
             </CCol>
+            <CCol md={12}>
+              <CFormSelect
+                label="Brand"
+                {...register("brand")}
+                options={brands.map((brand) => ({
+                  label: brand.name,
+                  value: brand._id,
+                }))}
+              />
+            </CCol>
           </CModalBody>
           <CModalFooter>
             <CButton
@@ -421,12 +451,18 @@ export default function ManageProduct() {
             >
               Close
             </CButton>
-            <CButton color="primary" type="submit">
+            <CButton color="primary" type="submit" disabled={isLoading}>
               {isCreate ? "Submit" : "Update"}
             </CButton>
           </CModalFooter>
         </CForm>
       </CModal>
+      <CToaster
+        className="p-3"
+        placement="top-end"
+        push={toast}
+        ref={toaster}
+      /> 
     </CRow>
   );
 }
