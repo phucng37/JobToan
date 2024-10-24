@@ -12,7 +12,8 @@ import {
   cilPuzzle,
   cilSpeedometer,
   cilStar,
-} from '@coreui/icons'
+} from '@coreui/icons';
+import { PiTrademarkFill } from "react-icons/pi";
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 import { TbCategoryPlus } from "react-icons/tb";
 import { RiBillLine } from "react-icons/ri";
@@ -30,10 +31,9 @@ const _nav = [
   },
   {
     component: CNavItem,
-    name: 'Manage user',
-    to: '/manage-user',
-    icon: <TbCategoryPlus className="nav-icon" />,
-    // icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    name: 'Manage brand',
+    to: '/manage-brand',
+    icon: <PiTrademarkFill className="nav-icon"/>,
 
   },
   {

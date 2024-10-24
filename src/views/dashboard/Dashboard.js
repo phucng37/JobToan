@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import classNames from 'classnames'
 
 import {
@@ -53,6 +53,14 @@ import avatar6 from 'src/assets/images/avatars/6.jpg'
 import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import MainChart from './MainChart'
+import { instanceAxios } from '../../utils/https'
+import ChartBar from '../charts/ChartBar'
+import ChartPie from '../charts/ChartPie'
+import ChartBarBody from '../../components/charts/ChartBarBody'
+import { CONFIG } from 'src/helpers/chart'
+import ChartHorizontalBarBody from '../../components/charts/ChartHorizontalBarBody'
+
+const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 const Dashboard = () => {
   const progressExample = [
@@ -175,66 +183,122 @@ const Dashboard = () => {
       activity: 'Last week',
     },
   ]
+  const [, forceUpdate] = React.useReducer(o => !o);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0)
+  const [revenue, setRevenue] = useState('');
+  const [revenueByMonth, setRevenueByMonth] = useState([]);
+  const [productsByMonth, setProductByMonth] = useState([]);
+  const [datasetPieChart, setDatasetPieChart] = useState({
+    labels: [],
+    data: []
+  });
+  const [datasetBarLineChart, setDatasetBarLineChart] = useState({
+    labels: [],
+    data: []
+  })
+  console.log('0000', totalOrders, totalUsers, totalProducts);
+  const fetchTotal = async () => {
+    const res = await Promise.allSettled([
+      instanceAxios.get('order/totalOrders'),
+      instanceAxios.get('get-total-users'),
+      instanceAxios.get('order/revenue'),
+      instanceAxios.get('order/productsByMonth'),
+      instanceAxios.get('order/productsByCategory'),
+      instanceAxios.get('order/productsByBrand')
+    ]);
+    console.log('res', res);
+    setTotalOrders(getData(res, 0)?.totalOrders);
+    setTotalProducts(getData(res, 0)?.totalProducts);
+    setRevenue(formatRenvenue(getData(res, 0)?.revenue));
+    setTotalUsers(getData(res, 1)?.totalUsers);
+    setRevenueByMonth(getDataForChartBar(getData(res, 2), 'totalPrice'));
+    setProductByMonth(getDataForChartBar(getData(res, 3), 'value'));
+    setDatasetPieChart((prevData) => {
+      const newData = { ...prevData };
+      const orders = getData(res, 4);
+      console.log('orders: ', orders);
+      newData.labels = orders?.map(order => order._id) || [];
+      newData.data = orders?.map(order => order.totalPrice) || [];
+      console.log('newData: ', newData);
+      return newData;
+    })
+    setDatasetBarLineChart((prevData) => {
+      const newData = { ...prevData };
+      const products = getData(res, 5);
+      console.log('products: ', products);
+      newData.labels = products?.map(order => order._id) || [];
+      newData.data = products?.map(order => order.totalProduct) || [];
+      console.log('newData: ', newData);
+      return newData;
+    })
+  };
+
+  const getDataForChartBar = (data, field) => {
+    let dataset = MONTHS.map((item) => {
+      return data.find(product => product._id.month === item)?.[`${field}`] || 0;
+    });
+    const index = data[data.length - 1]._id.month;
+    if (index < 12) {
+      dataset = dataset.slice(0, index);
+    }
+    return dataset;
+  }
+
+  const formatRenvenue = (amount) => {
+    return new Intl.NumberFormat('vi-VI', {
+      style: 'currency',
+      currency: 'VND'
+    }).format(amount);
+  }
+  const getData = (res, index) => {
+    return res[index]?.value?.data;
+  }
+
+  useEffect(() => {
+    fetchTotal();
+  }, []);
 
   return (
     <>
-      <WidgetsDropdown className="mb-4" />
+      <WidgetsDropdown className="mb-4" totalUsers={totalUsers} totalProducts={totalProducts} totalOrders={totalOrders} revenue={revenue} />
       <CCard className="mb-4">
-        <CCardBody>
-          <CRow>
-            <CCol sm={5}>
-              <h4 id="traffic" className="card-title mb-0">
-                Traffic
-              </h4>
-              <div className="small text-body-secondary">January - July 2023</div>
-            </CCol>
-            <CCol sm={7} className="d-none d-md-block">
-              <CButton color="primary" className="float-end">
-                <CIcon icon={cilCloudDownload} />
-              </CButton>
-              <CButtonGroup className="float-end me-3">
-                {['Day', 'Month', 'Year'].map((value) => (
-                  <CButton
-                    color="outline-secondary"
-                    key={value}
-                    className="mx-0"
-                    active={value === 'Month'}
-                  >
-                    {value}
-                  </CButton>
-                ))}
-              </CButtonGroup>
-            </CCol>
-          </CRow>
-          <MainChart />
-        </CCardBody>
-        <CCardFooter>
-          <CRow
-            xs={{ cols: 1, gutter: 4 }}
-            sm={{ cols: 2 }}
-            lg={{ cols: 4 }}
-            xl={{ cols: 5 }}
-            className="mb-2 text-center"
-          >
-            {progressExample.map((item, index, items) => (
-              <CCol
-                className={classNames({
-                  'd-none d-xl-block': index + 1 === items.length,
-                })}
-                key={index}
-              >
-                <div className="text-body-secondary">{item.title}</div>
-                <div className="fw-semibold text-truncate">
-                  {item.value} ({item.percent}%)
-                </div>
-                <CProgress thin className="mt-2" color={item.color} value={item.percent} />
-              </CCol>
-            ))}
-          </CRow>
-        </CCardFooter>
+        <ChartBar title="Product sold by month">
+          <ChartBarBody data={productsByMonth} config={{
+            ...CONFIG,
+            datasets: {
+              label: 'Products'
+            },
+          }} />
+        </ChartBar>
       </CCard>
-      <WidgetsBrand className="mb-4" withCharts />
       <CRow>
+        <CCol sm={7}>
+        <CCard className="mb-4">
+            <ChartBar title="Products sold by brand" children={<ChartHorizontalBarBody data={datasetBarLineChart.data} labels={datasetBarLineChart.labels}/>}/>
+          </CCard>
+        </CCol>
+        <CCol sm={5}>
+          <CCard className="mb-4">
+            <ChartPie data={datasetPieChart.data} labels={datasetPieChart.labels} title="Revenue by category" />
+          </CCard>
+        </CCol>
+      </CRow>
+      <CCard className="mb-4">
+        <ChartBar children={<ChartBarBody data={revenueByMonth} config={{
+            datasets: {
+              label: 'Revenue'
+            },
+              scales: {
+                y : {
+                  suffix: ' đ'
+                }
+              }
+          }}/>} title="Revenue by month" />
+      </CCard>
+      {/* <WidgetsBrand className="mb-4" withCharts /> */}
+      {/* <CRow>
         <CCol xs>
           <CCard className="mb-4">
             <CCardHeader>Traffic {' & '} Sales</CCardHeader>
@@ -379,7 +443,7 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-      </CRow>
+      </CRow> */}
     </>
   )
 }

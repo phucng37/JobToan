@@ -60,7 +60,7 @@ const Widgets = React.lazy(() => import('src/views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
-  { path: '/manage-user', name: 'Manage user', element: ManageUser },
+  // m{ path: '/manage-user', name: 'Manage user', element:  },
   { path: '/manage-order', name: 'Manage order', element: ManageOrder },
   { path: '/manage-product', name: 'Manage product', element: ManageProduct },
   { path: '/manage-category', name: 'Manage category', element: ManageCategory },
