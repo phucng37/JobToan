@@ -12,26 +12,10 @@ import ContextFilter, {
   createFilterContext,
 } from "../../context/ContextFilter";
 import { ToastSuccess } from "../../notifi/toastify";
+import { formatToVND } from "../../utils/CurrencyUtils";
 const CouponApplyForm = lazy(
   () => import("../../components/others/CouponApplyForm")
 );
-
-const data = [
-  {
-    id: 1,
-    img: "../../images/products/tshirt_red_480x400.webp",
-    name: "Laptop gaming i5",
-    count: 2,
-    price: "237",
-  },
-  {
-    id: 2,
-    img: "../../images/products/tshirt_grey_480x400.webp",
-    name: "ASUS Vivobook",
-    count: 5,
-    price: "500",
-  },
-];
 
 const CartView = () => {
   const isStatusCart = useSelector((state) => state.cartReducer.isStatusCart);
@@ -192,11 +176,11 @@ const CartView = () => {
                         </td>
                         <td>
                           <var className="price">
-                            {Number(item.product.price) *
+                            {formatToVND(Number(item.product.price) *
                               count.find(
                                 (countItem) =>
                                   countItem.idCart === item.product._id
-                              )?.count}
+                              )?.count)}
                           </var>
                         </td>
                         <td className="text-end">
@@ -246,10 +230,10 @@ const CartView = () => {
             <div className="card">
               <div className="card-body">
                 <dl className="row">
-                  <dt className="col-6">Total:</dt>
-                  <dd className="col-6 text-end  h5">
+                  <dt className="col-3">Total:</dt>
+                  <dd className="col-9 text-end  h5">
                     <strong>
-                      {cart.reduce(
+                      {formatToVND(cart.reduce(
                         (value, item) =>
                           Number(value) +
                           Number(
@@ -259,8 +243,7 @@ const CartView = () => {
                           ),
 
                         [0]
-                      )}{" "}
-                      VND
+                      ))}
                     </strong>
                   </dd>
                 </dl>
@@ -277,7 +260,7 @@ const CartView = () => {
           </div>
         </div>
       </div>
-      <div className="bg-light border-top p-4">
+      {/* <div className="bg-light border-top p-4">
         <div className="container">
           <h6>Payment and refund policy</h6>
           <p>
@@ -299,7 +282,7 @@ const CartView = () => {
             culpa qui officia deserunt mollit anim id est laborum.
           </p>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -61,150 +61,37 @@ import { CONFIG } from 'src/helpers/chart'
 import ChartHorizontalBarBody from '../../components/charts/ChartHorizontalBarBody'
 
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const DEFAULT_DATASET = {
+  labels: [],
+  data: []
+};
 
 const Dashboard = () => {
-  const progressExample = [
-    { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
-    { title: 'Unique', value: '24.093 Users', percent: 20, color: 'info' },
-    { title: 'Pageviews', value: '78.706 Views', percent: 60, color: 'warning' },
-    { title: 'New Users', value: '22.123 Users', percent: 80, color: 'danger' },
-    { title: 'Bounce Rate', value: 'Average Rate', percent: 40.15, color: 'primary' },
-  ]
-
-  const progressGroupExample1 = [
-    { title: 'Monday', value1: 34, value2: 78 },
-    { title: 'Tuesday', value1: 56, value2: 94 },
-    { title: 'Wednesday', value1: 12, value2: 67 },
-    { title: 'Thursday', value1: 43, value2: 91 },
-    { title: 'Friday', value1: 22, value2: 73 },
-    { title: 'Saturday', value1: 53, value2: 82 },
-    { title: 'Sunday', value1: 9, value2: 69 },
-  ]
-
-  const progressGroupExample2 = [
-    { title: 'Male', icon: cilUser, value: 53 },
-    { title: 'Female', icon: cilUserFemale, value: 43 },
-  ]
-
-  const progressGroupExample3 = [
-    { title: 'Organic Search', icon: cibGoogle, percent: 56, value: '191,235' },
-    { title: 'Facebook', icon: cibFacebook, percent: 15, value: '51,223' },
-    { title: 'Twitter', icon: cibTwitter, percent: 11, value: '37,564' },
-    { title: 'LinkedIn', icon: cibLinkedin, percent: 8, value: '27,319' },
-  ]
-
-  const tableExample = [
-    {
-      avatar: { src: avatar1, status: 'success' },
-      user: {
-        name: 'Yiorgos Avraamu',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'USA', flag: cifUs },
-      usage: {
-        value: 50,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: { name: 'Mastercard', icon: cibCcMastercard },
-      activity: '10 sec ago',
-    },
-    {
-      avatar: { src: avatar2, status: 'danger' },
-      user: {
-        name: 'Avram Tarasios',
-        new: false,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Brazil', flag: cifBr },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'info',
-      },
-      payment: { name: 'Visa', icon: cibCcVisa },
-      activity: '5 minutes ago',
-    },
-    {
-      avatar: { src: avatar3, status: 'warning' },
-      user: { name: 'Quintin Ed', new: true, registered: 'Jan 1, 2023' },
-      country: { name: 'India', flag: cifIn },
-      usage: {
-        value: 74,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'warning',
-      },
-      payment: { name: 'Stripe', icon: cibCcStripe },
-      activity: '1 hour ago',
-    },
-    {
-      avatar: { src: avatar4, status: 'secondary' },
-      user: { name: 'Enéas Kwadwo', new: true, registered: 'Jan 1, 2023' },
-      country: { name: 'France', flag: cifFr },
-      usage: {
-        value: 98,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'danger',
-      },
-      payment: { name: 'PayPal', icon: cibCcPaypal },
-      activity: 'Last month',
-    },
-    {
-      avatar: { src: avatar5, status: 'success' },
-      user: {
-        name: 'Agapetus Tadeáš',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Spain', flag: cifEs },
-      usage: {
-        value: 22,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'primary',
-      },
-      payment: { name: 'Google Wallet', icon: cibCcApplePay },
-      activity: 'Last week',
-    },
-    {
-      avatar: { src: avatar6, status: 'danger' },
-      user: {
-        name: 'Friderik Dávid',
-        new: true,
-        registered: 'Jan 1, 2023',
-      },
-      country: { name: 'Poland', flag: cifPl },
-      usage: {
-        value: 43,
-        period: 'Jun 11, 2023 - Jul 10, 2023',
-        color: 'success',
-      },
-      payment: { name: 'Amex', icon: cibCcAmex },
-      activity: 'Last week',
-    },
-  ]
   const [, forceUpdate] = React.useReducer(o => !o);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalProducts, setTotalProducts] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0)
   const [revenue, setRevenue] = useState('');
   const [revenueByMonth, setRevenueByMonth] = useState([]);
-  const [productsByMonth, setProductByMonth] = useState([]);
-  const [datasetPieChart, setDatasetPieChart] = useState({
-    labels: [],
-    data: []
-  });
-  const [datasetBarLineChart, setDatasetBarLineChart] = useState({
-    labels: [],
-    data: []
-  })
+  const [productsByDate, setProductsByDate] = useState([]);
+  const [filterBy, setFilterBy] = useState('month');
+
+  const [datasetProductsByDate, setDatatasetProductsByDate] = useState(DEFAULT_DATASET);
+  const [datasetRevenueByMonth, setDatatasetRevenueByMonth] = useState(DEFAULT_DATASET);
+  const [datasetPieChart, setDatasetPieChart] = useState(DEFAULT_DATASET);
+  const [datasetBarLineChart, setDatasetBarLineChart] = useState(DEFAULT_DATASET);
+
   console.log('0000', totalOrders, totalUsers, totalProducts);
-  const fetchTotal = async () => {
+  const fetchData = async () => {
     const res = await Promise.allSettled([
       instanceAxios.get('order/totalOrders'),
       instanceAxios.get('get-total-users'),
       instanceAxios.get('order/revenue'),
-      instanceAxios.get('order/productsByMonth'),
+      instanceAxios.get('order/productsByDate', {
+        params: {
+          filterBy
+        }
+      }),
       instanceAxios.get('order/productsByCategory'),
       instanceAxios.get('order/productsByBrand')
     ]);
@@ -213,37 +100,19 @@ const Dashboard = () => {
     setTotalProducts(getData(res, 0)?.totalProducts);
     setRevenue(formatRenvenue(getData(res, 0)?.revenue));
     setTotalUsers(getData(res, 1)?.totalUsers);
-    setRevenueByMonth(getDataForChartBar(getData(res, 2), 'totalPrice'));
-    setProductByMonth(getDataForChartBar(getData(res, 3), 'value'));
-    setDatasetPieChart((prevData) => {
-      const newData = { ...prevData };
-      const orders = getData(res, 4);
-      console.log('orders: ', orders);
-      newData.labels = orders?.map(order => order._id) || [];
-      newData.data = orders?.map(order => order.totalPrice) || [];
-      console.log('newData: ', newData);
-      return newData;
-    })
-    setDatasetBarLineChart((prevData) => {
-      const newData = { ...prevData };
-      const products = getData(res, 5);
-      console.log('products: ', products);
-      newData.labels = products?.map(order => order._id) || [];
-      newData.data = products?.map(order => order.totalProduct) || [];
-      console.log('newData: ', newData);
-      return newData;
-    })
+    setDatatasetRevenueByMonth(convertToDataset(getData(res, 2)));
+    setDatatasetProductsByDate(convertToDataset(getData(res, 3)));
+    setDatasetPieChart(convertToDataset(getData(res, 4)));
+    setDatasetBarLineChart(convertToDataset(getData(res, 5)));
   };
 
-  const getDataForChartBar = (data, field) => {
-    let dataset = MONTHS.map((item) => {
-      return data.find(product => product._id.month === item)?.[`${field}`] || 0;
-    });
-    const index = data[data.length - 1]._id.month;
-    if (index < 12) {
-      dataset = dataset.slice(0, index);
-    }
-    return dataset;
+  const convertToDataset = (dataSource) => {
+    const newData = {...DEFAULT_DATASET};
+    console.log('dataSource: ', dataSource);
+    newData.labels = dataSource?.map(item => item._id) || [];
+    newData.data = dataSource?.map(item => item.value) || [];
+    console.log('newData: ', newData);
+    return newData;
   }
 
   const formatRenvenue = (amount) => {
@@ -257,15 +126,29 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    fetchTotal();
+    fetchData();
   }, []);
+
+  const handleClickFilter = async (value) => {
+    console.log('value: ', value);
+    setFilterBy(value);
+    const res = await instanceAxios.get('order/productsByDate', {
+      params: {
+        filterBy: value
+      }
+    });
+    console.log('res: ', res);
+    if (res.data) {
+       setDatatasetProductsByDate(convertToDataset(res.data));
+    }
+  }
 
   return (
     <>
       <WidgetsDropdown className="mb-4" totalUsers={totalUsers} totalProducts={totalProducts} totalOrders={totalOrders} revenue={revenue} />
       <CCard className="mb-4">
-        <ChartBar title="Product sold by month">
-          <ChartBarBody data={productsByMonth} config={{
+        <ChartBar title={`Product sold by ${filterBy}`} filterBy={filterBy} isVisibleFilter={true} onClickFilter={(value) => handleClickFilter(value)} a={productsByDate}>
+          <ChartBarBody dataset={datasetProductsByDate} config={{
             ...CONFIG,
             datasets: {
               label: 'Products'
@@ -275,8 +158,8 @@ const Dashboard = () => {
       </CCard>
       <CRow>
         <CCol sm={7}>
-        <CCard className="mb-4">
-            <ChartBar title="Products sold by brand" children={<ChartHorizontalBarBody data={datasetBarLineChart.data} labels={datasetBarLineChart.labels}/>}/>
+          <CCard className="mb-4">
+            <ChartBar title="Products sold by brand" children={<ChartHorizontalBarBody data={datasetBarLineChart.data} labels={datasetBarLineChart.labels} />} />
           </CCard>
         </CCol>
         <CCol sm={5}>
@@ -286,16 +169,16 @@ const Dashboard = () => {
         </CCol>
       </CRow>
       <CCard className="mb-4">
-        <ChartBar children={<ChartBarBody data={revenueByMonth} config={{
-            datasets: {
-              label: 'Revenue'
-            },
-              scales: {
-                y : {
-                  suffix: ' đ'
-                }
-              }
-          }}/>} title="Revenue by month" />
+        <ChartBar children={<ChartBarBody dataset={datasetRevenueByMonth} config={{
+          datasets: {
+            label: 'Revenue'
+          },
+          scales: {
+            y: {
+              suffix: ' đ'
+            }
+          }
+        }} />} title="Revenue by month" />
       </CCard>
       {/* <WidgetsBrand className="mb-4" withCharts /> */}
       {/* <CRow>

@@ -7,6 +7,20 @@ import {
   handleGetProductDetailBeginRedux,
   handleGetProductListByParamsBeginRedux,
 } from "../../redux/slice/productListSlice";
+import { formatToVND } from "../../utils/CurrencyUtils";
+import {
+  CButton,
+  CCarousel,
+  CCarouselItem,
+  CImage,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CModalTitle,
+} from "@coreui/react";
+import "./style.css";
+
 const CardFeaturedProduct = lazy(
   () => import("../../components/card/CardFeaturedProduct")
 );
@@ -25,6 +39,7 @@ const SizeChart = lazy(() => import("../../components/others/SizeChart"));
 
 const ProductDetailView = () => {
   const [count, setCount] = useState(1);
+  const [visible, setVisible] = useState(false);
   const { handleClickAddToCart } = useContext(createFilterContext);
   const { id } = useParams();
   const productDetail = useSelector(
@@ -55,28 +70,35 @@ const ProductDetailView = () => {
           <div className="col-md-8">
             <div className="row mb-3">
               <div className="col-md-5 text-center">
-                <img
-                  src={productDetail.image}
-                  className="img-fluid mb-3"
-                  alt=""
-                />
+                <CButton className="p-0" onClick={() => setVisible(!visible)}>
+                  <img
+                    src={productDetail.image}
+                    className="img-fluid mb-3"
+                    alt=""
+                  />
+                </CButton>
                 {productDetail?.subImages?.length &&
                   productDetail?.subImages?.map((item, index) => (
-                    <img
-                      src={item}
-                      className="border me-2"
-                      width="75"
-                      height="100"
-                      alt="..."
-                      key={index}
-                    />
+                    <CButton
+                      className="p-0"
+                      onClick={() => setVisible(!visible)}
+                    >
+                      <img
+                        src={item}
+                        className="border me-2"
+                        width="w-100"
+                        height="100"
+                        alt="..."
+                        key={index}
+                      />
+                    </CButton>
                   ))}
               </div>
               <div className="col-md-7">
                 <h1 className="h5 d-inline me-2">{productDetail.name}</h1>
                 <span className="badge bg-success me-2">New</span>
                 <span className="badge bg-danger me-2">Hot</span>
-                <div className="mb-3">
+                {/* <div className="mb-3">
                   {productDetail?.review > 0
                     ? Array(Number(productDetail?.review || 1))
                         .fill(0)
@@ -93,14 +115,14 @@ const ProductDetailView = () => {
                             className="bi bi-star-fill text-secondary me-1"
                             key={index}
                           />
-                        ))}
-                  |{" "}
-                  <span className="text-muted small">
-                    42 ratings and 4 reviews
+                        ))} */}
+                  {/* |{" "} */}
+                  {/* <span className="text-muted small"> */}
+                    {/* 42 ratings and 4 reviews */}
                     {/* {productDetail.ratings} */}
-                  </span>
-                </div>
-                <dl className="row small mb-3">
+                  {/* </span> */}
+                {/* </div> */}
+                {/* <dl className="row small mb-3">
                   <dt className="col-sm-3">Description</dt>
                   <dd className="col-sm-9">{productDetail.shortDescription}</dd>
                   <dt className="col-sm-3">Color</dt>
@@ -113,14 +135,17 @@ const ProductDetailView = () => {
                     <button className="btn btn-sm btn-info p-2 me-2"></button>
                     <button className="btn btn-sm btn-dark p-2 me-2"></button>
                   </dd>
-                </dl>
+                </dl> */}
 
                 <div className="mb-3">
-                  <span className="fw-bold h5 me-2">{productDetail.price}</span>
-                  <del className="small text-muted me-2">$2000</del>
+                  <br/>
+                  <span className="fw-bold h5 me-2">
+                    {formatToVND(productDetail.price)}
+                  </span>
+                  {/* <del className="small text-muted me-2">$2000</del>
                   <span className="rounded p-1 bg-warning  me-2 small">
                     -$100
-                  </span>
+                  </span> */}
                 </div>
                 <div className="mb-3">
                   <div className="d-inline float-start me-2">
@@ -188,10 +213,7 @@ const ProductDetailView = () => {
                     role="tabpanel"
                     aria-labelledby="nav-details-tab"
                   >
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Delectus commodi quaerat ullam vitae maxime consequatur
-                    itaque. Eligendi temporibus pariatur, illo deleniti debitis
-                    labore ullam perspiciatis, consequatur sed, cum nulla autem?
+                    {productDetail.description}
                   </div>
                 </div>
               </div>
@@ -202,6 +224,34 @@ const ProductDetailView = () => {
             <CardServices />
           </div>
         </div>
+        <CModal
+          backdrop="static"
+          visible={visible}
+          onClose={() => setVisible(false)}
+          aria-labelledby="StaticBackdropExampleLabel"
+          className="modal-preview"
+        >
+          <CModalHeader>
+            <CModalTitle id="StaticBackdropExampleLabel">
+              Preview {productDetail.name}
+            </CModalTitle>
+          </CModalHeader>
+          <CModalBody>
+            <CCarousel controls>
+              {[productDetail.image, ...productDetail.subImages].map(
+                (imageURL) => (
+                  <CCarouselItem>
+                    <CImage
+                      className="d-block image-preview w-100"
+                      src={imageURL}
+                      alt="slide 1"
+                    />
+                  </CCarouselItem>
+                )
+              )}
+            </CCarousel>
+          </CModalBody>
+        </CModal>
       </div>
     )
   );

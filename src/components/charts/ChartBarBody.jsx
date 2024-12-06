@@ -4,9 +4,9 @@ import { CChartBar, CChartLine } from "@coreui/react-chartjs";
 import { getStyle } from "@coreui/utils";
 import { MONTHS, CONFIG } from 'src/helpers/chart';
 
-const ChartBarBody = ({ data, config = CONFIG}) => {
+const ChartBarBody = ({ dataset, config = CONFIG}) => {
   const chartRef = useRef(null);
-  console.log('config: ', config);
+
   useEffect(() => {
     document.documentElement.addEventListener("ColorSchemeChange", () => {
       if (chartRef.current) {
@@ -39,7 +39,7 @@ const ChartBarBody = ({ data, config = CONFIG}) => {
         ref={chartRef}
         style={{ height: "300px", marginTop: "40px" }}
         data={{
-          labels: MONTHS,
+          labels: dataset.labels,
           datasets: [
             {
               label: config.datasets.label,
@@ -47,7 +47,7 @@ const ChartBarBody = ({ data, config = CONFIG}) => {
               borderColor: getStyle("--cui-info"),
               pointHoverBackgroundColor: getStyle("--cui-info"),
               borderWidth: 2,
-              data: data,
+              data: dataset.data,
               fill: true,
             },
           ],
@@ -95,7 +95,7 @@ const ChartBarBody = ({ data, config = CONFIG}) => {
               grid: {
                 color: getStyle("--cui-border-color-translucent"),
               },
-              max: Math.ceil(Math.max(...data) + 50.5),
+              max: Math.ceil(Math.max(...dataset.data) + 50.5),
               ticks: {
                 color: getStyle("--cui-body-color"),
                 maxTicksLimit: 5,

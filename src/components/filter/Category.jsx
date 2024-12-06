@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { instanceAxios } from "../../utils/https";
+import "./style.css";
 
 const FilterCategory = (props) => {
   const { onChangeFilter } = props;
+  const [categories, setCategories] = useState([]);
+  const fetchCategories = useCallback(async () => {
+    const res = await instanceAxios.get("category/show");
+    if (res.status === 200) {
+      setCategories(res?.data.categories);
+    }
+  }, [categories]);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
   return (
     <div className="card mb-3 accordion">
       <div
@@ -14,29 +27,16 @@ const FilterCategory = (props) => {
       >
         Categories
       </div>
-      <ul
-        className="list-group list-group-flush show"
-        id="filterCategory"
-        onClick={(e) => onChangeFilter({ categoryName: e.target.dataset.cate })}
-      >
-        <li className="list-group-item btn" data-cate="dell">
-          DELL
-        </li>
-        <li className="list-group-item btn" data-cate="acer">
-          ACER
-        </li>
-        <li className="list-group-item btn" data-cate="asus">
-          ASUS
-        </li>
-        <li className="list-group-item btn" data-cate="gaming">
-          GAMING
-        </li>
-        <li className="list-group-item btn" data-cate="macbook">
-          MACBOOK
-        </li>
-        <li className="list-group-item btn" data-cate="hp">
-          HP
-        </li>
+      <ul className="list-group list-group-flush show" id="filterCategory">
+        {categories.map((category) => (
+          <li
+            className="list-group-item btn"
+            data-cate="dell"
+            onClick={(e) => onChangeFilter({ categoryId: category?._id })}
+          >
+            {category?.name}
+          </li>
+        ))}
       </ul>
     </div>
   );

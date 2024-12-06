@@ -32,6 +32,8 @@ import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
 import { useForm } from "react-hook-form";
 import Toast from "src/components/Toast";
+import ReactPaginate from 'react-paginate';
+import { getTotalPages, paginateConfig } from "../../utils/PaginationUtils";
 
 export default function ManageBrand() {
   const [brands, setBrands] = useState([]);
@@ -40,10 +42,10 @@ export default function ManageBrand() {
   const [visible, setVisible] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [icon, setIcon] = useState(null);
+  const [totalPages, setTotalPages] = useState(null);
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
-
+  const [currentPage, setCurrentPage] = useState(1);
   const {
     register,
     handleSubmit,
@@ -59,16 +61,23 @@ export default function ManageBrand() {
   });
 
   const fetchBrands = useCallback(async () => {
-    const res = await instanceAxios.get("brand/show");
+    const res = await instanceAxios.get("brand/show", {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
     if (res.status === 200 && res.data) {
+      const {brands, totalBrands} = res.data;
       console.log(res.data);
-      setBrands(res.data.brands);
+      setBrands(brands);
+      setTotalPages(getTotalPages(totalBrands, limit));
     }
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     fetchBrands();
-  }, []);
+  }, [currentPage]);
 
   const handleAction = useCallback(
     (brand, action) => {
@@ -115,26 +124,44 @@ export default function ManageBrand() {
         },
       };
       let res = null;
-      if (isCreate) {
-        res = await instanceAxios.post("brand/create", payload, headerConfig);
-        setIsCreate(false);
-      } else {
-        res = await instanceAxios.put(
-          `brand/update/${brand._id}`,
-          payload,
-          headerConfig
-        );
-      }
-      if (res?.status === 200) {
-        fetchBrands();
-        setVisible(false);
+      try {
+        if (isCreate) {
+          res = await instanceAxios.post("brand/create", payload, headerConfig);
+          setIsCreate(false);
+        } else {
+          res = await instanceAxios.put(
+            `brand/update/${brand._id}`,
+            payload,
+            headerConfig
+          );
+        }
+        if (res?.status === 200) {
+          fetchBrands();
+          setVisible(false);
+          setIsLoading(false);
+          addToast(() => Toast(res?.data?.message));
+          reset();
+        }
+      } catch (err) {
         setIsLoading(false);
-        addToast(() => Toast(res?.data?.message));
+        addToast(() => Toast(err.response.data.message));
       }
-      reset();
     },
     [isCreate, brand]
   );
+
+ 
+
+  // Simulate fetching items from another resources.
+  // (This could be items from props; or items loaded in a local state
+  // from an API endpoint with useEffect and useState)
+  const [limit, setLimit] = useState(10);
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = event.selected + 1;
+    setCurrentPage(newOffset);
+  };
 
   return (
     <CRow>
@@ -204,8 +231,20 @@ export default function ManageBrand() {
             </CTable>
           </CCardBody>
         </CCard>
-      </CCol>
-
+                <div className="float-end">
+                <ReactPaginate
+              onPageChange={handlePageClick}
+              pageCount={totalPages}
+              {...paginateConfig}
+              // forcePage={
+              //   isGetDataProductListByParams && itemOffset === 0
+              //     ? itemOffset
+              //     : undefined
+              // }
+            />
+                </div>
+             </CCol>
+              
       <CModal
         visible={isVisible}
         onClose={() => setIsVisible(false)}

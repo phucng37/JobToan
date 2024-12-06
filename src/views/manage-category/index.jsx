@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CButton,
   CCard,
@@ -39,7 +39,9 @@ import { DocsExample } from "src/components";
 import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
 import CIcon from "@coreui/icons-react";
-import Toast from 'src/components/Toast';
+import Toast from "src/components/Toast";
+import ReactPaginate from 'react-paginate';
+import { getIndex, getTotalPages, paginateConfig } from "../../utils/PaginationUtils";;
 
 export default function ManageCategory() {
   const [categories, setCategories] = useState([]);
@@ -53,17 +55,37 @@ export default function ManageCategory() {
   const [validated, setValidated] = useState(false);
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const startIndex = useMemo(
+    () => getIndex(currentPage, limit),
+    [currentPage, limit]
+  );
+
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = event.selected + 1;
+    setCurrentPage(newOffset);
+  };
+
   const fetchCategories = useCallback(async () => {
-    const res = await instanceAxios.get("category/show");
-    if (res.data?.categories) {
-      setCategories(res.data?.categories);
+    const res = await instanceAxios.get("category/show", {
+      params: {
+        page: currentPage,
+        limit
+      }
+    });
+    if (res.data && res.status === 200) {
+      const { categories, totalCategories } = res.data;
+      setCategories(categories);
+      setTotalPages(getTotalPages(totalCategories, limit));
     }
-  }, []);
+  }, [currentPage, limit, totalPages]);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [currentPage, limit]);
 
   const handleAction = useCallback(
     (category, action) => {
@@ -81,16 +103,15 @@ export default function ManageCategory() {
   );
 
   const handleDelete = useCallback(async () => {
-    console.log('CATEGORY: ', category);
+    console.log("CATEGORY: ", category);
     const res = await instanceAxios.delete(`category/delete/${category._id}`);
     if (res.status === 200) {
       fetchCategories();
       setIsVisible(false);
-      console.log('res delete: ', res);
+      console.log("res delete: ", res);
       addToast(() => Toast(res?.data?.message));
     }
   }, [isVisible, category]);
-
 
   const handleSubmit = async (event) => {
     setIsLoading(true);
@@ -140,7 +161,7 @@ export default function ManageCategory() {
           <CCardHeader>
             <CButton
               onClick={() => {
-                setName('');
+                setName("");
                 setIcon(null);
                 setCategory(null);
                 setIsCreate(true);
@@ -166,10 +187,17 @@ export default function ManageCategory() {
               <CTableBody>
                 {categories.map((category, index) => (
                   <CTableRow key={category._id}>
-                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                    <CTableHeaderCell scope="row">{startIndex + index + 1}</CTableHeaderCell>
                     <CTableDataCell>{category?.name}</CTableDataCell>
                     <CTableDataCell>
-                    <CImage hidden={!category?.icon} rounded thumbnail src={category?.icon} width={200} height={200} />
+                      <CImage
+                        hidden={!category?.icon}
+                        rounded
+                        thumbnail
+                        src={category?.icon}
+                        width={200}
+                        height={200}
+                      />
                     </CTableDataCell>
                     <CTableDataCell>
                       {new Date(category?.createdAt).toDateString()}
@@ -194,6 +222,18 @@ export default function ManageCategory() {
             </CTable>
           </CCardBody>
         </CCard>
+        <div className="float-end">
+          <ReactPaginate
+            onPageChange={handlePageClick}
+            pageCount={totalPages}
+            {...paginateConfig}
+            // forcePage={
+            //   isGetDataProductListByParams && itemOffset === 0
+            //     ? itemOffset
+            //     : undefined
+            // }
+          />
+        </div>
       </CCol>
 
       <CModal
@@ -240,12 +280,17 @@ export default function ManageCategory() {
               />
             </CCol>
             <CCol md={12} className="mt-2">
-              <CImage hidden={!category?.icon} rounded thumbnail src={category?.icon} width={200} height={200} />
+              <CImage
+                hidden={!category?.icon}
+                rounded
+                thumbnail
+                src={category?.icon}
+                width={200}
+                height={200}
+              />
             </CCol>
-            <CCol
-              md={12}
-            >
-            <CFormInput
+            <CCol md={12}>
+              <CFormInput
                 type="file"
                 label="Category icon"
                 onChange={(e) => {
@@ -265,12 +310,12 @@ export default function ManageCategory() {
           </CModalFooter>
         </CForm>
       </CModal>
-       <CToaster
+      <CToaster
         className="p-3"
         placement="top-end"
         push={toast}
         ref={toaster}
-      /> 
+      />
     </CRow>
   );
 }

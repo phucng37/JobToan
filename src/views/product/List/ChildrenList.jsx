@@ -4,6 +4,8 @@ import { data } from "../../../data";
 import ReactPaginate from "react-paginate";
 import { useDispatch, useSelector } from "react-redux";
 import { createFilterContext } from "../../../context/ContextFilter";
+import FilterBrand from "../../../components/filter/Brand";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const Breadcrumb = lazy(() => import("../../../components/Breadcrumb"));
 const FilterCategory = lazy(
@@ -49,7 +51,16 @@ const ChildrenList = ({ itemsPerPage }) => {
   const [itemOffset, setItemOffset] = useState(0);
 
   const { onChangeFilter } = useContext(createFilterContext);
+  let { slug } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const params = [];
 
+  for(let entry of searchParams.entries()) {
+    params.push(entry);
+  }
+
+
+  console.log(slug);
   useEffect(() => {
     if (isGetDataProductListByParams) {
       handlePageClick({ selected: 0 });
@@ -64,6 +75,12 @@ const ChildrenList = ({ itemsPerPage }) => {
 
   useEffect(() => {
     if (!isGetDataProductList) {
+      // const queryParam = Object.fromEntries(searchParams.entries());
+      // if(queryParam.productName) {
+      //   onChangeFilter({ productName: queryParam.productName })
+      // } else {
+      //   dispatch(handleGetProductListBeginRedux());
+      // }
       dispatch(handleGetProductListBeginRedux());
     } else {
       setItems([...dataProductListRedux]);
@@ -91,17 +108,18 @@ const ChildrenList = ({ itemsPerPage }) => {
       >
         <div className="container text-center">
           <span className="display-5 px-3 bg-white rounded shadow">
-            T-Shirts
+           Products
           </span>
         </div>
       </div>
-      <Breadcrumb />
       <div className="container-fluid mb-3">
+      <Breadcrumb />
         <div className="row">
           <div className="col-md-3">
             <FilterCategory onChangeFilter={onChangeFilter} />
+            <FilterBrand onChangeFilter={onChangeFilter} />
             <FilterPrice onChangeFilter={onChangeFilter} />
-            <FilterStar onChangeFilter={onChangeFilter} />
+            {/* <FilterStar onChangeFilter={onChangeFilter} /> */}
             <FilterClear />
             <CardServices />
           </div>
@@ -109,8 +127,7 @@ const ChildrenList = ({ itemsPerPage }) => {
             <div className="row">
               <div className="col-7">
                 <span className="align-middle fw-bold">
-                  {totalItems} results for{" "}
-                  <span className="text-warning">"t-shirts"</span>
+                 Total products: {totalItems}
                 </span>
               </div>
               <div className="col-5 d-flex justify-content-end">

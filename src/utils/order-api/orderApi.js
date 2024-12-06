@@ -19,10 +19,13 @@ export const addOrderApi = async (
   }
 };
 
-export const getOrderApi = async (path = "") => {
+export const getOrderApi = async (path = "", page = 1) => {
   try {
-    const data = instanceAxios.get(path);
-    return data;
+    return instanceAxios.get(path, {
+      params: {
+        page
+      }
+    });
   } catch (error) {
     return Promise.reject(error);
   }

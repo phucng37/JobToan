@@ -6,12 +6,14 @@ import {
   statusOrder,
 } from "../../redux/slice/orderSlice";
 import { ToastSuccess } from "../../notifi/toastify";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Dropdown, Modal, Spinner } from "react-bootstrap";
 import { FaCalculator } from "react-icons/fa";
 import { createFilterContext } from "../../context/ContextFilter";
 import { handleStartDeleteToCartRedux } from "../../redux/slice/cartSlice";
+import ReactPaginate from "react-paginate";
+import { getTotalPages, paginateConfig } from "../../utils/PaginationUtils";
 
 const OrdersView = () => {
   const isStatusOrder = useSelector(
@@ -19,9 +21,29 @@ const OrdersView = () => {
   );
   const statusOr = useSelector((state) => state.orderReducer.statusOrder);
   const idOrder = useSelector((state) => state.orderReducer.idOrder);
-  const dataOrder = useSelector((state) => state.orderReducer.dataOrder);
+  const orders = useSelector((state) => state.orderReducer.dataOrder);
+  const totalOrders = useSelector((state) => state.orderReducer.totalOrders);
+  const totalPages = useMemo(()=>{
+    console.log('totalOrders: ', totalOrders);
+    return getTotalPages(totalOrders, 10);
+  }, [totalOrders]);
+  console.log(totalOrders);
   const dispatch = useDispatch();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [selectedItem, setSelectedItem] = useState("");
+  const [orderId, setOrderId] = useState(null);
+  const [toast, addToast] = useState(0);
+  const toaster = React.useRef();
+  // Invoke when user click to request another page.
+  const handlePageClick = (event) => {
+    const newOffset = event.selected + 1;
+    console.log(
+      `User requested page number ${newOffset}, which is offset `
+    );
+    setCurrentPage(newOffset);
+    // dispatch(handleGetOrderRedux(newOffset));
+  };
   const { idRef } = useContext(createFilterContext);
 
   useEffect(() => {
@@ -30,17 +52,21 @@ const OrdersView = () => {
         ToastSuccess("Đặt hàng thành công");
         dispatch(handleStartDeleteToCartRedux(idRef.current));
       }
-      dispatch(handleGetOrderRedux());
+      dispatch(handleGetOrderRedux(currentPage));
     }
   }, [isStatusOrder]);
+
+  useEffect(()=>{
+      dispatch(handleGetOrderRedux(currentPage));
+  }, [currentPage]);
 
   useEffect(() => {
     if (statusOr === statusOrder.COMPLETED) {
       ToastSuccess(`đơn hàng có mã ${idOrder} đã được giao`);
-      dispatch(handleGetOrderRedux());
+      dispatch(handleGetOrderRedux(currentPage));
     }
   }, [idOrder, statusOr]);
-  console.log("dataorrder", dataOrder);
+  console.log("dataorrder", orders);
 
   const [showModal, setShowModal] = useState("");
 
@@ -74,7 +100,7 @@ const OrdersView = () => {
         <>
           <h4 className="my-3">Orders</h4>
           <div className="row g-3">
-            {dataOrder.map((item, index) => {
+            {orders.map((item, index) => {
               console.log(item);
 
               return (
@@ -133,7 +159,7 @@ const OrdersView = () => {
                                   flexGrow: 1,
                                 }}
                               >
-                                {item.createAt}
+                                {(new Date(item.createdAt)).toLocaleString()}
                               </span>
                             </div>
                           </div>
@@ -251,6 +277,14 @@ const OrdersView = () => {
                 </div>
               );
             })}
+        </div>
+            <div className="float-end mt-3">
+              <ReactPaginate
+                onPageChange={handlePageClick}
+                pageCount={totalPages}
+                {...paginateConfig}
+                forcePage={currentPage - 1}
+              />
           </div>
         </>
       ) : null}

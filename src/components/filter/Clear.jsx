@@ -6,7 +6,8 @@ const FilterClear = (props) => {
   const handleClearFilter = () => {
     onChangeFilter({
       sort_by: "",
-      categoryName: "",
+      categoryId: "",
+      brandId: "",
       review: "",
       priceMin: "",
       priceMax: "",

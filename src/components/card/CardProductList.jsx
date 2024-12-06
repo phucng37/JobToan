@@ -1,11 +1,14 @@
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { createFilterContext } from "../../context/ContextFilter";
+import { formatToVND } from "../../utils/CurrencyUtils";
 
 const CardProductList = (props) => {
   const product = props.data;
   const [count, setCount] = useState(1);
   const { handleClickAddToCart } = useContext(createFilterContext);
+
+
   return (
     <div className="card">
       <div className="row g-0">
@@ -27,9 +30,9 @@ const CardProductList = (props) => {
             )}
             {product.isHot && <span className="badge bg-danger me-2">Hot</span>}
 
-            <div>
+            {/* <div>
               {product.review > 0 &&
-                Array.from({ length: 5 }, (_, key) => {
+                Array.from({ length: product.review }, (_, key) => {
                   if (key <= product.review)
                     return (
                       <i
@@ -45,7 +48,7 @@ const CardProductList = (props) => {
                       />
                     );
                 })}
-            </div>
+            </div> */}
             {product.shortDescription &&
               product.shortDescription.includes("|") === false && (
                 <p className="small mt-2">{product.shortDescription}</p>
@@ -55,7 +58,9 @@ const CardProductList = (props) => {
         <div className="col-md-3">
           <div className="card-body">
             <div className="mb-2">
-              <span className="fw-bold h5">${product.price}</span>
+              <span className="fw-bold h5">
+                {formatToVND(product.price)}
+              </span>
               {product.originPrice > 0 && (
                 <del className="small text-muted ms-2">
                   ${product.originPrice}
@@ -112,3 +117,4 @@ const CardProductList = (props) => {
 };
 
 export default CardProductList;
+

@@ -9,13 +9,13 @@ const Breadcrumb = () => {
             Home
           </Link>
         </li>
-        <li className="breadcrumb-item">
+        {/* <li className="breadcrumb-item">
           <Link to="/" title="Men">
-            Men
+            Products
           </Link>
-        </li>
+        </li> */}
         <li className="breadcrumb-item active" aria-current="page">
-          T-Shirts
+          Products
         </li>
       </ol>
     </nav>

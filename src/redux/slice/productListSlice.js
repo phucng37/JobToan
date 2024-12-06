@@ -1,12 +1,15 @@
 /* eslint-disable default-case */
 const initProductList = {
   products: [],
+  bestsellers: [],
   product: {},
   idDetail: "",
   isGetDataProductList: false,
+  isStarted: false,
   isGetDataProductListByParams: false,
   queryParams: {
-    categoryName: "",
+    categoryId: "",
+    brandId: "",
     review: "",
     priceMax: "",
     priceMin: "",
@@ -24,6 +27,8 @@ export const GET_PRODUCT_LIST_BY_PARAMS_BEGIN =
 export const GET_PRODUCT_LIST_BY_PARAMS_DONE =
   "GET_PRODUCT_LIST_BY_PARAMS_DONE";
 export const RESET_BY_PARAMS = "RESET_BY_PARAMS";
+export const GET_BESTSELLERS = "GET_BESTSELLERS";
+export const SET_BESTSELLERS = "SET_BESTSELLERS";
 
 export const productListSlice = (state = initProductList, action) => {
   const newState = { ...state };
@@ -43,7 +48,8 @@ export const productListSlice = (state = initProductList, action) => {
       break;
     case GET_PRODUCT_LIST_BY_PARAMS_BEGIN:
       newState.isGetDataProductListByParams = false;
-      newState.queryParams.categoryName = action.payload.categoryName;
+      newState.queryParams.categoryId = action.payload.categoryId;
+      newState.queryParams.brandId = action.payload.brandId;
       newState.queryParams.review = action.payload.review;
       newState.queryParams.priceMin = action.payload.priceMin;
       newState.queryParams.priceMax = action.payload.priceMax;
@@ -53,6 +59,10 @@ export const productListSlice = (state = initProductList, action) => {
     case GET_PRODUCT_LIST_BY_PARAMS_DONE:
       newState.isGetDataProductListByParams = true;
       newState.products = action.payload.products;
+      break;
+    case SET_BESTSELLERS:
+      console.log(action);
+      newState.bestsellers = action.payload.bestsellers;
       break;
   }
   return newState;
@@ -77,6 +87,15 @@ export const handleGetProductDetailDoneRedux = (payload) => ({
 export const handleGetProductListByParamsBeginRedux = (payload) => ({
   type: GET_PRODUCT_LIST_BY_PARAMS_BEGIN,
   payload,
+});
+
+export const handleGetBestSellers = () => ({
+  type: GET_BESTSELLERS,
+});
+
+export const handleSetBestSellers = (payload) => ({
+  type: SET_BESTSELLERS,
+  payload
 });
 
 export const handleGetProductListByParamsDoneRedux = (payload) => ({

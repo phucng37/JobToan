@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { formatToVND } from "../../utils/CurrencyUtils";
 
 const CardFeaturedProduct = (props) => {
   const products = props.data;
@@ -24,11 +25,11 @@ const CardFeaturedProduct = (props) => {
                 </Link>
               </h6>
               <div className="mb-2">
-                {Array.from({ length: product.review }, (_, key) => (
+                {/* {Array.from({ length: product.review }, (_, key) => (
                   <i className="bi bi-star-fill text-warning me-1" key={key} />
-                ))}
+                ))} */}
               </div>
-              <span className="fw-bold h5">{product.price} vnd</span>
+              <span className="fw-bold h5">{formatToVND(product.price)}</span>
               {product.originPrice > 0 && (
                 <del className="small text-muted ms-2">
                   ${product.originPrice}

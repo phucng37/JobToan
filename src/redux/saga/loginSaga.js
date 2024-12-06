@@ -22,6 +22,7 @@ function* handleLogin() {
     const { role, token, userId } = data.data;
     store.dispatch(handleEndSuccessLoginRedux({ role, token, userId }));
   } catch (error) {
+    console.log(error);
     ToastError("Đăng nhập không thành công");
     store.dispatch(handleEndFailedLoginRedux());
   }

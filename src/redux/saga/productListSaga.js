@@ -1,11 +1,14 @@
 import { put, takeLatest } from "redux-saga/effects";
 import {
+  GET_BESTSELLERS,
   GET_PRODUCT_DETAIL_BEGIN,
   GET_PRODUCT_LIST_BEGIN,
   GET_PRODUCT_LIST_BY_PARAMS_BEGIN,
+  handleGetBestSellers,
   handleGetProductDetailDoneRedux,
   handleGetProductListByParamsDoneRedux,
   handleGetProductListDoneRedux,
+  handleSetBestSellers,
 } from "../slice/productListSlice";
 import {
   getProductApiById,
@@ -14,6 +17,7 @@ import {
 } from "../../utils/product-api/productApi";
 import { data } from "../../data";
 import store1 from "../slice/rootSlice";
+import { getOrderApi } from "../../utils/order-api/orderApi";
 
 function* getDataProductList() {
   try {
@@ -44,9 +48,20 @@ function* getDataProductListByParams() {
   }
 }
 
+function* getBestSellers() {
+  try {
+    const res = yield getOrderApi('order/bestsellers');
+    console.log('RES: ', res.data);
+    yield put(handleSetBestSellers(res.data));
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export function* productListSaga() {
   yield takeLatest(GET_PRODUCT_LIST_BEGIN, getDataProductList);
   yield takeLatest(GET_PRODUCT_DETAIL_BEGIN, getDataProductDetail);
+  yield takeLatest(GET_BESTSELLERS, getBestSellers);
   yield takeLatest(
     GET_PRODUCT_LIST_BY_PARAMS_BEGIN,
     getDataProductListByParams

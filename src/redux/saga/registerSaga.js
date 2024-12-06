@@ -18,14 +18,12 @@ function* handleStartRegister() {
       name: firstName + lastName,
       phone,
       password,
-      email: "1@gmail.com",
     });
     console.log(data);
 
     ToastSuccess(data.data.message);
-    // store.dispatch(handleEndRegisterSuccessRedux());
   } catch (error) {
-    ToastError(error?.response?.data?.data?.email);
+    ToastError(error?.response?.data?.message);
     store.dispatch(handleEndRegisterFailedRedux());
   }
 }

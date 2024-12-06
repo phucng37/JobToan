@@ -1,4 +1,8 @@
+import "bootstrap-icons/font/bootstrap-icons.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.js";
 import React, { Suspense, lazy } from "react";
+import Skeleton from "react-loading-skeleton";
 import {
   BrowserRouter,
   Navigate,
@@ -6,16 +10,14 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.js";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import TopMenu from "./components/TopMenu";
-import Header from "./components/Header";
+import "./App.css";
 import Footer from "./components/Footer";
-import "./App.min.css";
-import "./scss/style.scss";
+import Header from "./components/Header";
+import TopMenu from "./components/TopMenu";
 import AdminLayout from "./layout/AdminLayout";
 import { protectedRoute, publicRouters, rejectedRoute } from "./router";
+import "./scss/style.scss";
+import { CContainer } from "@coreui/react";
 //const Header = lazy(() => import("./components/Header"));
 //const TopMenu = lazy(() => import("./components/TopMenu"));
 const HomeView = lazy(() => import("./views/Home"));
@@ -56,9 +58,11 @@ function ProtectedRoute() {
 }
 
 function App() {
+  console.log(localStorage.getItem('role'));
+  console.log(localStorage.getItem('role')==='admin');
   return (
     <BrowserRouter>
-      {false ? (
+      {localStorage.getItem('role') === 'admin' ? (
         <AdminLayout />
       ) : (
         <React.Fragment>
@@ -66,7 +70,7 @@ function App() {
           <TopMenu />
           <Suspense
             fallback={
-              <div className="text-white text-center mt-3">Loading...</div>
+              <CContainer><Skeleton count={5} height={100}/></CContainer>
             }
           >
             <Routes>

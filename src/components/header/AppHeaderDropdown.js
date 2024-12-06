@@ -23,8 +23,16 @@ import {
 import CIcon from '@coreui/icons-react'
 
 import avatar8 from './../../assets/images/avatars/8.jpg'
+import { useDispatch, useSelector } from 'react-redux'
+import { handleLogoutRedux } from '../../redux/slice/loginSlice'
+import { Link } from 'react-router-dom'
 
 const AppHeaderDropdown = () => {
+  const dispatch = useDispatch();
+  const handleLogout = () => {
+    dispatch(handleLogoutRedux());
+    window.location.href = 'http://localhost:3000/account/signin';
+  }
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
@@ -84,10 +92,18 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider /> */}
-        <CDropdownItem href="#">
-          {/* <CIcon icon={cilLockLocked} className="me-2" /> */}
+        {/* <Link
+          className="dropdown-item"
+          onClick={handleLogout}
+          to="account/signin"
+        > */}
+         <CDropdownItem onClick={handleLogout}>
+
+
+          <CIcon icon={cilLockLocked}  className="me-2" />
           Log out
-        </CDropdownItem>
+          </CDropdownItem>
+        {/* </Link> */}
       </CDropdownMenu>
     </CDropdown>
   )

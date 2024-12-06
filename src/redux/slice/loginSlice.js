@@ -32,13 +32,13 @@ export const loginSlice = (state = initLogin, action) => {
     case END_LOGIN_SUCCESS:
       localStorage.setItem("userId", action.payload.userId);
       localStorage.setItem("role", action.payload.role);
-      localStorage.setItem("pw", JSON.stringify(newState.password));
       newState.userId = localStorage.getItem("userId");
       newState.isLoginDone = true;
       newState.isLoginStatus = true;
       newState.role = action.payload.role;
       newState.access_token = action.payload.token || "";
       localStorage.setItem("access_token", action.payload.token || "");
+      window.location.href = 'http://localhost:3000/';
       break;
     case LOGGED_OUT:
       newState.phone = "";
@@ -50,7 +50,6 @@ export const loginSlice = (state = initLogin, action) => {
       localStorage.removeItem("userId");
       localStorage.removeItem("role");
       localStorage.removeItem("access_token");
-      localStorage.removeItem("pw");
       break;
     case CHANGE_PASSWORD:
       newState.newPassword = action.payload || "";

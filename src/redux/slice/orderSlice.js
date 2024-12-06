@@ -27,6 +27,8 @@ const initStateOrder = {
       color: "",
     },
   ],
+  totalOrders: 1,
+  page: 1,
   isStatusOrder: status.NOTYET,
   bodyOrder: { products: [], userId: "", totalPrice: "" },
   idOrder: "",
@@ -52,10 +54,15 @@ export const orderSlice = (state = initStateOrder, action) => {
       break;
     case GET_ORDER:
       newState.isStatusOrder = status.GETTING;
+      newState.page = action.payload || 1;
+      console.log(action, 'newState: ', newState);
       break;
     case GET_ORDER_DONE:
       newState.isStatusOrder = status.GOT;
-      newState.dataOrder = action.payload;
+      console.log('action: ', action);
+      newState.dataOrder = action.payload.orders;
+      newState.totalOrders = action.payload.totalOrders;
+      console.log('NEW STATE: ', newState);
       break;
     case START_UPDATE_ORDER:
       newState.idOrder = action.payload;
@@ -76,8 +83,9 @@ export const handleStartOrderRedux = (payload) => ({
 export const handleFinishedOrderRedux = () => ({
   type: FINISHED_ORDER,
 });
-export const handleGetOrderRedux = () => ({
+export const handleGetOrderRedux = (payload) => ({
   type: GET_ORDER,
+  payload
 });
 export const handleGetOrderDoneRedux = (payload) => ({
   type: GET_ORDER_DONE,

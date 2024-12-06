@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createFilterContext } from "../../context/ContextFilter";
+import { formatToVND } from "../../utils/CurrencyUtils";
 
 const CardProductGrid = (props) => {
   const product = props.data;
@@ -41,15 +42,15 @@ const CardProductGrid = (props) => {
           </Link>
         </h6>
         <div className="my-2">
-          <span className="fw-bold h5">${product.price}</span>
+          <span className="fw-bold h5">{formatToVND(product.price)}</span>
           {product.originPrice > 0 && (
             <del className="small text-muted ms-2">${product.originPrice}</del>
           )}
-          <span className="ms-2">
+          {/* <span className="ms-2">
             {Array.from({ length: product.review }, (_, key) => (
               <i className="bi bi-star-fill text-warning me-1" key={key} />
             ))}
-          </span>
+          </span> */}
         </div>
         <div className="btn-group  d-flex between" role="group">
           <input

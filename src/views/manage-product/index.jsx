@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
   CButton,
   CCard,
@@ -43,6 +43,8 @@ import CIcon from "@coreui/icons-react";
 import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import Toast from 'src/components/Toast';
+import ReactPaginate from 'react-paginate';
+import { getIndex, getTotalPages, paginateConfig } from "../../utils/PaginationUtils";;
 
 const CRHookInput = ({
   multiple,
@@ -86,12 +88,29 @@ export default function ManageProduct() {
   const [isLoading, setIsLoading] = useState(false);
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  const startIndex = useMemo(
+    () => getIndex(currentPage, limit),
+    [currentPage, limit]
+  );
+
+  const handlePageClick = (event) => {
+    const newOffset = event.selected + 1;
+    setCurrentPage(newOffset);
+  };
+
   const fetchProducts = useCallback(async () => {
     const res = await instanceAxios.get(`product/get-all?offset=1&limit=10`);
-    if (res.data?.products) {
-      setProducts(res.data?.products);
+    if (res.data && res.status === 200) {
+      const { products, totalProducts } = res.data;
+      setProducts(products);
+      setTotalPages(getTotalPages(totalProducts, limit));
     }
-  }, []);
+  }, [currentPage, limit]);
+
   const fetchCategories = useCallback(async () => {
     const res = await instanceAxios.get("category/show");
     if (res.data?.categories) {
@@ -107,12 +126,15 @@ export default function ManageProduct() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchProducts();
+  useEffect(() => {    
     fetchCategories();
     fetchBrands();
   }, []);
 
+  useEffect(()=>{
+    fetchProducts();
+  }, [currentPage, limit]);
+  
   const {
     register,
     handleSubmit,
@@ -160,20 +182,25 @@ export default function ManageProduct() {
 
   const onSubmit = useCallback(
     async (data) => {
-      setIsLoading(true);
+      setIsLoading(false);
       const { category, name, price, quantity, shortDescription, brand } = data;
-      console.log("data: ", data);
+      console.log(isCreate, "data: ", data,);
       let primaryImg, subImg1, subImg2, subImg3;
       if (isCreate) {
+        console.log('CREATE');
         primaryImg = data.primaryImg[0];
         subImg1 = data.subImg1[0];
         subImg2 = data.subImg1[1];
         subImg3 = data.subImg1[2];
       } else {
+        console.log('EIDIT');
         primaryImg = data.primaryImg?.[0] || image;
-        subImg1 = data.subImg1[0] || subImages[0];
-        subImg2 = data.subImg1[1] || subImages[1];
-        subImg3 = data.subImg1[2] || subImages[2];
+        if (subImages.length === 1) 
+          subImg1 = data.subImg1[0] || subImages[0];
+        if (subImages.length === 2) 
+          subImg2 = data.subImg1[1] || subImages[1];
+        if (subImages.length === 3) 
+          subImg3 = data.subImg1[2] || subImages[2];
       }
       const payload = {
         category,
@@ -249,7 +276,7 @@ export default function ManageProduct() {
                   </CTableHeaderCell>
                   <CTableHeaderCell scope="col">Category</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Brand</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Created date</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Created at</CTableHeaderCell>
                   <CTableHeaderCell scope="col" colSpan={2}>
                     Action
                   </CTableHeaderCell>
@@ -258,7 +285,7 @@ export default function ManageProduct() {
               <CTableBody>
                 {products.map((product, index) => (
                   <CTableRow key={product._id}>
-                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
+                    <CTableHeaderCell scope="row">{startIndex + index + 1}</CTableHeaderCell>
                     <CTableDataCell>{product?.name}</CTableDataCell>
                     <CTableDataCell>{product.price}</CTableDataCell>
                     <CTableDataCell>{product.quantity}</CTableDataCell>
@@ -289,7 +316,20 @@ export default function ManageProduct() {
             </CTable>
           </CCardBody>
         </CCard>
+        <div className="float-end">
+          <ReactPaginate
+            onPageChange={handlePageClick}
+            pageCount={totalPages}
+            {...paginateConfig}
+            // forcePage={
+            //   isGetDataProductListByParams && itemOffset === 0
+            //     ? itemOffset
+            //     : undefined
+            // }
+          />
+        </div>
       </CCol>
+
       <CModal
         aria-hidden
         visible={isVisible}
@@ -327,11 +367,16 @@ export default function ManageProduct() {
         <CForm encType="" onSubmit={handleSubmit(onSubmit)}>
           <CModalBody className="overflow-auto" style={{ height: 700 }}>
             <CCol md={12}>
-              <CFormInput
-                type="text"
-                label="Product name"
-                {...register("name", { require: "This input is required" })}
-              />
+            <CRHookInput
+              size={12}
+              name="name"
+              lable="Product name"
+              validation={{
+                required: "This input is required",
+              }}
+              errors={errors}
+              register={register}
+            />
             </CCol>
             <CCol md={12}>
               <CFormInput
@@ -346,7 +391,7 @@ export default function ManageProduct() {
                 })}
               />
               {errors.price?.type === "required" && (
-                <p role="alert">First name is required</p>
+                <p role="alert">This input is required</p>
               )}
             </CCol>
             <CRHookInput
@@ -380,7 +425,7 @@ export default function ManageProduct() {
               size={12}
               type="file"
               name="primaryImg"
-              lable="Thumbnail "
+              lable="Thumbnail"
               validation={{
                 required: !image,
               }}

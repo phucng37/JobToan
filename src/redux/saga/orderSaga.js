@@ -1,5 +1,5 @@
 import { fork, put, take, takeLeading } from "redux-saga/effects";
-import store1 from "../../redux/slice/rootSlice";
+import store from "../slice/rootSlice";
 import { ToastError, ToastSuccess } from "../../notifi/toastify";
 import { getToCartApi } from "../../utils/cart-api/cartApi";
 import {
@@ -19,7 +19,7 @@ import {
 
 function* handleAddOrderSaga() {
   try {
-    const bodyOrder = store1.getState().orderReducer.bodyOrder;
+    const bodyOrder = store.getState().orderReducer.bodyOrder;
 
     yield addOrderApi("/order/create", bodyOrder);
 
@@ -31,17 +31,17 @@ function* handleAddOrderSaga() {
 function* handleGetOrderSaga() {
   try {
     const userId = localStorage.getItem("userId");
-    const data = yield getOrderApi(`order/recentOrder/${userId}`);
-    console.log("order", data);
-
-    yield put(handleGetOrderDoneRedux(data.data.orders));
+    const page = store.getState().orderReducer.page;
+    const res = yield getOrderApi(`order/recentOrder/${userId}`, page);
+    console.log("order", res.data);
+    yield put(handleGetOrderDoneRedux(res.data));
   } catch (error) {
     console.log(error);
   }
 }
 function* handleUpdateOrderSaga() {
   try {
-    const idOrder = store1.getState().orderReducer.idOrder;
+    const idOrder = store.getState().orderReducer.idOrder;
     yield updateOrderApi(`/order/update/${idOrder}`, {
       status: statusOrder.COMPLETED,
     });

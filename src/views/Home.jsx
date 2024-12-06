@@ -1,11 +1,26 @@
-import React, { lazy, Component, useEffect } from "react";
+import React, { lazy, Component, useEffect, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { data } from "../data";
 import { useDispatch, useSelector } from "react-redux";
 import { handleGetBrandBeginRedux } from "../redux/slice/brandSlice";
 import CardProductGrid from "../components/card/CardProductGrid";
-import { handleGetProductListByParamsBeginRedux } from "../redux/slice/productListSlice";
+import {
+  handleGetBestSellers,
+  handleGetProductListByParamsBeginRedux,
+} from "../redux/slice/productListSlice";
 import CIcon from "@coreui/icons-react";
+import {
+  CButton,
+  CCard,
+  CCardBody,
+  CCardImage,
+  CCardText,
+  CCardTitle,
+  CCol,
+  CImage,
+} from "@coreui/react";
+import Skeleton from "react-loading-skeleton";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const Support = lazy(() => import("../components/Support"));
 const Banner = lazy(() => import("../components/carousel/Banner"));
@@ -23,44 +38,36 @@ const HomeView = () => {
   );
   const dataBrand = useSelector((state) => state.brandReducer.dataBrand);
   const dispatch = useDispatch();
+
   useEffect(() => {
     if (!isGetDataBrand) dispatch(handleGetBrandBeginRedux());
   }, [isGetDataBrand]);
 
-  const productFeatured = useSelector(
-    (state) => state.productListReducer.products
+  const bestsellers = useSelector(
+    (state) => state.productListReducer.bestsellers
   );
+  console.log(bestsellers);
+
   useEffect(() => {
-    dispatch(handleGetProductListByParamsBeginRedux({ review: 4 }));
+    dispatch(handleGetBestSellers());
   }, []);
 
-  const carouselContent = dataBrand.map((row, idx) => {
+  const carouselContent = dataBrand?.map((category, idx) => {
     return (
-      <div
-        className="card col-sm-4 grid g-3"
-        style={{ width: "350px" }}
-        key={idx}
-      >
-        <div style={{ width: "100px", margin: "auto" }}>
-          {/* <FaLaptop style={{ width: "100%", height: "100%" }} /> */}
-          {/* {<row.icon style={{ width: "100%", height: "100%" }}/>} */}
-          <CIcon
-            icon={row.icon.component}
-            style={{ width: "100%", height: "100%" }}
-          />
-        </div>
-        <div className="card-body">
-          <h5 className="card-title">{row.name}</h5>
-          <p className="card-text">
-            Some quick example text to build on the card title and make up the
-            bulk of the card's content.
-            {row.description}
-          </p>
-          <Link to={`/brand/${row._id}`} className="btn btn-primary">
-            See More
-          </Link>
-        </div>
-      </div>
+      <CCol sm={2}>
+        <CCard>
+          <CCardImage orientation="top" src={category.icon} />
+          <CCardBody>
+            <CCardTitle>{category.name}</CCardTitle>
+            <CCardText>{category.description} </CCardText>
+            <Link
+              to={`/categories/${category._id}`}
+            >
+              <CButton color="primary">See more</CButton>
+            </Link>
+          </CCardBody>
+        </CCard>
+      </CCol>
     );
   });
 
@@ -88,7 +95,7 @@ const HomeView = () => {
       <div className="container-fluid bg-light mb-3">
         <div className="row">
           <div className="col-md-12">
-            <CardDealsOfTheDay title="OUTSTANDING BRAND">
+            <CardDealsOfTheDay title="OUTSTANDING CATEGORIES">
               {carouselContent}
             </CardDealsOfTheDay>
           </div>
@@ -96,15 +103,17 @@ const HomeView = () => {
       </div>
 
       <div className="bg-info bg-gradient p-3 text-center mb-3">
-        <h4 className="m-0">Featured Products</h4>
+        <h4 className="m-0">Best Sellers</h4>
       </div>
       <div className="container">
         <div className="row">
-          {productFeatured?.slice(0, 12).map((item, index) => (
-            <div className="col-md-3" key={index}>
-              <CardProductGrid data={item} />
-            </div>
-          ))}
+          <Suspense fallback={<Skeleton count={5} />}>
+            {bestsellers?.map((item, index) => (
+              <div className="col-md-3" key={item._id}>
+                <CardProductGrid data={item.product} />
+              </div>
+            ))}
+          </Suspense>
         </div>
       </div>
     </React.Fragment>

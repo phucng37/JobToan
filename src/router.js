@@ -7,6 +7,7 @@ import WishlistView from "./views/account/Wishlist";
 import BlogDetailView from "./views/blog-detail/BlogDetailView";
 import BlogView from "./views/blog/BlogView";
 import BrandListView from "./views/brand/List/List";
+import Category from './views/category/List/List';
 import CartView from "./views/cart/Cart";
 import HomeView from "./views/Home";
 import IntroView from "./views/intro/IntroView";
@@ -62,8 +63,8 @@ export const publicRouters = [
     component: ProductListView,
   },
   {
-    path: "/brand/:id",
-    component: BrandListView,
+    path: "/categories/:id",
+    component: Category,
   },
   {
     path: "/product/detail/:id",
