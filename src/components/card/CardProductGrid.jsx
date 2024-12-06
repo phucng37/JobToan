@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { createFilterContext } from "../../context/ContextFilter";
 import { formatToVND } from "../../utils/CurrencyUtils";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const CardProductGrid = (props) => {
   const product = props.data;
@@ -9,7 +10,10 @@ const CardProductGrid = (props) => {
   const { handleClickAddToCart } = useContext(createFilterContext);
   return (
     <div className="card">
-      <img src={product.image} className="card-img-top" alt="" />
+      <LazyLoadImage
+        height={180}
+        src={product.image}
+        width={300} />
       {product.isNew && (
         <span className="badge bg-success position-absolute mt-2 ms-2">
           New

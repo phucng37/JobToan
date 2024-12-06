@@ -56,7 +56,7 @@ const HomeView = () => {
     return (
       <CCol sm={2}>
         <CCard>
-          <CCardImage orientation="top" src={category.icon} />
+          <CCardImage className="w-100" height={140} orientation="top" src={category.icon} />
           <CCardBody>
             <CCardTitle>{category.name}</CCardTitle>
             <CCardText>{category.description} </CCardText>

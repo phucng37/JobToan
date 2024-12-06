@@ -20,6 +20,9 @@ import {
   CModalTitle,
 } from "@coreui/react";
 import "./style.css";
+import Skeleton from "react-loading-skeleton";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 const CardFeaturedProduct = lazy(
   () => import("../../components/card/CardFeaturedProduct")
@@ -42,11 +45,9 @@ const ProductDetailView = () => {
   const [visible, setVisible] = useState(false);
   const { handleClickAddToCart } = useContext(createFilterContext);
   const { id } = useParams();
-  const productDetail = useSelector(
-    (state) => state.productListReducer.product
-  );
+  const product = useSelector((state) => state.productListReducer.product);
   const dispatch = useDispatch();
-  console.log(productDetail);
+  console.log(product);
 
   const productRetaled = useSelector(
     (state) => state.productListReducer.products
@@ -54,53 +55,58 @@ const ProductDetailView = () => {
   useEffect(() => {
     dispatch(
       handleGetProductListByParamsBeginRedux({
-        categoryId: productDetail.category,
+        categoryId: product.category,
       })
     );
-  }, [productDetail.category]);
+  }, [product.category]);
 
   useEffect(() => {
     dispatch(handleGetProductDetailBeginRedux(id));
   }, [id]);
-
+  console.log("SUBIMAGE: ", product.subImages);
+  const isEmptyObject = (obj) => Object.keys(obj).length === 0;
+  if (isEmptyObject(product)) {
+    return (
+      <>
+        <Skeleton count={10} height={100} />
+      </>
+    );
+  }
   return (
-    productDetail && (
+    product && (
       <div className="container-fluid mt-3">
         <div className="row">
           <div className="col-md-8">
             <div className="row mb-3">
               <div className="col-md-5 text-center">
                 <CButton className="p-0" onClick={() => setVisible(!visible)}>
-                  <img
-                    src={productDetail.image}
+                  <LazyLoadImage
                     className="img-fluid mb-3"
-                    alt=""
+                    src={product.image}
                   />
                 </CButton>
-                {productDetail?.subImages?.length &&
-                  productDetail?.subImages?.map((item, index) => (
+                {product?.subImages?.length &&
+                  product?.subImages?.map((item, index) => (
                     <CButton
                       className="p-0"
                       onClick={() => setVisible(!visible)}
                     >
-                      <img
+                      <LazyLoadImage
                         src={item}
                         className="border me-2"
-                        width="w-100"
-                        height="100"
-                        alt="..."
+                        height={100}
                         key={index}
                       />
                     </CButton>
                   ))}
               </div>
               <div className="col-md-7">
-                <h1 className="h5 d-inline me-2">{productDetail.name}</h1>
+                <h1 className="h5 d-inline me-2">{product.name}</h1>
                 <span className="badge bg-success me-2">New</span>
                 <span className="badge bg-danger me-2">Hot</span>
                 {/* <div className="mb-3">
-                  {productDetail?.review > 0
-                    ? Array(Number(productDetail?.review || 1))
+                  {product?.review > 0
+                    ? Array(Number(product?.review || 1))
                         .fill(0)
                         .map((_, index) => (
                           <i
@@ -108,7 +114,7 @@ const ProductDetailView = () => {
                             key={index}
                           />
                         ))
-                    : Array(5 - (Number(productDetail?.review) || 0))
+                    : Array(5 - (Number(product?.review) || 0))
                         .fill(0)
                         .map((_, index) => (
                           <i
@@ -116,15 +122,15 @@ const ProductDetailView = () => {
                             key={index}
                           />
                         ))} */}
-                  {/* |{" "} */}
-                  {/* <span className="text-muted small"> */}
-                    {/* 42 ratings and 4 reviews */}
-                    {/* {productDetail.ratings} */}
-                  {/* </span> */}
+                {/* |{" "} */}
+                {/* <span className="text-muted small"> */}
+                {/* 42 ratings and 4 reviews */}
+                {/* {product.ratings} */}
+                {/* </span> */}
                 {/* </div> */}
                 {/* <dl className="row small mb-3">
                   <dt className="col-sm-3">Description</dt>
-                  <dd className="col-sm-9">{productDetail.shortDescription}</dd>
+                  <dd className="col-sm-9">{product.shortDescription}</dd>
                   <dt className="col-sm-3">Color</dt>
                   <dd className="col-sm-9">
                     <button className="btn btn-sm btn-primary p-2 me-2"></button>
@@ -138,9 +144,9 @@ const ProductDetailView = () => {
                 </dl> */}
 
                 <div className="mb-3">
-                  <br/>
+                  <br />
                   <span className="fw-bold h5 me-2">
-                    {formatToVND(productDetail.price)}
+                    {formatToVND(product.price)}
                   </span>
                   {/* <del className="small text-muted me-2">$2000</del>
                   <span className="rounded p-1 bg-warning  me-2 small">
@@ -162,7 +168,7 @@ const ProductDetailView = () => {
                         className="form-control"
                         defaultValue="1"
                         value={count}
-                        max={productDetail.quantity}
+                        max={product.quantity}
                       />
                       <button
                         className="btn btn-primary text-white"
@@ -179,7 +185,7 @@ const ProductDetailView = () => {
                     title="Add to cart"
                     onClick={() =>
                       handleClickAddToCart({
-                        product: productDetail,
+                        product: product,
                         quantity: count,
                       })
                     }
@@ -213,7 +219,7 @@ const ProductDetailView = () => {
                     role="tabpanel"
                     aria-labelledby="nav-details-tab"
                   >
-                    {productDetail.description}
+                    {product.description}
                   </div>
                 </div>
               </div>
@@ -233,22 +239,20 @@ const ProductDetailView = () => {
         >
           <CModalHeader>
             <CModalTitle id="StaticBackdropExampleLabel">
-              Preview {productDetail.name}
+              Preview {product.name}
             </CModalTitle>
           </CModalHeader>
           <CModalBody>
             <CCarousel controls>
-              {[productDetail.image, ...productDetail.subImages].map(
-                (imageURL) => (
-                  <CCarouselItem>
-                    <CImage
-                      className="d-block image-preview w-100"
-                      src={imageURL}
-                      alt="slide 1"
-                    />
-                  </CCarouselItem>
-                )
-              )}
+              {[product.image, ...product?.subImages].map((imageURL) => (
+                <CCarouselItem>
+                  <CImage
+                    className="d-block image-preview w-100"
+                    src={imageURL}
+                    alt="slide 1"
+                  />
+                </CCarouselItem>
+              ))}
             </CCarousel>
           </CModalBody>
         </CModal>
