@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
+import { CAccordionBody, CAccordionHeader, CAccordionItem, CImage } from "@coreui/react";
 import "./style.css";
-
 const FilterCategory = (props) => {
   const { onChangeFilter } = props;
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
   const fetchCategories = useCallback(async () => {
     const res = await instanceAxios.get("category/show");
     if (res.status === 200) {
@@ -17,28 +18,33 @@ const FilterCategory = (props) => {
   }, []);
 
   return (
-    <div className="card mb-3 accordion">
-      <div
-        className="card-header fw-bold text-uppercase accordion-icon-button"
-        data-bs-toggle="collapse"
-        data-bs-target="#filterCategory"
-        aria-expanded="true"
-        aria-controls="filterCategory"
-      >
-        Categories
-      </div>
-      <ul className="list-group list-group-flush show" id="filterCategory">
+    <CAccordionItem itemKey={1} className="mb-2">
+      <CAccordionHeader>Categories</CAccordionHeader>
+      <CAccordionBody id="filterCategory">
         {categories.map((category) => (
-          <li
-            className="list-group-item btn"
-            data-cate="dell"
-            onClick={(e) => onChangeFilter({ categoryId: category?._id })}
-          >
-            {category?.name}
-          </li>
-        ))}
-      </ul>
+      <div className="item py-2">
+      <input
+        className="form-check-input me-3"
+        type="radio"
+        id="flexCheckDefault1"
+        name="categoryFilter"
+        onChange={() => {
+          setSelectedCategory(category?._id);
+          onChangeFilter({ categoryId: category?._id });
+        }}
+      />
+      <label
+        className="form-check-label"
+        htmlFor="flexCheckDefault1"
+        data-pricemin="10000000"
+        data-pricemax="15000000"
+      >
+        {category.name}
+      </label>
     </div>
+        ))}
+     </CAccordionBody>
+     </CAccordionItem>
   );
 };
 

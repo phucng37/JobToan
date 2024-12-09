@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { createFilterContext } from "../../context/ContextFilter";
 import { formatToVND } from "../../utils/CurrencyUtils";
+import { CImage } from "@coreui/react";
 
 const CardProductList = (props) => {
   const product = props.data;
@@ -13,7 +14,7 @@ const CardProductList = (props) => {
     <div className="card">
       <div className="row g-0">
         <div className="col-md-3 text-center">
-          <img src={product.image} className="img-fluid" alt="" />
+          <CImage src={product.image} className="img-fluid" style={{height: '130px'}}/>
         </div>
         <div className="col-md-6">
           <div className="card-body">

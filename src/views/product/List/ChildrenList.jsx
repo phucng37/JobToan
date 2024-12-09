@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createFilterContext } from "../../../context/ContextFilter";
 import FilterBrand from "../../../components/filter/Brand";
 import { useParams, useSearchParams } from "react-router-dom";
+import { CAccordion, CAccordionBody, CAccordionHeader, CAccordionItem, CCol, CRow } from "@coreui/react";
 
 const Breadcrumb = lazy(() => import("../../../components/Breadcrumb"));
 const FilterCategory = lazy(
@@ -114,16 +115,18 @@ const ChildrenList = ({ itemsPerPage }) => {
       </div>
       <div className="container-fluid mb-3">
       <Breadcrumb />
-        <div className="row">
-          <div className="col-md-3">
+        <CRow>
+          <CCol sm={2}>
+          <CAccordion flush alwaysOpen className="mb-3">
             <FilterCategory onChangeFilter={onChangeFilter} />
             <FilterBrand onChangeFilter={onChangeFilter} />
             <FilterPrice onChangeFilter={onChangeFilter} />
             {/* <FilterStar onChangeFilter={onChangeFilter} /> */}
+            </CAccordion>
             <FilterClear />
             <CardServices />
-          </div>
-          <div className="col-md-9">
+          </CCol>
+          <CCol sm={10}>
             <div className="row">
               <div className="col-7">
                 <span className="align-middle fw-bold">
@@ -212,8 +215,8 @@ const ChildrenList = ({ itemsPerPage }) => {
                   : undefined
               }
             />
-          </div>
-        </div>
+          </CCol>
+        </CRow>
       </div>
     </React.Fragment>
   );

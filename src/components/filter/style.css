@@ -1,10 +1,14 @@
 #filter {
-    height: 300px;
+    max-height: 300px;
     /* height: 408px; infinite scroll */
     overflow: auto;
 }
 
 #filterCategory {
-    height: 200px;
+    max-height: 200px;
     overflow: auto;
+}
+
+.accordion-button {
+    height: 40px;
 }

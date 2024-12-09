@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
 import "./style.css";
 import Skeleton from "react-loading-skeleton";
-import 'react-loading-skeleton/dist/skeleton.css'
+import "react-loading-skeleton/dist/skeleton.css";
+import { CAccordionBody, CAccordionHeader, CAccordionItem, CImage } from "@coreui/react";
 
 const FilterBrand = (props) => {
   const { onChangeFilter } = props;
@@ -12,6 +13,7 @@ const FilterBrand = (props) => {
   const [loadMore, setLoadMore] = useState(true);
   const [page, setPage] = useState(1);
 
+  const [selectedBrand, setSelectedBrand] = useState("");
   const fetchBrands = useCallback(async () => {
     setIsLoading(true);
     const res = await instanceAxios.get("brand/show");
@@ -48,32 +50,45 @@ const FilterBrand = (props) => {
   // }, []);
 
   return (
-    <div className="card mb-3 accordion">
-      <div
-        className="card-header fw-bold text-uppercase accordion-icon-button"
-        data-bs-toggle="collapse"
-        data-bs-target="#filter"
-        aria-expanded="true"
-        aria-controls="filter"
-      >
-        Brands
-      </div>
-      <ul className="list-group list-group-flush show" id="filter">
+    <CAccordionItem itemKey={2} className="mb-2 p-0">
+      <CAccordionHeader className="p-0">Brands</CAccordionHeader>
+      <CAccordionBody id="filter">
+      <div className="d-flex flex-column" >
         {isLoading ? (
           <Skeleton height={40} count={9} />
         ) : (
           brands.map((brand) => (
-            <li
-              className="list-group-item btn"
-              data-cate="dell"
-              onClick={(e) => onChangeFilter({ brandId: brand?._id })}
-            >
-              {brand?.name}
-            </li>
+            <div className="item py-2">
+              <input
+                className="form-check-input me-3"
+                type="radio"
+                id="flexCheckDefault1"
+                name="brandFilter"
+                onChange={() => {
+                  setSelectedBrand(brand?._id);
+                  onChangeFilter({ brandId: brand?._id });
+                }}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="flexCheckDefault1"
+                data-pricemin="10000000"
+                data-pricemax="15000000"
+              >
+                <CImage
+                  src={brand.image}
+                  style={{
+                    height: "30px",
+                    width: "30px",
+                  }}
+                />
+              </label>
+            </div>
           ))
         )}
-      </ul>
-    </div>
+        </div>
+      </CAccordionBody>
+    </CAccordionItem>
   );
 };
 
