@@ -48,7 +48,7 @@ import {
   getIndex,
   getTotalPages,
   paginateConfig,
-} from "../../utils/PaginationUtils";
+} from "../../utils/paginationUtils";
 import CustomInput from "src/components/base/CustomInput";
 import CreateEditProductModal from "./components/CreateEditProductModal";
 import { ACTION } from "../../constant/action";

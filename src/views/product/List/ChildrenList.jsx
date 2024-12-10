@@ -175,7 +175,7 @@ const ChildrenList = ({ itemsPerPage }) => {
               {view === "grid" &&
                 currentItems.map((product, idx) => {
                   return (
-                    <div key={idx} className="col-md-4">
+                    <div key={idx} className="col-md-2">
                       <CardProductGrid data={product} index={idx} />
                     </div>
                   );
@@ -190,6 +190,7 @@ const ChildrenList = ({ itemsPerPage }) => {
                 })}
             </div>
             <hr />
+            <div className="float-end">
             <ReactPaginate
               nextLabel="Next >"
               onPageChange={handlePageClick}
@@ -215,6 +216,7 @@ const ChildrenList = ({ itemsPerPage }) => {
                   : undefined
               }
             />
+            </div>
           </CCol>
         </CRow>
       </div>

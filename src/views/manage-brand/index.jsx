@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CButton,
   CCard,
@@ -32,8 +32,24 @@ import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
 import { useForm } from "react-hook-form";
 import Toast from "src/components/Toast";
-import ReactPaginate from 'react-paginate';
-import { getTotalPages, paginateConfig } from "../../utils/PaginationUtils";
+import ReactPaginate from "react-paginate";
+import { getIndex, getTotalPages, paginateConfig } from "../../utils/paginationUtils";
+
+const FIELDS = ["id", "name", "image", "createdAt", "action"];
+
+const columns = FIELDS.map((field, index) => {
+  const column = {
+    key: field,
+    _props: { scope: "col" },
+  };
+  if (field === "id") {
+    column.label = "#";
+  }
+  if (field === "createdAt") {
+    column.label = "Created At";
+  }
+  return column;
+});
 
 export default function ManageBrand() {
   const [brands, setBrands] = useState([]);
@@ -43,9 +59,14 @@ export default function ManageBrand() {
   const [isCreate, setIsCreate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(null);
+
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
   const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = useMemo(
+    () => getIndex(currentPage, 10),
+    [currentPage]
+  );
   const {
     register,
     handleSubmit,
@@ -64,11 +85,11 @@ export default function ManageBrand() {
     const res = await instanceAxios.get("brand/show", {
       params: {
         page: currentPage,
-        limit
-      }
+        limit,
+      },
     });
     if (res.status === 200 && res.data) {
-      const {brands, totalBrands} = res.data;
+      const { brands, totalBrands } = res.data;
       console.log(res.data);
       setBrands(brands);
       setTotalPages(getTotalPages(totalBrands, limit));
@@ -109,13 +130,14 @@ export default function ManageBrand() {
       setIsLoading(true);
       console.log("data: ", data);
       let { name, image } = data;
-      if (!(image instanceof String || typeof image === 'string')) {
-        console.log('IMAGE IS NOT OF STRING')
+      if (!(image instanceof String || typeof image === "string")) {
+        console.log("IMAGE IS NOT OF STRING");
         image = image[0];
       }
       const payload = {
         name,
-        image      };
+        image,
+      };
       console.log(payload);
       // return;
       const headerConfig = {
@@ -150,8 +172,6 @@ export default function ManageBrand() {
     [isCreate, brand]
   );
 
- 
-
   // Simulate fetching items from another resources.
   // (This could be items from props; or items loaded in a local state
   // from an API endpoint with useEffect and useState)
@@ -163,6 +183,33 @@ export default function ManageBrand() {
     setCurrentPage(newOffset);
   };
 
+
+  const mapToItems = (brands) =>
+    brands?.map((brand, index) => ({
+      id: startIndex + index + 1,
+      name: brand?.name,
+      image: (
+        <CImage
+          hidden={!brand?.image}
+          rounded
+          thumbnail
+          src={brand?.image}
+          width={200}
+          height={200}
+        />
+      ),
+      createdAt: new Date(brand?.createdAt).toDateString(),
+      action: (
+        <>
+          <CButton color="primary" onClick={() => handleAction(brand, "EDIT")}>
+            Edit
+          </CButton>{" "}
+          <CButton color="danger" onClick={() => handleAction(brand, "DELETE")}>
+            Delete
+          </CButton>
+        </>
+      ),
+    }));
   return (
     <CRow>
       <CCol xs={12}>
@@ -180,71 +227,18 @@ export default function ManageBrand() {
             </CButton>
           </CCardHeader>
           <CCardBody>
-            <CTable>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Image</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Created At</CTableHeaderCell>
-                  <CTableHeaderCell scope="col" colSpan={2}>
-                    Action
-                  </CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {brands.map((brand, index) => (
-                  <CTableRow key={brand?._id}>
-                    <CTableHeaderCell scope="row">{index + 1}</CTableHeaderCell>
-                    <CTableDataCell>{brand?.name}</CTableDataCell>
-                    <CTableDataCell>
-                      {" "}
-                      <CImage
-                        hidden={!brand?.image}
-                        rounded
-                        thumbnail
-                        src={brand?.image}
-                        width={200}
-                        height={200}
-                      />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {new Date(brand?.createdAt).toDateString()}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CButton
-                        color="primary"
-                        onClick={() => handleAction(brand, "EDIT")}
-                      >
-                        Edit
-                      </CButton>{" "}
-                      <CButton
-                        color="danger"
-                        onClick={() => handleAction(brand, "DELETE")}
-                      >
-                        Delete
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+            <CTable columns={columns} items={mapToItems(brands)} />
           </CCardBody>
         </CCard>
-                <div className="float-end">
-                <ReactPaginate
-              onPageChange={handlePageClick}
-              pageCount={totalPages}
-              {...paginateConfig}
-              // forcePage={
-              //   isGetDataProductListByParams && itemOffset === 0
-              //     ? itemOffset
-              //     : undefined
-              // }
-            />
-                </div>
-             </CCol>
-              
+        <div className="float-end">
+          <ReactPaginate
+            onPageChange={handlePageClick}
+            pageCount={totalPages}
+            {...paginateConfig}
+          />
+        </div>
+      </CCol>
+
       <CModal
         visible={isVisible}
         onClose={() => setIsVisible(false)}
@@ -282,7 +276,7 @@ export default function ManageBrand() {
               <CFormInput
                 type="text"
                 label="Brand name"
-                {...register("name", { require: "This input is required" })}
+                {...register("name", { require: false })}
               />
             </CCol>
             <CCol md={12} className="mt-2">
@@ -299,7 +293,7 @@ export default function ManageBrand() {
               <CFormInput
                 type="file"
                 label="Brand image"
-                {...register("image", { require: "This input is required" })}
+                {...register("image", { require: false })}
               />
             </CCol>
           </CModalBody>

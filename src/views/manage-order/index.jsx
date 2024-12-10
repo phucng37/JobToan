@@ -24,11 +24,44 @@ import {
   getIndex,
   getTotalPages,
   paginateConfig,
-} from "../../utils/PaginationUtils";
+} from "../../utils/paginationUtils";
 import { FaEdit } from "react-icons/fa";
 import { MdDoneOutline, MdOutlineCancel } from "react-icons/md";
 import Toast from "src/components/Toast";
+
 const STATUSES = ["PENDING", "COMPLETED", "PROCESSING", "CANCELLED"];
+const FIELDS = [
+  "id",
+  "orderId",
+  "customer",
+  "orderTotal",
+  "status",
+  "createdAt",
+];
+
+const columns = FIELDS.map((field) => {
+  const column = {
+    key: field,
+    _props: { scope: "col" },
+  };
+  switch (field) {
+    case "id":
+      column.label = "#";
+      break;
+    case "orderId":
+      column.label = "Order id";
+      break;
+    case "orderTotal":
+      column.label = "Order Total";
+      break;
+    case "createdAt":
+      column.label = "Created at";
+      break;
+    default:
+      break;
+  }
+  return column;
+});
 
 export default function ManageOrder() {
   const [orders, setOrders] = React.useState();
@@ -94,75 +127,66 @@ export default function ManageOrder() {
     }
     console.log(selectedItem, orderId);
   };
+  
+  const mapToItems = (orders) =>
+    orders?.map((order, index) => ({
+      id: startIndex + index + 1,
+      orderId: order?._id,
+      customer: order?.customerName,
+      orderTotal: order?.totalPrice,
+      status: (
+        <>
+          {orderId === order?._id && (
+            <div className="d-flex align-items-center gap-3">
+              <CFormSelect
+                width={2}
+                size="sm"
+                onChange={(event) => {
+                  setSelectedItem(event.target.value);
+                }}
+              >
+                {STATUSES.map((status, index) => (
+                  <option
+                    value={status}
+                    key={index}
+                    selected={order?.status === status}
+                  >
+                    {status}
+                  </option>
+                ))}
+              </CFormSelect>
+              <MdDoneOutline
+                size={30}
+                color="#2eb85c"
+                onClick={() => handleUpdateStatus(order?._id)}
+              />
+              <MdOutlineCancel
+                color="#e55353"
+                size={30}
+                onClick={handleCancelEdit}
+              />
+            </div>
+          )}{" "}
+          {orderId !== order?._id && (
+            <div className="d-flex align-items-center gap-2">
+              <CBadge color="primary">{order?.status}</CBadge>
+              <FaEdit
+                color="#0d6efd"
+                size={20}
+                onClick={() => handleToggleEdit(order?._id)}
+              />
+            </div>
+          )}
+        </>
+      ),
+      createdAt: new Date(order?.createdAt).toDateString(),
+    }));
   return (
     <CRow>
       <CCol xs={12}>
         <CCard className="mb-4">
           <CCardBody>
-            <CTable>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Order ID</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Customer</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Total price</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Status</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Created at</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {orders?.map((order, index) => (
-                  <CTableRow key={order._id}>
-                    <CTableHeaderCell scope="row">
-                      {startIndex + index + 1}
-                    </CTableHeaderCell>
-                    <CTableDataCell>{order?._id}</CTableDataCell>
-                    <CTableDataCell>{order?.customerName}</CTableDataCell>
-                    <CTableDataCell>{order?.totalPrice}</CTableDataCell>
-                    <CTableDataCell>
-                      {orderId === order?._id && (
-                        <div className="d-flex align-items-center gap-3">
-                          <CFormSelect
-                            width={2}
-                            size="sm"
-                            onChange={(event) => {
-                              setSelectedItem(event.target.value);
-                            }}
-                          >
-                            {STATUSES.map((status, index) => (
-                              <option
-                                value={status}
-                                key={index}
-                                selected={order?.status === status}
-                              >
-                                {status}
-                              </option>
-                            ))}
-                          </CFormSelect>
-                          <MdDoneOutline size={30}
-                          color="#2eb85c"
-                            onClick={() => handleUpdateStatus(order?._id)}
-                          />
-                          <MdOutlineCancel color="#e55353" size={30} onClick={handleCancelEdit} />
-                        </div>
-                      )}{" "}
-                      {orderId !== order?._id && (
-                        <div className="d-flex align-items-center gap-2">
-                          <CBadge color="primary">{order?.status}</CBadge>
-                          <FaEdit
-                            color="#0d6efd"
-                            size={20}
-                            onClick={() => handleToggleEdit(order?._id)}
-                          />
-                        </div>
-                      )}
-                    </CTableDataCell>
-
-                    <CTableDataCell>{(new Date(order?.createdAt)).toDateString()}</CTableDataCell>
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+            <CTable columns={columns} items={mapToItems(orders)}/>
           </CCardBody>
         </CCard>
         <div className="float-end">

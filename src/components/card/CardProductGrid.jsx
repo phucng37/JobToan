@@ -10,10 +10,11 @@ const CardProductGrid = (props) => {
   const { handleClickAddToCart } = useContext(createFilterContext);
   return (
     <div className="card">
-      <LazyLoadImage
+    <div className="w-100 text-center">
+    <LazyLoadImage
         height={180}
-        src={product.image}
-        width={300} />
+        src={product.image} className="w-100" />
+    </div>
       {product.isNew && (
         <span className="badge bg-success position-absolute mt-2 ms-2">
           New

@@ -69,7 +69,7 @@ const ChildrenListBrand = ({ itemsPerPage }) => {
 
   return (
     <React.Fragment>
-      <div
+      {/* <div
         className="p-5 bg-primary bs-cover"
         style={{
           backgroundImage: "url(../../images/banner/banner_cate.jpg)",
@@ -80,7 +80,7 @@ const ChildrenListBrand = ({ itemsPerPage }) => {
             T-Shirts
           </span>
         </div>
-      </div>
+      </div> */}
       <div className="container-fluid mb-3">
         <div className="row">
           <div className="col-md-10 offset-1">
@@ -121,7 +121,7 @@ const ChildrenListBrand = ({ itemsPerPage }) => {
               {view === "grid" &&
                 currentItems.map((product, idx) => {
                   return (
-                    <div key={idx} className="col-md-4">
+                    <div key={idx} className="col-md-2">
                       <CardProductGrid data={product} index={idx} />
                     </div>
                   );

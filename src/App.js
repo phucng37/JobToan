@@ -18,6 +18,7 @@ import AdminLayout from "./layout/AdminLayout";
 import { protectedRoute, publicRouters, rejectedRoute } from "./router";
 import "./scss/style.scss";
 import { CContainer } from "@coreui/react";
+import { isAdmin } from "./utils/auth";
 //const Header = lazy(() => import("./components/Header"));
 //const TopMenu = lazy(() => import("./components/TopMenu"));
 const HomeView = lazy(() => import("./views/Home"));
@@ -62,12 +63,12 @@ function App() {
   console.log(localStorage.getItem('role')==='admin');
   return (
     <BrowserRouter>
-      {localStorage.getItem('role') === 'admin' ? (
+      {isAdmin ? (
         <AdminLayout />
       ) : (
         <React.Fragment>
           <Header />
-          <TopMenu />
+          {/* <TopMenu /> */}
           <Suspense
             fallback={
               <CContainer><Skeleton count={5} height={100}/></CContainer>
@@ -99,7 +100,6 @@ function App() {
                     </Route>
                   );
               })}
-              <Route path="/" element={<Navigate to="dashboard" replace />} />
             </Routes>
           </Suspense>
           <Footer />
