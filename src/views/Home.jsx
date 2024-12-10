@@ -1,4 +1,5 @@
 import React, { lazy, Component, useEffect, Suspense } from "react";
+import { CNav, CNavLink } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { data } from "../data";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,7 +37,7 @@ const HomeView = () => {
   const isGetDataBrand = useSelector(
     (state) => state.brandReducer.isGetDataBrand
   );
-  const dataBrand = useSelector((state) => state.brandReducer.dataBrand);
+  const categories = useSelector((state) => state.brandReducer.dataBrand);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,17 +53,20 @@ const HomeView = () => {
     dispatch(handleGetBestSellers());
   }, []);
 
-  const carouselContent = dataBrand?.map((category, idx) => {
+  const carouselContent = categories?.map((category, idx) => {
     return (
       <CCol sm={2}>
         <CCard>
-          <CCardImage className="w-100" height={140} orientation="top" src={category.icon} />
+          <CCardImage
+            className="w-100"
+            height={140}
+            orientation="top"
+            src={category.icon}
+          />
           <CCardBody>
             <CCardTitle>{category.name}</CCardTitle>
             <CCardText>{category.description} </CCardText>
-            <Link
-              to={`/categories/${category._id}`}
-            >
+            <Link to={`/categories/${category._id}`}>
               <CButton color="primary">See more</CButton>
             </Link>
           </CCardBody>
@@ -73,12 +77,36 @@ const HomeView = () => {
 
   return (
     <React.Fragment>
+      <CNav as="nav">
+        {categories?.map((category, idx) => (
+          <CNavLink key={idx}>
+            <Link  to={`/categories/${category._id}`} className="text-decoration-none">
+            <div>
+              <CImage width={25} height={25} src={category.icon} />{" "}
+              {category.name}{" "}
+            </div>
+          </Link>
+          </CNavLink>
+        ))}
+      </CNav>
+      
       <Banner className="mb-3" id="carouselHomeBanner" data={data.banner} />
+      <div className="bg-info bg-gradient p-3 text-center mb-3">
+        <h4 className="m-0">Best Sellers</h4>
+      </div>
+      <div className="container">
+        <div className="row p-4">
+          <Suspense fallback={<Skeleton count={5} />}>
+            {bestsellers?.map((item, index) => (
+              <div className="col-md-3" key={item._id}>
+                <CardProductGrid data={item.product} />
+              </div>
+            ))}
+          </Suspense>
+        </div>
+      </div>
       <div className="container-fluid bg-light mb-3">
         <div className="row g-3">
-          <div className="col-md-12">
-            <Support />
-          </div>
           <div className="col-md-12 d-flex justify-content-between">
             <CardImage src="../../images/banner/Watches.webp" to="promo" />
             <CardImage
@@ -90,9 +118,12 @@ const HomeView = () => {
               to="promo"
             />
           </div>
+          <div className="col-md-12">
+            <Support />
+          </div>
         </div>
       </div>
-      <div className="container-fluid bg-light mb-3">
+      {/* <div className="container-fluid bg-light mb-3">
         <div className="row">
           <div className="col-md-12">
             <CardDealsOfTheDay title="OUTSTANDING CATEGORIES">
@@ -100,22 +131,9 @@ const HomeView = () => {
             </CardDealsOfTheDay>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="bg-info bg-gradient p-3 text-center mb-3">
-        <h4 className="m-0">Best Sellers</h4>
-      </div>
-      <div className="container">
-        <div className="row">
-          <Suspense fallback={<Skeleton count={5} />}>
-            {bestsellers?.map((item, index) => (
-              <div className="col-md-3" key={item._id}>
-                <CardProductGrid data={item.product} />
-              </div>
-            ))}
-          </Suspense>
-        </div>
-      </div>
+      
     </React.Fragment>
   );
 };
