@@ -4,7 +4,12 @@ import { instanceAxios } from "../../utils/https";
 import "./style.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { CAccordionBody, CAccordionHeader, CAccordionItem, CImage } from "@coreui/react";
+import {
+  CAccordionBody,
+  CAccordionHeader,
+  CAccordionItem,
+  CImage,
+} from "@coreui/react";
 
 const FilterBrand = (props) => {
   const { onChangeFilter } = props;
@@ -53,39 +58,39 @@ const FilterBrand = (props) => {
     <CAccordionItem itemKey={2} className="mb-2 p-0">
       <CAccordionHeader className="p-0">Brands</CAccordionHeader>
       <CAccordionBody id="filter">
-      <div className="d-flex flex-column" >
-        {isLoading ? (
-          <Skeleton height={40} count={9} />
-        ) : (
-          brands.map((brand) => (
-            <div className="item py-2">
-              <input
-                className="form-check-input me-3"
-                type="radio"
-                id="flexCheckDefault1"
-                name="brandFilter"
-                onChange={() => {
-                  setSelectedBrand(brand?._id);
-                  onChangeFilter({ brandId: brand?._id });
-                }}
-              />
-              <label
-                className="form-check-label"
-                htmlFor="flexCheckDefault1"
-                data-pricemin="10000000"
-                data-pricemax="15000000"
-              >
-                <CImage
-                  src={brand.image}
-                  style={{
-                    height: "30px",
-                    width: "30px",
+        <div className="d-flex flex-column">
+          {isLoading ? (
+            <Skeleton height={40} count={9} />
+          ) : (
+            brands.map((brand) => (
+              <div className="item py-2">
+                <input
+                  className="form-check-input me-3"
+                  type="radio"
+                  id="flexCheckDefault1"
+                  name="brandFilter"
+                  onChange={() => {
+                    setSelectedBrand(brand?._id);
+                    onChangeFilter({ brandId: brand?._id });
                   }}
                 />
-              </label>
-            </div>
-          ))
-        )}
+                <label
+                  className="form-check-label"
+                  htmlFor="flexCheckDefault1"
+                  data-pricemin="10000000"
+                  data-pricemax="15000000"
+                >
+                  <CImage
+                    src={brand.image}
+                    style={{
+                      height: "30px",
+                      width: "30px",
+                    }}
+                  />
+                </label>
+              </div>
+            ))
+          )}
         </div>
       </CAccordionBody>
     </CAccordionItem>

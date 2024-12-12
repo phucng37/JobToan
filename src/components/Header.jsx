@@ -50,18 +50,6 @@ const Header = () => {
     if (isUser) {
       return (
         <>
-          <CNavItem>
-            <CNavLink>
-              <div className="position-relative d-inline">
-                <Link to="/cart" className="btn btn-primary ">
-                  <i className="bi bi-cart3"></i>
-                  <div className="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-circle">
-                    {countDataCart || 0}
-                  </div>
-                </Link>
-              </div>
-            </CNavLink>
-          </CNavItem>
           <CDropdown variant="nav-item" popper={false}>
             <CNavLink>
               <CDropdownToggle color="secondary">My Profile</CDropdownToggle>
@@ -95,6 +83,18 @@ const Header = () => {
               </CDropdownItem>
             </CDropdownMenu>
           </CDropdown>
+          <CNavItem>
+            <CNavLink>
+              <div className="position-relative d-inline">
+                <Link to="/cart" className="btn btn-primary ">
+                  <i className="bi bi-cart3"></i>
+                  <div className="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-circle">
+                    { countDataCart > 0 && countDataCart}
+                  </div>
+                </Link>
+              </div>
+            </CNavLink>
+          </CNavItem>
         </>
       );
     } else {

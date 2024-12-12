@@ -53,6 +53,18 @@ const ProductDetailView = () => {
     (state) => state.productListReducer.products
   );
   useEffect(() => {
+    console.log(localStorage.getItem('viewedProducts'));
+    const viewedProducts = JSON.parse(localStorage.getItem('viewedProducts')) || [];
+    console.log('viewedProducts: ', viewedProducts);
+    if(viewedProducts?.length === 5) {
+     viewedProducts.shift(); 
+    } else {
+      viewedProducts.push(id);
+      localStorage.setItem('viewedProducts', JSON.stringify(viewedProducts));
+    }
+  }, []);
+  
+  useEffect(() => {
     dispatch(
       handleGetProductListByParamsBeginRedux({
         categoryId: product.category,

@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
-import { CAccordionBody, CAccordionHeader, CAccordionItem, CImage } from "@coreui/react";
+import {
+  CAccordionBody,
+  CAccordionHeader,
+  CAccordionItem,
+  CImage,
+} from "@coreui/react";
 import "./style.css";
 const FilterCategory = (props) => {
   const { onChangeFilter } = props;
@@ -22,29 +27,29 @@ const FilterCategory = (props) => {
       <CAccordionHeader>Categories</CAccordionHeader>
       <CAccordionBody id="filterCategory">
         {categories.map((category) => (
-      <div className="item py-2">
-      <input
-        className="form-check-input me-3"
-        type="radio"
-        id="flexCheckDefault1"
-        name="categoryFilter"
-        onChange={() => {
-          setSelectedCategory(category?._id);
-          onChangeFilter({ categoryId: category?._id });
-        }}
-      />
-      <label
-        className="form-check-label"
-        htmlFor="flexCheckDefault1"
-        data-pricemin="10000000"
-        data-pricemax="15000000"
-      >
-        {category.name}
-      </label>
-    </div>
+          <div className="item py-2">
+            <input
+              className="form-check-input me-3"
+              type="radio"
+              id="flexCheckDefault1"
+              name="categoryFilter"
+              onChange={() => {
+                setSelectedCategory(category?._id);
+                onChangeFilter({ categoryId: category?._id });
+              }}
+            />
+            <label
+              className="form-check-label"
+              htmlFor="flexCheckDefault1"
+              data-pricemin="10000000"
+              data-pricemax="15000000"
+            >
+              {category.name}
+            </label>
+          </div>
         ))}
-     </CAccordionBody>
-     </CAccordionItem>
+      </CAccordionBody>
+    </CAccordionItem>
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { lazy, Component, useEffect, Suspense } from "react";
-import { CNav, CNavLink } from "@coreui/react";
+import { CNav, CNavLink, CRow } from "@coreui/react";
 import { Link } from "react-router-dom";
 import { data } from "../data";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +22,7 @@ import {
 } from "@coreui/react";
 import Skeleton from "react-loading-skeleton";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import ViewedProduct from "./home/components/ViewedProduct";
 
 const Support = lazy(() => import("../components/Support"));
 const Banner = lazy(() => import("../components/carousel/Banner"));
@@ -74,25 +75,44 @@ const HomeView = () => {
       </CCol>
     );
   });
-
+  const FEATURE_PRODUCTS = [
+    {
+      imageURL:
+        "https://cdn2.fptshop.com.vn/unsafe/480x0/filters:quality(100)/H3_405x175_a8481bdbe1.png",
+      productId: "",
+    },
+    {
+      imageURL:
+        "https://cdn2.fptshop.com.vn/unsafe/480x0/filters:quality(100)/H3_405x175_da06d798e7.png",
+      productId: "",
+    },
+    {
+      imageURL:
+        "https://cdn2.fptshop.com.vn/unsafe/480x0/filters:quality(100)/H3_405x175_20fbf1ad13.png",
+      productId: "",
+    },
+  ];
   return (
-    <React.Fragment>
-      <CNav as="nav">
+    <>
+      <CNav as="nav" className="bg-primary">
         {categories?.map((category, idx) => (
           <CNavLink key={idx}>
-            <Link  to={`/categories/${category._id}`} className="text-decoration-none">
-            <div>
-              <CImage width={25} height={25} src={category.icon} />{" "}
-              {category.name}{" "}
-            </div>
-          </Link>
+            <Link
+              to={`/categories/${category._id}`}
+              className="text-decoration-none text-white"
+            >
+              <div>
+                <CImage width={25} height={25} src={category.icon} />{" "}
+                {category.name}{" "}
+              </div>
+            </Link>
           </CNavLink>
         ))}
       </CNav>
-      
+
       <Banner className="mb-3" id="carouselHomeBanner" data={data.banner} />
-      <div className="bg-info bg-gradient p-3 text-center mb-3">
-        <h4 className="m-0">Best Sellers</h4>
+      <div className="bg-primary p-3 text-center mb-3">
+        <h4 className="m-0 text-white">Best Sellers</h4>
       </div>
       <div className="container">
         <div className="row p-4">
@@ -107,17 +127,23 @@ const HomeView = () => {
       </div>
       <div className="container-fluid bg-light mb-3">
         <div className="row g-3">
-          <div className="col-md-12 d-flex justify-content-between">
-            <CardImage src="../../images/banner/Watches.webp" to="promo" />
-            <CardImage
-              src="https://laptop2.vnwordpress.net/wp-content/uploads/2020/02/banner-ben.jpg"
-              to="promo"
-            />
-            <CardImage
-              src="https://laptop2.vnwordpress.net/wp-content/uploads/2020/02/cai-dat-win.jpg"
-              to="promo"
-            />
+          <div className="col-md-12">
+            <CRow>
+              {FEATURE_PRODUCTS.map((product) => (
+                <CCol sm={4}>
+                  <Link to={`/products/detail/${product.productId}`}>
+                    <CImage
+                      height={250}
+                      className="w-100"
+                      src={product.imageURL}
+                      to="promo"
+                    />
+                  </Link>
+                </CCol>
+              ))}
+            </CRow>
           </div>
+          <ViewedProduct />
           <div className="col-md-12">
             <Support />
           </div>
@@ -132,9 +158,7 @@ const HomeView = () => {
           </div>
         </div>
       </div> */}
-
-      
-    </React.Fragment>
+    </>
   );
 };
 
