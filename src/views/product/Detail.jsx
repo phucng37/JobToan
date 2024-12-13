@@ -59,8 +59,11 @@ const ProductDetailView = () => {
     if(viewedProducts?.length === 5) {
      viewedProducts.shift(); 
     } else {
-      viewedProducts.push(id);
-      localStorage.setItem('viewedProducts', JSON.stringify(viewedProducts));
+      const isExits = viewedProducts.find(product=>product === id);
+      if(!isExits) {
+        viewedProducts.push(id);
+        localStorage.setItem('viewedProducts', JSON.stringify(viewedProducts));
+      }
     }
   }, []);
   

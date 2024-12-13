@@ -33,7 +33,14 @@ import { instanceAxios } from "../../utils/https";
 import { useForm } from "react-hook-form";
 import Toast from "src/components/Toast";
 import ReactPaginate from "react-paginate";
-import { getIndex, getTotalPages, paginateConfig } from "../../utils/paginationUtils";
+import {
+  getIndex,
+  getTotalPages,
+  paginateConfig,
+} from "../../utils/paginationUtils";
+import DeleteBrandModal from "./components/DeleteBrandModal";
+import { ACTION } from "../../constant/action";
+import CreateEditBrandModal from "./components/CreateEditBrandModal";
 
 const FIELDS = ["id", "name", "image", "createdAt", "action"];
 
@@ -53,20 +60,15 @@ const columns = FIELDS.map((field, index) => {
 
 export default function ManageBrand() {
   const [brands, setBrands] = useState([]);
-  const [isVisible, setIsVisible] = useState(false);
+  const [action, setAction] = useState("");
   const [brand, setBrand] = useState();
-  const [visible, setVisible] = useState(false);
-  const [isCreate, setIsCreate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(null);
 
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
   const [currentPage, setCurrentPage] = useState(1);
-  const startIndex = useMemo(
-    () => getIndex(currentPage, 10),
-    [currentPage]
-  );
+  const startIndex = useMemo(() => getIndex(currentPage, 10), [currentPage]);
   const {
     register,
     handleSubmit,
@@ -104,11 +106,11 @@ export default function ManageBrand() {
     (brand, action) => {
       setBrand(brand);
       if (action === "EDIT") {
-        setVisible(true);
+        setAction(ACTION.delete);
         setValue("name", brand.name);
         setValue("image", brand.image);
       } else {
-        setIsVisible(true);
+        setAction(ACTION.delete);
       }
     },
     [brand]
@@ -119,9 +121,9 @@ export default function ManageBrand() {
     console.log(res);
     if (res.status === 200) {
       fetchBrands();
-      setIsVisible(false);
       addToast(() => Toast(res?.data?.message));
     }
+    setAction("");
   }, [brand]);
 
   const onSubmit = useCallback(
@@ -149,7 +151,6 @@ export default function ManageBrand() {
       try {
         if (isCreate) {
           res = await instanceAxios.post("brand/create", payload, headerConfig);
-          setIsCreate(false);
         } else {
           res = await instanceAxios.put(
             `brand/update/${brand._id}`,
@@ -159,14 +160,14 @@ export default function ManageBrand() {
         }
         if (res?.status === 200) {
           fetchBrands();
-          setVisible(false);
-          setIsLoading(false);
           addToast(() => Toast(res?.data?.message));
-          reset();
         }
       } catch (err) {
-        setIsLoading(false);
         addToast(() => Toast(err.response.data.message));
+      } finally {
+        reset();
+        setAction("");
+        setIsLoading(false);
       }
     },
     [isCreate, brand]
@@ -182,7 +183,6 @@ export default function ManageBrand() {
     const newOffset = event.selected + 1;
     setCurrentPage(newOffset);
   };
-
 
   const mapToItems = (brands) =>
     brands?.map((brand, index) => ({
@@ -210,6 +210,7 @@ export default function ManageBrand() {
         </>
       ),
     }));
+  const handleCloseModal = () => setAction("");
   return (
     <CRow>
       <CCol xs={12}>
@@ -217,8 +218,7 @@ export default function ManageBrand() {
           <CCardHeader>
             <CButton
               onClick={() => {
-                setIsCreate(true);
-                setVisible(true);
+                setAction(ACTION.create);
                 setBrand(null);
                 reset();
               }}
@@ -239,74 +239,22 @@ export default function ManageBrand() {
         </div>
       </CCol>
 
-      <CModal
-        visible={isVisible}
-        onClose={() => setIsVisible(false)}
-        aria-labelledby="delete-modal"
-      >
-        <CModalHeader>
-          <CModalTitle id="delete-modal">Notification</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <p>Are you sure to delete this brand?</p>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setIsVisible(false)}>
-            Close
-          </CButton>
-          <CButton color="primary" onClick={handleDelete}>
-            Yes
-          </CButton>
-        </CModalFooter>
-      </CModal>
+      <DeleteBrandModal
+        action={action}
+        handleDelete={handleDelete}
+        handleCloseModal={handleCloseModal}
+      />
+      <CreateEditBrandModal
+        action={action}
+        brand={brand}
+        isLoading={isLoading}
+        closeModal={handleCloseModal}
+        handleSubmit={handleSubmit}
+        dispatchSubmit={onSubmit}
+        register={register}
+        errors={errors}
+      />
 
-      <CModal
-        visible={visible}
-        onClose={() => setVisible(false)}
-        aria-labelledby="Write"
-      >
-        <CModalHeader>
-          <CModalTitle id="Write">
-            {isCreate ? "Create" : "Edit"} a brand
-          </CModalTitle>
-        </CModalHeader>
-        <CForm onSubmit={handleSubmit(onSubmit)}>
-          <CModalBody>
-            <CCol md={12}>
-              <CFormInput
-                type="text"
-                label="Brand name"
-                {...register("name", { require: false })}
-              />
-            </CCol>
-            <CCol md={12} className="mt-2">
-              <CImage
-                hidden={!brand?.image}
-                rounded
-                thumbnail
-                src={brand?.image}
-                width={200}
-                height={200}
-              />
-            </CCol>
-            <CCol md={12}>
-              <CFormInput
-                type="file"
-                label="Brand image"
-                {...register("image", { require: false })}
-              />
-            </CCol>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setVisible(false)}>
-              Close
-            </CButton>
-            <CButton color="primary" type="submit" disabled={isLoading}>
-              Submit
-            </CButton>
-          </CModalFooter>
-        </CForm>
-      </CModal>
       <CToaster
         className="p-3"
         placement="top-end"
