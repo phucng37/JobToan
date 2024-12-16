@@ -1,23 +1,15 @@
-import React from 'react'
-import CIcon from '@coreui/icons-react'
 import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
-  cilCursor,
-  cilDescription,
-  cilDrop,
-  cilNotes,
-  cilPencil,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
+  cilSpeedometer
 } from '@coreui/icons';
-import { PiTrademarkFill } from "react-icons/pi";
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
-import { TbCategoryPlus } from "react-icons/tb";
-import { RiBillLine } from "react-icons/ri";
+import CIcon from '@coreui/icons-react';
+import { CNavItem } from '@coreui/react';
+import React from 'react';
 import { FaProductHunt } from "react-icons/fa";
+import { PiTrademarkFill } from "react-icons/pi";
+import { RiBillLine } from "react-icons/ri";
+import { TbCategoryPlus } from "react-icons/tb";
+import { LuGalleryThumbnails } from "react-icons/lu";
+
 const _nav = [
   {
     component: CNavItem,
@@ -53,6 +45,12 @@ const _nav = [
     name: 'Manage product',
     to: '/manage-product',
     icon: <FaProductHunt className='nav-icon'/>,
+  },
+  {
+    component: CNavItem,
+    name: 'Manage banner',
+    to: '/manage-banner',
+    icon: <LuGalleryThumbnails className='nav-icon'/>,
   },
   // {
   //   component: CNavTitle,

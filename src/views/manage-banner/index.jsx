@@ -1,74 +1,64 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CButton,
   CCard,
   CCardBody,
   CCardHeader,
   CCol,
-  CForm,
-  CFormInput,
   CImage,
-  CModal,
-  CModalBody,
-  CModalFooter,
-  CModalHeader,
-  CModalTitle,
   CRow,
   CTable,
-  CTableBody,
-  CTableCaption,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-  CToast,
-  CToastBody,
-  CToastClose,
-  CToaster,
-  CToastHeader,
+  CToaster
 } from "@coreui/react";
-import { DocsExample } from "src/components";
-import { Link } from "react-router-dom";
-import { instanceAxios } from "../../utils/https";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import Toast from "src/components/Toast";
 import ReactPaginate from "react-paginate";
+import Toast from "src/components/Toast";
+import { ACTION } from "../../constant/action";
+import { instanceAxios } from "../../utils/https";
 import {
   getIndex,
   getTotalPages,
   paginateConfig,
 } from "../../utils/paginationUtils";
-import DeleteBrandModal from "./components/DeleteBrandModal";
-import { ACTION } from "../../constant/action";
-import CreateEditBrandModal from "./components/CreateEditBrandModal";
+import CreateEditBrannerModal from "./components/CreateEditBrannerModal";
+import DeleteBrannerModal from "./components/DeleteBrannerModal";
 
-const FIELDS = ["id", "name", "image", "createdAt", "action"];
+const FIELDS = ["id", "name", "thumbnailURL", "directURL", "createdAt", "action"];
 
 const columns = FIELDS.map((field, index) => {
   const column = {
     key: field,
     _props: { scope: "col" },
   };
-  if (field === "id") {
-    column.label = "#";
-  }
-  if (field === "createdAt") {
-    column.label = "Created At";
+  switch(field) {
+    case 'id':
+      column.label = '#';
+      break;
+    case 'thumbnailURL':
+      column.label = 'Thumbnail URL';
+      break;
+    case 'directURL':
+      column.label = 'Direct URL';
+      break;
+    case 'createdAt':
+      column.label = 'Created At';
+      break;
   }
   return column;
 });
 
-export default function ManageBrand() {
-  const [brands, setBrands] = useState([]);
+export default function ManagerBanner() {
+  const [banners, setBanners] = useState([]);
   const [action, setAction] = useState("");
-  const [brand, setBrand] = useState();
+  const [banner, setBanner] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(null);
-
   const [toast, addToast] = useState(0);
-  const toaster = React.useRef();
+
+  const toaster = useRef();
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = useMemo(() => getIndex(currentPage, 10), [currentPage]);
+
   const {
     register,
     handleSubmit,
@@ -83,61 +73,63 @@ export default function ManageBrand() {
     criteriaMode: "firstError",
   });
 
-  const fetchBrands = useCallback(async () => {
-    const res = await instanceAxios.get("brand/show", {
+  const fetchBanners = useCallback(async () => {
+    const res = await instanceAxios.get("banners", {
       params: {
         page: currentPage,
         limit,
       },
     });
     if (res.status === 200 && res.data) {
-      const { brands, totalBrands } = res.data;
+      const { banners, totalBanners } = res.data;
       console.log(res.data);
-      setBrands(brands);
-      setTotalPages(getTotalPages(totalBrands, limit));
+      setBanners(banners);
+      setTotalPages(getTotalPages(totalBanners, limit));
     }
   }, [currentPage]);
 
   useEffect(() => {
-    fetchBrands();
+    fetchBanners();
   }, [currentPage]);
 
   const handleAction = useCallback(
-    (brand, action) => {
-      setBrand(brand);
+    (banner, action) => {
+      setBanner(banner);
       if (action === "EDIT") {
-        setAction(ACTION.delete);
-        setValue("name", brand.name);
-        setValue("image", brand.image);
+        setAction(ACTION.edit);
+        setValue("name", banner.name);
+        setValue("thumbnailURL", banner.thumbnailURL);
+        setValue("directURL", banner.directURL);
       } else {
         setAction(ACTION.delete);
       }
     },
-    [brand]
+    [banner]
   );
 
   const handleDelete = useCallback(async () => {
-    const res = await instanceAxios.delete(`brand/delete/${brand._id}`);
+    const res = await instanceAxios.delete(`banners/${banner._id}`);
     console.log(res);
     if (res.status === 200) {
-      fetchBrands();
+      fetchBanners();
       addToast(() => Toast(res?.data?.message));
     }
     setAction("");
-  }, [brand]);
+  }, [banner]);
 
   const onSubmit = useCallback(
     async (data) => {
       setIsLoading(true);
       console.log("data: ", data);
-      let { name, image } = data;
-      if (!(image instanceof String || typeof image === "string")) {
-        console.log("IMAGE IS NOT OF STRING");
-        image = image[0];
+      let { name, thumbnailURL, directURL } = data;
+      if (!(thumbnailURL instanceof String || typeof thumbnailURL === "string")) {
+        console.log("thumbnailURL IS NOT OF STRING");
+        thumbnailURL = thumbnailURL[0];
       }
       const payload = {
         name,
-        image,
+        thumbnailURL,
+        directURL
       };
       console.log(payload);
       // return;
@@ -149,61 +141,58 @@ export default function ManageBrand() {
       let res = null;
       try {
         if (action === ACTION.create) {
-          res = await instanceAxios.post("brand/create", payload, headerConfig);
+          res = await instanceAxios.post("banners", payload, headerConfig);
         } else {
           res = await instanceAxios.put(
-            `brand/update/${brand._id}`,
+            `banners/${banner._id}`,
             payload,
             headerConfig
           );
         }
         if (res?.status === 200) {
-          fetchBrands();
+          fetchBanners();
           addToast(() => Toast(res?.data?.message));
         }
       } catch (err) {
+        console.log(err);
         addToast(() => Toast(err.response.data.message));
       } finally {
-        reset();
-        setAction("");
+        // reset();
+        // setAction(""); 
         setIsLoading(false);
       }
     },
-    [brand]
+    [action, banner]
   );
 
-  // Simulate fetching items from another resources.
-  // (This could be items from props; or items loaded in a local state
-  // from an API endpoint with useEffect and useState)
   const [limit, setLimit] = useState(10);
 
-  // Invoke when user click to request another page.
   const handlePageClick = (event) => {
     const newOffset = event.selected + 1;
     setCurrentPage(newOffset);
   };
 
-  const mapToItems = (brands) =>
-    brands?.map((brand, index) => ({
+  const mapToItems = (banners) =>
+    banners?.map((banner, index) => ({
       id: startIndex + index + 1,
-      name: brand?.name,
-      image: (
+      name: banner?.name,
+      thumbnailURL: (
         <CImage
-          hidden={!brand?.image}
+          hidden={!banner?.thumbnailURL}
           rounded
-          thumbnail
-          src={brand?.image}
-          width={200}
+          src={banner?.thumbnailURL}
+          width={150}
           height={200}
         />
       ),
-      createdAt: new Date(brand?.createdAt).toDateString(),
+      directURL: <p className="text-wrap">{banner?.directURL} </p>,
+      createdAt: new Date(banner?.createdAt).toDateString(),
       action: (
         <>
-          <CButton color="primary" onClick={() => handleAction(brand, "EDIT")}>
+          <CButton color="primary" onClick={() => handleAction(banner, "EDIT")}>
             Edit
           </CButton>{" "}
-          <CButton color="danger" onClick={() => handleAction(brand, "DELETE")}>
+          <CButton color="danger" onClick={() => handleAction(banner, "DELETE")}>
             Delete
           </CButton>
         </>
@@ -218,15 +207,15 @@ export default function ManageBrand() {
             <CButton
               onClick={() => {
                 setAction(ACTION.create);
-                setBrand(null);
+                setBanner(null);
                 reset();
               }}
             >
-              Create new brand
+              Create new banner
             </CButton>
           </CCardHeader>
           <CCardBody>
-            <CTable columns={columns} items={mapToItems(brands)} />
+            <CTable columns={columns} items={mapToItems(banners)} />
           </CCardBody>
         </CCard>
         <div className="float-end">
@@ -238,14 +227,14 @@ export default function ManageBrand() {
         </div>
       </CCol>
 
-      <DeleteBrandModal
+      <DeleteBrannerModal
         action={action}
         handleDelete={handleDelete}
         handleCloseModal={handleCloseModal}
       />
-      <CreateEditBrandModal
+      <CreateEditBrannerModal
         action={action}
-        brand={brand}
+        banner={banner}
         isLoading={isLoading}
         closeModal={handleCloseModal}
         handleSubmit={handleSubmit}

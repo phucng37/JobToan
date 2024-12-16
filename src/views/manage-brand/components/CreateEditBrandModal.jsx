@@ -13,6 +13,7 @@ import { ACTION } from "../../../constant/action";
 
 export default function CreateEditBrandModal({
   brand,
+  isLoading,
   action,
   closeModal,
   dispatchSubmit,

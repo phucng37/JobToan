@@ -1,4 +1,5 @@
 import React from 'react'
+import ManagerBanner from '../views/manage-banner';
 
 const Dashboard = React.lazy(() => import('src/views/dashboard/Dashboard'));
 const ManageUser = React.lazy(() => import('src/views/manage-user'));
@@ -65,6 +66,7 @@ const routes = [
   { path: '/manage-product', name: 'Manage product', element: ManageProduct },
   { path: '/manage-category', name: 'Manage category', element: ManageCategory },
   { path: '/manage-brand', name: 'Manage brand', element: ManageBrand },
+  { path: '/manage-banner', name: 'Manage banner', element: ManagerBanner },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
