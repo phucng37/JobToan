@@ -1,15 +1,4 @@
-import React, { lazy, Component, useEffect, Suspense } from "react";
-import { CNav, CNavLink, CRow } from "@coreui/react";
-import { Link } from "react-router-dom";
-import { data } from "../data";
-import { useDispatch, useSelector } from "react-redux";
-import { handleGetBrandBeginRedux } from "../redux/slice/brandSlice";
-import CardProductGrid from "../components/card/CardProductGrid";
-import {
-  handleGetBestSellers,
-  handleGetProductListByParamsBeginRedux,
-} from "../redux/slice/productListSlice";
-import CIcon from "@coreui/icons-react";
+import React, { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import {
   CButton,
   CCard,
@@ -19,9 +8,18 @@ import {
   CCardTitle,
   CCol,
   CImage,
+  CNav,
+  CNavLink,
+  CRow,
 } from "@coreui/react";
 import Skeleton from "react-loading-skeleton";
-import { LazyLoadImage } from "react-lazy-load-image-component";
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import CardProductGrid from "../components/card/CardProductGrid";
+import { data } from "../data";
+import { handleGetBrandBeginRedux } from "../redux/slice/brandSlice";
+import { handleGetBestSellers } from "../redux/slice/productListSlice";
+import { instanceAxios } from "../utils/https";
 import ViewedProduct from "./home/components/ViewedProduct";
 
 const Support = lazy(() => import("../components/Support"));
@@ -35,6 +33,7 @@ const CardDealsOfTheDay = lazy(
 );
 
 const HomeView = () => {
+  const [banner, setBanner] = useState(null);
   const isGetDataBrand = useSelector(
     (state) => state.brandReducer.isGetDataBrand
   );
@@ -54,6 +53,16 @@ const HomeView = () => {
     dispatch(handleGetBestSellers());
   }, []);
 
+  const fetchBanner = useCallback(async () => {
+    const res = await instanceAxios.get("/banners/filter-banner");
+    if (res.status === 200) {
+      setBanner(res.data?.banner);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchBanner();
+  }, []);
   const carouselContent = categories?.map((category, idx) => {
     return (
       <CCol sm={2}>
@@ -75,23 +84,6 @@ const HomeView = () => {
       </CCol>
     );
   });
-  const FEATURE_PRODUCTS = [
-    {
-      imageURL:
-        "https://cdn2.fptshop.com.vn/unsafe/480x0/filters:quality(100)/H3_405x175_a8481bdbe1.png",
-      productId: "",
-    },
-    {
-      imageURL:
-        "https://cdn2.fptshop.com.vn/unsafe/480x0/filters:quality(100)/H3_405x175_da06d798e7.png",
-      productId: "",
-    },
-    {
-      imageURL:
-        "https://cdn2.fptshop.com.vn/unsafe/480x0/filters:quality(100)/H3_405x175_20fbf1ad13.png",
-      productId: "",
-    },
-  ];
   return (
     <>
       <CNav as="nav" className="bg-primary">
@@ -109,8 +101,7 @@ const HomeView = () => {
           </CNavLink>
         ))}
       </CNav>
-
-      <Banner className="mb-3" id="carouselHomeBanner" data={data.banner} />
+      <Banner className="mb-3" id="carouselHomeBanner" data={banner?.main} />
       <div className="bg-primary p-3 text-center mb-3">
         <h4 className="m-0 text-white">Best Sellers</h4>
       </div>
@@ -129,13 +120,13 @@ const HomeView = () => {
         <div className="row g-3">
           <div className="col-md-12">
             <CRow>
-              {FEATURE_PRODUCTS.map((product) => (
+              {banner?.subs?.map((sub) => (
                 <CCol sm={4}>
-                  <Link to={`/products/detail/${product.productId}`}>
+                  <Link to={sub.directURL}>
                     <CImage
                       height={250}
                       className="w-100"
-                      src={product.imageURL}
+                      src={sub.thumbnailURL}
                       to="promo"
                     />
                   </Link>
@@ -144,6 +135,22 @@ const HomeView = () => {
             </CRow>
           </div>
           <ViewedProduct />
+          <CCol md={12}>
+            <CRow>
+              {banner?.events?.map((sub) => (
+                <CCol sm={3}>
+                  <Link to={sub.directURL}>
+                    <CImage
+                      height={250}
+                      className="w-100"
+                      src={sub.thumbnailURL}
+                      to="promo"
+                    />
+                  </Link>
+                </CCol>
+              ))}
+            </CRow>
+          </CCol>
           <div className="col-md-12">
             <Support />
           </div>

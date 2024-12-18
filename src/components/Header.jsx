@@ -89,7 +89,7 @@ const Header = () => {
                 <Link to="/cart" className="btn btn-primary ">
                   <i className="bi bi-cart3"></i>
                   <div className="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-circle">
-                    { countDataCart > 0 && countDataCart}
+                    {countDataCart > 0 && countDataCart}
                   </div>
                 </Link>
               </div>
@@ -208,6 +208,7 @@ const Header = () => {
               />
             </Link>
           </CHeaderBrand>
+          <Search />
           <CHeaderToggler onClick={() => setVisible(!visible)} />
           <CCollapse className="header-collapse" visible={true}>
             <CHeaderNav>

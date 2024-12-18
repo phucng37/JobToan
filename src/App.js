@@ -66,7 +66,9 @@ function App() {
       {isAdmin ? (
         <AdminLayout />
       ) : (
-        <React.Fragment>
+        <Suspense fallback={
+          <CContainer><Skeleton count={5} height={100}/></CContainer>
+        }>
           <Header />
           {/* <TopMenu /> */}
           <Suspense
@@ -103,7 +105,7 @@ function App() {
             </Routes>
           </Suspense>
           <Footer />
-        </React.Fragment>
+        </Suspense>
       )}
     </BrowserRouter>
   );
