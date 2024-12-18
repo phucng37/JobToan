@@ -15,6 +15,7 @@ const initState = {
   password: "",
   firstName: "",
   lastName: "",
+  address: ''
 };
 
 export const START_REGISTER = "START_REGISTER";
@@ -35,6 +36,7 @@ export const registerSlice = (state = initState, action) => {
       newState.password = action.payload.password;
       newState.firstName = action.payload.firstName;
       newState.lastName = action.payload.lastName;
+      newState.address = action.payload.address;
       break;
     case END_REGISTER_SUCCESS:
       newState.isRegisterDone = true;

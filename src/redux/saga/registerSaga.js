@@ -13,15 +13,15 @@ function* handleStartRegister() {
   const password = store.getState().registerReducer.password;
   const firstName = store.getState().registerReducer.firstName;
   const lastName = store.getState().registerReducer.lastName;
+  const address = store.getState().registerReducer.address;
   try {
     const data = yield postApiRegister("register", {
       name: firstName + lastName,
       phone,
       password,
+      address
     });
-    console.log(data);
-
-    ToastSuccess(data.data.message);
+    ToastSuccess(data.data?.message);
   } catch (error) {
     ToastError(error?.response?.data?.message);
     store.dispatch(handleEndRegisterFailedRedux());

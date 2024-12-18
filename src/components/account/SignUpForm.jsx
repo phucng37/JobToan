@@ -7,11 +7,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastError, ToastSuccess } from "../../notifi/toastify";
 import { useDispatch } from "react-redux";
 import { handleStartRegisterRedux } from "../../redux/slice/registerSlice";
+import CustomInput from "../base/CustomInput";
 const nameSchema = yup.string().required("Tên là bắt buộc");
+const addressSchema = yup.string().required("Địa chỉ là bắt buộc");
 
 const phoneSchema = yup
   .string()
-  .required("Sđt là bắt buộc nà")
+  .required("Sđt là bắt buộc")
   .matches(/^(?:\+84|0)[1-9]\d{8,9}$/, "Sđt ko hợp lệ");
 
 const pwSchema = yup
@@ -29,6 +31,7 @@ const yupResolverSignUpValidate = yup.object({
   lastName: nameSchema,
   phone: phoneSchema,
   password: pwSchema,
+  address: addressSchema
 });
 
 const SignUpForm = () => {
@@ -128,6 +131,21 @@ const SignUpForm = () => {
         type="text"
         {...register("password")}
         placeholder="Password***"
+        style={{
+          width: "100%",
+          display: "block",
+          margin: "auto",
+          borderRadius: "5px",
+          outline: "none",
+          border: "2px solid #ececec",
+          height: "38px",
+          marginBottom: "20px",
+        }}
+      />
+       <input
+        type="text"
+        {...register("address")}
+        placeholder="Address***"
         style={{
           width: "100%",
           display: "block",

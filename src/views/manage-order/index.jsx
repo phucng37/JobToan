@@ -15,6 +15,7 @@ import {
   CTableHeaderCell,
   CTableRow,
   CToaster,
+  CTooltip,
 } from "@coreui/react";
 import { DocsExample } from "src/components";
 import { Link, useParams } from "react-router-dom";
@@ -28,12 +29,14 @@ import {
 import { FaEdit } from "react-icons/fa";
 import { MdDoneOutline, MdOutlineCancel } from "react-icons/md";
 import Toast from "src/components/Toast";
+import { formatDateToVN } from "../../utils/date";
 
 const STATUSES = ["PENDING", "COMPLETED", "PROCESSING", "CANCELLED"];
 const FIELDS = [
   "id",
   "orderId",
   "customer",
+  "address",
   "orderTotal",
   "status",
   "createdAt",
@@ -73,15 +76,13 @@ export default function ManageOrder() {
     [currentPage, limit]
   );
   const [selectedItem, setSelectedItem] = useState("");
+  
   const [orderId, setOrderId] = useState(null);
   const [toast, addToast] = useState(0);
   const toaster = React.useRef();
-  // Invoke when user click to request another page.
+
   const handlePageClick = (event) => {
     const newOffset = event.selected + 1;
-    console.log(
-      `User requested page number ${event.selected}, which is offset `
-    );
     setCurrentPage(newOffset);
   };
   const fetchOrders = useCallback(async () => {
@@ -133,6 +134,14 @@ export default function ManageOrder() {
       id: startIndex + index + 1,
       orderId: order?._id,
       customer: order?.customerName,
+      address: <CTooltip content={order?.customerAddress}>
+        <p style={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          width: '300px'
+        }}>{order?.customerAddress}</p>
+      </CTooltip>,
       orderTotal: order?.totalPrice,
       status: (
         <>
@@ -179,7 +188,7 @@ export default function ManageOrder() {
           )}
         </>
       ),
-      createdAt: new Date(order?.createdAt).toDateString(),
+      createdAt: formatDateToVN(order?.createdAt),
     }));
   return (
     <CRow>
