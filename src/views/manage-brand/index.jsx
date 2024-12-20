@@ -105,12 +105,10 @@ export default function ManageBrand() {
   const handleAction = useCallback(
     (brand, action) => {
       setBrand(brand);
-      if (action === "EDIT") {
-        setAction(ACTION.delete);
+      setAction(action);
+      if (action === ACTION.edit) {
         setValue("name", brand.name);
         setValue("image", brand.image);
-      } else {
-        setAction(ACTION.delete);
       }
     },
     [brand]
@@ -200,10 +198,10 @@ export default function ManageBrand() {
       createdAt: new Date(brand?.createdAt).toDateString(),
       action: (
         <>
-          <CButton color="primary" onClick={() => handleAction(brand, "EDIT")}>
+          <CButton color="primary" onClick={() => handleAction(brand, ACTION.edit)}>
             Edit
           </CButton>{" "}
-          <CButton color="danger" onClick={() => handleAction(brand, "DELETE")}>
+          <CButton color="danger" onClick={() => handleAction(brand, ACTION.delete)}>
             Delete
           </CButton>
         </>
@@ -243,6 +241,7 @@ export default function ManageBrand() {
         handleDelete={handleDelete}
         handleCloseModal={handleCloseModal}
       />
+      
       <CreateEditBrandModal
         action={action}
         brand={brand}

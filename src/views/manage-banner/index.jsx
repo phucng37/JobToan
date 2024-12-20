@@ -82,7 +82,6 @@ export default function ManagerBanner() {
     });
     if (res.status === 200 && res.data) {
       const { banners, totalBanners } = res.data;
-      console.log(res.data);
       setBanners(banners);
       setTotalPages(getTotalPages(totalBanners, limit));
     }
@@ -109,7 +108,6 @@ export default function ManagerBanner() {
 
   const handleDelete = useCallback(async () => {
     const res = await instanceAxios.delete(`banners/${banner._id}`);
-    console.log(res);
     if (res.status === 200) {
       fetchBanners();
       addToast(() => Toast(res?.data?.message));
@@ -132,7 +130,6 @@ export default function ManagerBanner() {
         directURL
       };
       console.log(payload);
-      // return;
       const headerConfig = {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -154,11 +151,10 @@ export default function ManagerBanner() {
           addToast(() => Toast(res?.data?.message));
         }
       } catch (err) {
-        console.log(err);
         addToast(() => Toast(err.response.data.message));
       } finally {
-        // reset();
-        // setAction(""); 
+        reset();
+        setAction(""); 
         setIsLoading(false);
       }
     },

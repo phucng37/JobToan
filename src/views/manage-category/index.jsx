@@ -40,13 +40,43 @@ import { Link } from "react-router-dom";
 import { instanceAxios } from "../../utils/https";
 import CIcon from "@coreui/icons-react";
 import Toast from "src/components/Toast";
-import ReactPaginate from 'react-paginate';
-import { getIndex, getTotalPages, paginateConfig } from "../../utils/PaginationUtils";;
+import ReactPaginate from "react-paginate";
+import {
+  getIndex,
+  getTotalPages,
+  paginateConfig,
+} from "../utils/PaginationUtils";
+import { ACTION } from "../../constant/action";
+import CreateEditCategoryModal from "./components/CreateEditCategoryModal";
+import { formatDateToVN } from "../../utils/date";
+import DeleteItemModal from "../../components/modals/DeleteItemModal";
+
+const DEFAULT_CATEGORY = {
+  id: "",
+  name: "",
+  icon: "",
+};
+
+const FIELDS = ["id", "name", "icon", "createdAt", "action"];
+
+const columns = FIELDS.map((field, index) => {
+  const column = {
+    key: field,
+    _props: { scope: "col" },
+  };
+  if (field === "id") {
+    column.label = "#";
+  }
+  if (field === "createdAt") {
+    column.label = "Created At";
+  }
+  return column;
+});
 
 export default function ManageCategory() {
   const [categories, setCategories] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [visible, setVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCreate, setIsCreate] = useState(false);
@@ -73,8 +103,8 @@ export default function ManageCategory() {
     const res = await instanceAxios.get("category/show", {
       params: {
         page: currentPage,
-        limit
-      }
+        limit,
+      },
     });
     if (res.data && res.status === 200) {
       const { categories, totalCategories } = res.data;
@@ -86,32 +116,35 @@ export default function ManageCategory() {
   useEffect(() => {
     fetchCategories();
   }, [currentPage, limit]);
-
+  const [action, setAction] = useState("");
   const handleAction = useCallback(
     (category, action) => {
-      setCategory(category);
-      if (action === "EDIT") {
-        setName(category?.name);
-        console.log("category: ", category);
-        setIcon(category?.icon);
-        setVisible(true);
-      } else {
-        setIsVisible(true);
-      }
+      setAction(action);
+      setCategory({
+        id: category?._id,
+        name: category?.name,
+        icon: category?.icon,
+      });
     },
     [category, isVisible]
   );
 
   const handleDelete = useCallback(async () => {
     console.log("CATEGORY: ", category);
-    const res = await instanceAxios.delete(`category/delete/${category._id}`);
-    if (res.status === 200) {
-      fetchCategories();
-      setIsVisible(false);
-      console.log("res delete: ", res);
+    try {
+      const res = await instanceAxios.delete(
+        `category/delete/${category?._id}`
+      );
+      if (res.status === 200) {
+        fetchCategories();
+        addToast(() => Toast(res?.data?.message));
+      }
+    } catch (error) {
       addToast(() => Toast(res?.data?.message));
+    } finally {
+      handleCloseModal();
     }
-  }, [isVisible, category]);
+  }, [action, category]);
 
   const handleSubmit = async (event) => {
     setIsLoading(true);
@@ -128,32 +161,76 @@ export default function ManageCategory() {
       icon,
     };
     console.log(payload);
-    // return;
     const headerConfig = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     };
-    if (isCreate) {
-      res = await instanceAxios.post("category/create", payload, headerConfig);
-      setIsCreate(false);
-    } else {
-      res = await instanceAxios.put(
-        `category/update/${category._id}`,
-        payload,
-        headerConfig
-      );
-    }
-    if (res.status === 200) {
-      setValidated(false);
-      fetchCategories();
-      setVisible(false);
-      setName("");
-      setIcon(null);
-      setIsLoading(false);
+    try {
+      if (action === ACTION.create) {
+        res = await instanceAxios.post(
+          "category/create",
+          payload,
+          headerConfig
+        );
+      } else {
+        res = await instanceAxios.put(
+          `category/update/${category._id}`,
+          payload,
+          headerConfig
+        );
+      }
+      if (res.status === 200) {
+        fetchCategories();
+        addToast(() => Toast(res?.data?.message));
+      }
+    } catch (error) {
       addToast(() => Toast(res?.data?.message));
+    } finally {
+      setValidated(false);
+      setIsLoading(false);
+      handleCloseModal();
     }
   };
+
+  const handleCloseModal = useCallback(() => {
+    setAction("");
+    setCategory(null);
+  }, [action, category]);
+
+  const mapToItems = () =>
+    categories?.map((category, index) => ({
+      id: startIndex + index + 1,
+      name: category?.name,
+      icon: (
+        <CImage
+          hidden={!category?.icon}
+          rounded
+          thumbnail
+          src={category?.icon}
+          width={200}
+          height={200}
+        />
+      ),
+      createdAt: formatDateToVN(category?.createdAt),
+      action: (
+        <>
+          <CButton
+            color="primary"
+            onClick={() => handleAction(category, ACTION.edit)}
+          >
+            Edit
+          </CButton>{" "}
+          <CButton
+            color="danger"
+            onClick={() => handleAction(category, ACTION.delete)}
+          >
+            Delete
+          </CButton>
+        </>
+      ),
+    }));
+
   return (
     <CRow>
       <CCol xs={12}>
@@ -161,65 +238,14 @@ export default function ManageCategory() {
           <CCardHeader>
             <CButton
               onClick={() => {
-                setName("");
-                setIcon(null);
-                setCategory(null);
-                setIsCreate(true);
-                setVisible(true);
+                setAction(ACTION.create);
               }}
             >
               Create new category
             </CButton>
           </CCardHeader>
           <CCardBody>
-            <CTable>
-              <CTableHead>
-                <CTableRow>
-                  <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Name</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Icon</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Created date</CTableHeaderCell>
-                  <CTableHeaderCell scope="col" colSpan={2}>
-                    Action
-                  </CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
-              <CTableBody>
-                {categories.map((category, index) => (
-                  <CTableRow key={category._id}>
-                    <CTableHeaderCell scope="row">{startIndex + index + 1}</CTableHeaderCell>
-                    <CTableDataCell>{category?.name}</CTableDataCell>
-                    <CTableDataCell>
-                      <CImage
-                        hidden={!category?.icon}
-                        rounded
-                        thumbnail
-                        src={category?.icon}
-                        width={200}
-                        height={200}
-                      />
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      {new Date(category?.createdAt).toDateString()}
-                    </CTableDataCell>
-                    <CTableDataCell>
-                      <CButton
-                        color="primary"
-                        onClick={() => handleAction(category, "EDIT")}
-                      >
-                        Edit
-                      </CButton>{" "}
-                      <CButton
-                        color="danger"
-                        onClick={() => handleAction(category, "DELETE")}
-                      >
-                        Delete
-                      </CButton>
-                    </CTableDataCell>
-                  </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+            <CTable columns={columns} items={mapToItems()} />
           </CCardBody>
         </CCard>
         <div className="float-end">
@@ -227,89 +253,25 @@ export default function ManageCategory() {
             onPageChange={handlePageClick}
             pageCount={totalPages}
             {...paginateConfig}
-            // forcePage={
-            //   isGetDataProductListByParams && itemOffset === 0
-            //     ? itemOffset
-            //     : undefined
-            // }
           />
         </div>
       </CCol>
 
-      <CModal
-        visible={isVisible}
-        onClose={() => setIsVisible(false)}
-        aria-labelledby="delete-modal"
-      >
-        <CModalHeader>
-          <CModalTitle id="delete-modal">Notification</CModalTitle>
-        </CModalHeader>
-        <CModalBody>
-          <p>Are you sure to delete this category?</p>
-        </CModalBody>
-        <CModalFooter>
-          <CButton color="secondary" onClick={() => setIsVisible(false)}>
-            Close
-          </CButton>
-          <CButton color="primary" onClick={handleDelete}>
-            Yes
-          </CButton>
-        </CModalFooter>
-      </CModal>
+      <DeleteItemModal
+        action={action}
+        name={category?.name}
+        closeModal={closeModal}
+        dispatchDelete={handleDelete}
+      />
 
-      <CModal
-        visible={visible}
-        onClose={() => setVisible(false)}
-        aria-labelledby="Write"
-      >
-        <CModalHeader>
-          <CModalTitle id="Write">
-            {isCreate ? "Create" : "Edit"} a category
-          </CModalTitle>
-        </CModalHeader>
-        <CForm noValidate validated={validated} onSubmit={handleSubmit}>
-          <CModalBody>
-            <CCol md={12}>
-              <CFormInput
-                type="text"
-                label="Category name"
-                required
-                onChange={(e) => setName(e.target.value)}
-                value={name}
-                name="name"
-              />
-            </CCol>
-            <CCol md={12} className="mt-2">
-              <CImage
-                hidden={!category?.icon}
-                rounded
-                thumbnail
-                src={category?.icon}
-                width={200}
-                height={200}
-              />
-            </CCol>
-            <CCol md={12}>
-              <CFormInput
-                type="file"
-                label="Category icon"
-                onChange={(e) => {
-                  setIcon(e.target.files[0]);
-                }}
-                name="name"
-              />
-            </CCol>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setVisible(false)}>
-              Close
-            </CButton>
-            <CButton color="primary" type="submit" disabled={isLoading}>
-              Submit
-            </CButton>
-          </CModalFooter>
-        </CForm>
-      </CModal>
+      <CreateEditCategoryModal
+        isLoading={isLoading}
+        action={action}
+        category={category}
+        closeModal={handleCloseModal}
+        dispatchSubmit={handleSubmit}
+      />
+
       <CToaster
         className="p-3"
         placement="top-end"
