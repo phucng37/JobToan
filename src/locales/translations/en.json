@@ -1,0 +1,16 @@
+{
+    "common": {
+      "button": {
+        "search": "Search",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "save": "Save"
+      }
+    },
+    "home": {
+      "title" : {
+        "bestSeller": "Best Seller"
+      }
+    }
+  }
+  

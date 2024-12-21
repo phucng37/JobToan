@@ -21,6 +21,7 @@ import { handleGetBrandBeginRedux } from "../redux/slice/brandSlice";
 import { handleGetBestSellers } from "../redux/slice/productListSlice";
 import { instanceAxios } from "../utils/https";
 import ViewedProduct from "./home/components/ViewedProduct";
+import { useTranslation } from "react-i18next";
 
 const Support = lazy(() => import("../components/Support"));
 const Banner = lazy(() => import("../components/carousel/Banner"));
@@ -33,6 +34,7 @@ const CardDealsOfTheDay = lazy(
 );
 
 const HomeView = () => {
+  const { t, i18n } = useTranslation();
   const [banner, setBanner] = useState(null);
   const isGetDataBrand = useSelector(
     (state) => state.brandReducer.isGetDataBrand
@@ -103,7 +105,7 @@ const HomeView = () => {
       </CNav>
       <Banner className="mb-3" id="carouselHomeBanner" data={banner?.main} />
       <div className="bg-primary p-3 text-center mb-3">
-        <h4 className="m-0 text-white">Best Sellers</h4>
+        <h4 className="m-0 text-white">{t('home.title.bestSeller')}</h4>
       </div>
       <div className="container">
         <div className="row p-4">

@@ -1,0 +1,16 @@
+{
+    "common": {
+      "button": {
+        "search": "Tìm kiếm",
+        "cancel": "Hủy",
+        "delete": "Xóa",
+        "save": "Lưu"
+      }
+    },
+    "home": {
+      "title" : {
+        "bestSeller": "Bán chạy nhất"
+      }
+    }
+  }
+  

@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ContextFilter from "./context/ContextFilter";
 import 'core-js';
+import './locales/index';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
